@@ -39,7 +39,7 @@
             extra_parameters: |
                 passenger_enabled on;
                 passenger_base_uri /;
-                passenger_app_root {{ ansistrano_deploy_to }}/current;
+                passenger_app_root {{ pharos_app_root }};
                 passenger_app_env {{ RAILS_ENV }};
                 passenger_friendly_error_pages off;
 
@@ -48,9 +48,6 @@
                 ssl_certificate    {{ssl_cert_path}};
                 ssl_certificate_key {{ ssl_key_path }};
         nginx_client_max_body_size: 0
-
-        # Passenger
-        #        passenger_standalone: true
 
         # RBenv
         rbenv:
