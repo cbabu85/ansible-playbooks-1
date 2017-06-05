@@ -68,24 +68,12 @@
             # - { name: unattended-upgrades, logdir: /var/log/unattended-upgradescopy }
           - {name: pharos, logdir: "/var/www/{{ansible_fqdn}}/pharos/shared/log", servicename: nginx}
 
-    # THESE ARE SUPPLIED PER GROUP/HOST-VARS
-    ## Rewrite to use aws_ses_user everywhere. currently mapped to postfix_sasl_user
-    # AWS CREDENTIALS
-    #AWS_ACCESS_KEY_ID: "{{ var_aws_access_key_id }}"
-    #AWS_SECRET_ACCESS_KEY: "{{ var_aws_secret_access_key }}"
-
-    #AWS_SES_USER: ""
-    #AWS_SES_PASSWORD: ""
-
-
     roles:
       - {role: common, tags: common}
       - {role: zzet.rbenv, tags: rbenv}
       - {role: cd3ef.nginx, tags: [nginx, passenger, nginx-passenger]}
       - {role: carlosbuenosvinos.ansistrano-deploy, tags: [deploy, pharos]}
       - {role: aptrust.pharos, tags: [pharos, deploy]}
-        # Disabled until central_logs role is refactored.
-        #      - {role: central_logs, tags: [logs, deploy]}
     tasks:
 
     - name: Slack to all
