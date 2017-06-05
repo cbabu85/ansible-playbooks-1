@@ -61,4 +61,4 @@
     user: "{{pg_backup_user}}"
     minute: "22"
     hour: "1"
-    job: "/etc/psql_backup/pg_backup_rotated.sh"
+    job: "/etc/psql_backup/pg_backup_rotated.sh >> /var/log/psql_backup.log 2>&1"
