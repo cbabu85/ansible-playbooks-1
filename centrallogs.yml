@@ -7,9 +7,10 @@
         #        mount_dir: /mnt/efs/apt
 
         centrallogs:
-          #          - { name: nginx, logdir: /var/log/nginx, servicename: nginx}
-            # - { name: unattended-upgrades, logdir: /var/log/unattended-upgradescopy }
-          - {name: pharos, logdir: "/var/www/{{ansible_fqdn}}/pharos/shared/log", servicename: nginx}
+          - { name: nginx, logdir: /var/log/nginx-new, servicename: nginx}
+          - { name: unattended-upgrades, logdir: /var/log/unattended-upgrades-new }
+          - { name: supervisor, logdir: /var/log/supervisor-new, servicename: supervisor }
+            #         - {name: pharos, logdir: "/var/www/{{ansible_fqdn}}/pharos/shared/log", servicename: nginx}
 
     roles:
       #      - common
