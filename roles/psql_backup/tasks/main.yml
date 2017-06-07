@@ -55,6 +55,13 @@
     group: "{{system_default_group}}"
     mode: 0600
 
+- name: Touch logfile
+  file:
+    dest: /var/log/psql_backup.log
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0644
+
 - name: Set up cron job for regular backups
   cron:
     name: "Run postgres backup"
