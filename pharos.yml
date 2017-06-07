@@ -60,6 +60,12 @@
 #            - cd3ef
         rbenv_group: 'deploy'
 
+        # psql_backup
+        pg_hostname: "{{ pharos_db_host }}"
+        pg_username: "{{pharos_db_user}}"
+        pg_pass: "{{pharos_db_pwd}}"
+        pg_backup_dir: "/mnt/ebs/apt/psql_backup/"
+
         # Central logs on efs mount
         # Note: Role doesn't allow for multiple logdirs at the moment.
         # Requires refactoring.
@@ -74,6 +80,7 @@
       - {role: cd3ef.nginx, tags: [nginx, passenger, nginx-passenger]}
       - {role: carlosbuenosvinos.ansistrano-deploy, tags: [deploy, pharos]}
       - {role: aptrust.pharos, tags: [pharos, deploy]}
+      - {role: psql_backup, tags: [psql_backup]}
     tasks:
 
     - name: Slack to all
