@@ -1,5 +1,4 @@
 -   hosts:
-        - apt-util
         - apt-ops
         - pharos
     vars_files:
@@ -13,9 +12,9 @@
         ops_data_grafana: /mnt/efs/apt/ops_data/grafana
 
         # Postgresql
-        psql_db: grafana
-        psql_owner: grafana_admin
-        psql_pass: gr4f4n4
+        grafana_psql_db: grafana
+        grafana_psql_owner: grafana_admin
+        grafana_psql_pwd: gr4f4n4
 
         # Grafana
         # grafana_admin_password set by vault.
@@ -23,11 +22,11 @@
         grafana_database:
           type: postgres
           host: 127.0.0.1:5432
-          name: "{{psql_db}}"
-          user: "{{psql_owner}}"
-          password: "{{psql_pass}}"
+          name: "{{grafana_psql_db}}"
+          user: "{{grafana_psql_owner}}"
+          password: "{{grafana_psql_pwd}}"
           path: "{{ops_data_grafana}}"
-
+/
         # InfluxDB
         influxdb_admin_https_enabled: "true"
         # influxdb_admin_https_certificate: "{{ssl_cert_path}}"
@@ -73,14 +72,14 @@
 
     tasks:
       - name: Create grafana DB user
-        postgresql_user: name="{{psql_owner}}"
-                         password="{{psql_pass}}"
+        postgresql_user: name="{{grafana_psql_owner}}"
+                         password="{{grafana_psql_pass}}"
         tags: postgresql
 
       - name: Create grafana DB user
-        postgresql_db: name="{{psql_db}}"
+        postgresql_db: name="{{grafana_psql_db}}"
                        encoding='UTF-8'
-                       owner="{{psql_owner}}"
+                       owner="{{grafana_psql_owner}}"
                        state=present
         tags: postgresql
 
