@@ -166,6 +166,9 @@ nagios_server: nagios.aptrust.org
 
 # Icinga2
 icinga_server: icinga.aptrust.org
+icinga2_master: "{{vault_icinga2_master}}"
+icinga2_db_host: "{{vault_icinga2_db_host}}"
+
 icinga2_db: "{{vault_icinga2_db}}"
 icinga2_db_user: "{{vault_icinga2_db_user}}"
 icinga2_db_pass: "{{vault_icinga2_db_pwd}}"
