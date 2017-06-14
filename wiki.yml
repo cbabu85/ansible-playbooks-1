@@ -87,4 +87,5 @@
       - {role: wtanaka.mysql, tags: ['mysql','mediawiki'], when: mediawiki_local_db == true}
 
       - {role: tersmitten.composer, tags: composer, when: ansible_distribution_release == 'xenial'}
+      - {role: AsianChris.npm, tags: npm}
       - {role: ansible-mediawiki, tags: mediawiki}
