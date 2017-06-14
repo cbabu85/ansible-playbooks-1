@@ -1,0 +1,16 @@
+---
+- name: Download Debian Source
+  get_url: url=https://deb.nodesource.com/setup_4.x dest=/tmp/setup_4.x mode=0755
+  register: debianSource
+
+- name: Install Debian Source
+  shell:
+    bash /tmp/setup_4.x
+  become: yes
+  become_method: sudo
+  when: debianSource.changed
+
+- name: Install NodeJS 4.x
+  apt: pkg=nodejs state=present update_cache=yes
+  become: yes
+  become_method: sudo
