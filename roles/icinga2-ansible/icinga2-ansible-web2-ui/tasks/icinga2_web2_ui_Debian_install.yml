@@ -8,19 +8,28 @@
 
 - name: Create a IDO Database for Icinga2
   mysql_db: name={{ icinga2_db }}
+            login_host="{{icinga2_db_host}}"
+            login_user="{{icinga2_db_user}}"
+            login_pass="{{icinga2_db_pass}}"
             state=present
   register: icinga_ido_db
 
 - name: Create Icinga2 IDO Database User and configure Grants
   mysql_user: name={{ icinga2_db_user }}
               password={{ icinga2_db_pass }}
+              login_host="{{icinga2_db_host}}"
+              login_user="{{icinga2_db_user}}"
+              login_pass="{{icinga2_db_pass}}"
               state=present
               priv="{{ icinga2_db }}.*:GRANT,INSERT,SELECT,UPDATE,DELETE,DROP,CREATE VIEW,INDEX,EXECUTE"
 
 - name: Import the IDO Schema on Icinga Web Database (only once)
   mysql_db: name={{ icinga2_db }}
             state=import
-            target={{ icinga2_web_mysql_schema_debian }}
+            login_host="{{icinga2_db_host}}"
+            login_user="{{icinga2_db_user}}"
+            login_pass="{{icinga2_db_pass}}"
+target={{ icinga2_web_mysql_schema_debian }}
   when: icinga_ido_db.changed == true
 
 - name: Configure Icinga2 Ido Mysql Feature
@@ -46,6 +55,9 @@
 
 - name: Create a Web Database for Icinga2
   mysql_db: name={{ icinga2_web2_db }}
+            login_host="{{icinga2_db_host}}"
+            login_user="{{icinga2_db_user}}"
+            login_pass="{{icinga2_db_pass}}"
             state=present
   register: icinga_web_db
 
@@ -57,6 +69,9 @@
 
 - name: Import the Web Schema on Icinga Web Database (only once)
   mysql_db: name={{ icinga2_web2_db }}
+            login_host="{{icinga2_db_host}}"
+            login_user="{{icinga2_db_user}}"
+            login_pass="{{icinga2_db_pass}}"
             state=import
             target={{ icinga2_web2_mysql_schema_debian }}
   when: icinga_web_db.changed == true
