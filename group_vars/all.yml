@@ -169,18 +169,14 @@ icinga_server: icinga.aptrust.org
 icinga2_master: "{{vault_icinga2_master}}"
 icinga2_db_host: "{{vault_icinga2_db_host}}"
 
+# Icinga IDO dB
 icinga2_db: "{{vault_icinga2_db}}"
 icinga2_db_user: "{{vault_icinga2_db_user}}"
 icinga2_db_pass: "{{vault_icinga2_db_pwd}}"
 
-
-icinga2_mysql_auth_user   : "{{vault_icinga2_mysql_auth_user}}"
-icinga2_mysql_auth_pass   : "{{vault_icinga2_mysql_auth_pass}}"
-
-icinga2_db_auth           : "{{vault_icinga2_db_auth}}"
-icinga2_db_auth_user      : "{{vault_icinga2_db_auth_user}}"
-icinga2_db_auth_pass      : "{{vault_icinga2_db_auth_pass}}"
-
+icinga2_web2_db: "{{vault_icinga2_web_db}}"
+icinga2_web2_db_user: "{{vault_icinga2_web_db_user}}"
+icinga2_web2_db_pass: "{{vault_icinga2_web_db_pass}}"
 
 # InfluxDB
 influxdb_host: "{{vault_influxdb_host}}"
