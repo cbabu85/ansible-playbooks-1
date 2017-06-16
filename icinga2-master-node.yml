@@ -10,8 +10,9 @@
   gather_facts: True
   vars_files:
       - "group_vars/vault.yml"
-  roles:
-    - role: icinga2-ansible/icinga2-ansible-no-ui
+  vars:
+
+      # Icinga2
       icinga2_conf_global: |
          include "constants.conf"
          include "zones.conf"
@@ -19,9 +20,14 @@
          include <plugins>
          include <plugins-contrib>
          include "features-enabled/*.conf"
-      tags: icinga2-no-ui
+
+      # InfluxDB
+
+  roles:
+    - role: icinga2-ansible/icinga2-ansible-no-ui
 # TODO: Enable once config is in group_vars
 #    - role: ansible-influxdb
+    - role: cd3ef.nginx
   tasks:
     - name: Enable {{ item }} feature
       become: true
@@ -32,7 +38,7 @@
         - notification
         - syslog
         - mainlog
-        - perfdata
+        #    - perfdata
 
 # Generate ticket on master to use for client nodes
 # - hosts: "{{ masteritem | default('monitoring_servers')}}"
