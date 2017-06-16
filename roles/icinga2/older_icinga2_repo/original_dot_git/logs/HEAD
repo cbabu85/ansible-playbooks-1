@@ -1,7 +1,0 @@
-0000000000000000000000000000000000000000 3584f1e320480112843518f29cfdccc30663b3e2 Christian Dahlhausen <dahlhausen@gmail.com> 1464981368 -0400	clone: from https://github.com/Icinga/icinga2-ansible
-3584f1e320480112843518f29cfdccc30663b3e2 0bff0efd3f3e468d0c8e26671bc9e3dc5b10075a Christian Dahlhausen <dahlhausen@gmail.com> 1466624693 -0400	commit: Add additional Nagios plugins to Icinga2 server.
-0bff0efd3f3e468d0c8e26671bc9e3dc5b10075a d413397c0e737935a87487da3352500207b45d5b Christian Dahlhausen <dahlhausen@gmail.com> 1466624764 -0400	commit: Define default nagios_plugin_dir.
-d413397c0e737935a87487da3352500207b45d5b 65cbac5f28cf20a2f8a1a7503615d3b6d53ff53d Christian Dahlhausen <dahlhausen@gmail.com> 1466624916 -0400	commit: Add nagios_plugins include.
-65cbac5f28cf20a2f8a1a7503615d3b6d53ff53d 85f722f448ce5efcb15e16aa685958ee405404b6 Christian Dahlhausen <dahlhausen@gmail.com> 1467311430 -0400	commit: Fix ansible_fqdn dict lookup.
-85f722f448ce5efcb15e16aa685958ee405404b6 e8d822947dcca07682023fd782cdc37efe11dd2d Christian Dahlhausen <dahlhausen@gmail.com> 1467399616 -0400	commit: Update to Ansible 2.x compatibilty.
-e8d822947dcca07682023fd782cdc37efe11dd2d 85ce7c8901582d9a185a1a9f9bdf9c1c191ae929 Christian Dahlhausen <dahlhausen@gmail.com> 1467399693 -0400	commit (amend): Update to Ansible 2.x compatibilty.
