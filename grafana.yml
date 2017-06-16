@@ -13,8 +13,6 @@
 
         # Postgresql
         grafana_psql_db: grafana
-        grafana_psql_owner: grafana_admin
-        grafana_psql_pwd: gr4f4n4
 
         # Grafana
         # grafana_admin_password set by vault.
@@ -73,7 +71,7 @@
     tasks:
       - name: Create grafana DB user
         postgresql_user: name="{{grafana_psql_owner}}"
-                         password="{{grafana_psql_pass}}"
+                         password="{{grafana_psql_pwd}}"
         tags: postgresql
 
       - name: Create grafana DB user
