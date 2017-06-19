@@ -80,8 +80,8 @@
       dest="{{ goapp_src_path }}"
       accept_hostkey=yes
       clone=no
-      update=no
-      force=no
+      update=yes
+      force=yes
       version=master
   become_user: "{{system_default_user}}"
   become: true
