@@ -79,7 +79,7 @@
   git: repo="git@github.com:APTrust/exchange.git"
       dest="{{ goapp_src_path }}"
       accept_hostkey=yes
-      clone=no
+      clone=yes
       update=yes
       force=yes
       version=master
