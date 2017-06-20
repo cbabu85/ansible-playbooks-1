@@ -174,9 +174,9 @@ icinga2_db: "{{vault_icinga2_db}}"
 icinga2_db_user: "{{vault_icinga2_db_user}}"
 icinga2_db_pass: "{{vault_icinga2_db_pwd}}"
 
-icinga2_web2_db: "{{vault_icinga2_web_db}}"
-icinga2_web2_db_user: "{{vault_icinga2_web_db_user}}"
-icinga2_web2_db_pass: "{{vault_icinga2_web_db_pass}}"
+icinga2_web2_db: "{{vault_icinga2_web2_db}}"
+icinga2_web2_db_user: "{{vault_icinga2_web2_db_user}}"
+icinga2_web2_db_pass: "{{vault_icinga2_web2_db_pass}}"
 
 # InfluxDB
 influxdb_host: "{{vault_influxdb_host}}"
