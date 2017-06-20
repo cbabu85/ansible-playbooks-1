@@ -89,7 +89,7 @@
   tags: gitclone
 
 # Checkout Exchange repo
-- name: Checkout exchange repo
+- name: Go get exchange repo
   become_user: "{{system_default_user}}"
   become: true
   shell: "go get -u -f -d github.com/APTrust/exchange/..."
