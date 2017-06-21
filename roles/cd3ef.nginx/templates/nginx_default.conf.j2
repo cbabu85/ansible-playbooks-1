@@ -1,0 +1,11 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# {{ansible_managed}}
+# Default Server
+server {
+    listen 80;
+    server_name _ default_server;
+
+    client_max_body_size 10;
+    index index.html index.htm;
+    return 301 https://$host$request_uri;
+}

@@ -63,9 +63,13 @@
     become: yes
     tags: nginx
 
-  - name: Nginx | Disable default site
-    file: path=/etc/nginx/sites-enabled/default state=absent
-    when: ansible_os_family == "Debian"
+  - name: Nginx | Update default site
+    template:
+      src: nginx_default.conf.j2
+      dest: /etc/nginx/sites-enabled/default
+      owner: "{{nginx_user}}"
+      group: "{{nginx_group}}"
+      mode: 0644
     become: yes
     tags: nginx
 
