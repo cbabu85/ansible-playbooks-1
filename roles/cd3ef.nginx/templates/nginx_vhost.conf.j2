@@ -1,8 +1,8 @@
 #jinja2: trim_blocks: True, lstrip_blocks: True
-# {{ ansible_managed }}
+# {{ansible_managed}}
 {% for vhost in nginx_vhosts %}
 server {
-    listen {{ vhost.listen | default('80 default_server') }};
+    listen {{ vhost.listen }};
 
     client_max_body_size {{nginx_client_max_body_size}};
 {% if vhost.server_name is defined %}
@@ -18,13 +18,8 @@ server {
     error_page {{ vhost.error_page }};
     {% endif %}
 
-{% if vhost.access_log is defined %}
-    access_log {{ vhost.access_log }};
-    {% endif %}
-
-{% if vhost.error_log is defined %}
-    error_log {{ vhost.error_log }} error;
-    {% endif %}
+    access_log {{ vhost.access_log | default(vhost.server_name + '_access.log')}};
+    error_log {{ vhost.error_log | default(vhost.server_name + '_error.log')}} error;
 
 {% if vhost.return is defined %}
     return {{ vhost.return }};
