@@ -3,7 +3,8 @@
               regexp="^;?{{item.key}}"
               line="{{item.key}} = {{item.value}}"
               backup=yes
-  with_dict: "{{tunables|default({})}}"
+  with_dict: "{{php_tunables|default({})}}"
+  tags: php_tunables
 
 - name: Add suhosin apt key
   apt_key:
