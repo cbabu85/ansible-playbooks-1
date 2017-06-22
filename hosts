@@ -21,6 +21,7 @@ apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.
 [demo-servers]
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
+apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 
 [pharos-servers]
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
