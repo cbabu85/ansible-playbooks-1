@@ -48,7 +48,7 @@
     tags: php
 
   - name: Nginx | Create sites available/enabled directories
-    file: path={{item}} state=directory mode=0755
+    file: path={{item}} state=directory mode=0755 group={{nginx_group}}
     with_items:
       - /etc/nginx/sites-available
       - /etc/nginx/sites-enabled
@@ -75,7 +75,7 @@
 
   - name: Nginx | Copy nginx.conf template
     become: yes
-    template: src="nginx.conf.j2" dest="/etc/nginx/nginx.conf" owner=root group=root mode=0644
+    template: src="nginx.conf.j2" dest="/etc/nginx/nginx.conf" owner=root group={{nginx_group}} mode=0644
     when: ansible_os_family == "Debian"
     notify: nginx reload
     tags:
