@@ -1,6 +1,9 @@
 ---
 # defaults file for icinga2-ansible-web2-ui
 
+icingaweb2_local_db: True
+icinga2_local_db: True
+
 icinga2_db_host: localhost
 icinga2_db: "icinga2"
 icinga2_db_user: "icinga2"
