@@ -123,6 +123,12 @@
     - "{{web_server_daemon}}"
     - icinga2
 
+- name: Create icingaweb2 group
+  group:
+    name: icingaweb2
+    system: yes
+    state: present
+
 - name: Add user www-data to group icingaweb2
   user: name=www-data
         groups=icingaweb2
