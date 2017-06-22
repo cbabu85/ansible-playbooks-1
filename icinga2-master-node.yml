@@ -6,12 +6,12 @@
 # - Install icinga2web
 # -- Pass in RDS db vars
 
-- hosts: "{{ nodeitem | default('all')}}"
+- hosts: apt-ops
   gather_facts: True
   vars_files:
       - "group_vars/vault.yml"
   vars:
-
+      playbook_name: icinga2-master
       # Icinga2
       icinga2_conf_global: |
          include "constants.conf"
@@ -21,13 +21,65 @@
          include <plugins-contrib>
          include "features-enabled/*.conf"
 
+      # Icingaweb2
+      icingaweb2_local_db: False
+      web_server_daemon: nginx
+
       # InfluxDB
+      icinga2_local_db: False
+
+      #Nginx
+      install_php: true
+      nginx_vhosts:
+          - listen: "443 ssl"
+            server_name: "icinga.aptrust.org"
+            root: /usr/share/icingaweb2/public
+            extra_parameters: |
+              index index.php;
+              location = /favicon.ico {
+                  log_not_found off;
+                  access_log off;
+                  expires max;
+              }
+              location ~ /\. {
+                  deny all;
+                  access_log off;
+                  log_not_found off;
+              }
+
+              location ~ \..*/.*\.php$ {
+                  return 403;
+              }
+              if (!-d $request_filename) {
+                rewrite ^/(.+)/$ /$1 permanent;
+              }
+
+              location / {
+                try_files $1 $uri $uri/ /index.php$is_args$args;
+              }
+
+              location ~ ^/index\.php(.*)$ {
+                fastcgi_index index.php;
+                include /etc/nginx/fastcgi_params;
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/var/run/php5-fpm.sock; #Replace with the port if php fpm is configured to run on port.
+                fastcgi_param SCRIPT_FILENAME /usr/share/icingaweb2/public/index.php; #Replace with icinga2 web index.php file path.
+                fastcgi_param ICINGAWEB_CONFIGDIR /etc/icingaweb2;
+                fastcgi_param REMOTE_USER $remote_user;
+              }
+                ssl    on;
+                # SSL Chain if Nginx, SSL cert if Apache2
+                ssl_certificate    {{ssl_cert_path}};
+                ssl_certificate_key {{ ssl_key_path }};
 
   roles:
-    - role: icinga2-ansible/icinga2-ansible-no-ui
+    - {role: icinga2-ansible/icinga2-ansible-no-ui, tags: icinga2}
 # TODO: Enable once config is in group_vars
-#    - role: ansible-influxdb
-    - role: cd3ef.nginx
+#    - {role: ansible-influxdb, tags: influxdb}
+    - {role: icinga2-ansible/icinga2-ansible-web2-ui, tags: icingaweb2}
+    - {role: tersmitten.composer, tags: [composer, nginx], when: ansible_distribution_release == 'xenial'}
+    - {role: cd3ef.nginx, tags: nginx}
   tasks:
     - name: Enable {{ item }} feature
       become: true
@@ -51,106 +103,3 @@
      #     shell: /usr/sbin/icinga2 pki ticket --cn {{ nodeitem }}.aptrust.org
      #  register: ticket
      # tags: nodeaction
-
-- hosts: "{{ nodeitem | default('all')}}"
-  tags: ['nodeaction', 'nodecerts']
-  vars:
-   master_hostname: apt-ops.aptrust.org
-   master_ip:  hostvars['apt-ops'].host_eip
-   master_port: 5665
-  tasks:
-    - name: create pki folder
-      file: path=/etc/icinga2/pki state=directory mode=0700 owner=nagios group=nagios
-      tags: nodeaction
-
-    - name: create cert on new node
-      shell: icinga2 pki new-cert --cn "{{ nodeitem }}.aptrust.org" --key "/etc/icinga2/pki/{{ nodeitem }}.key" --cert "/etc/icinga2/pki/{{ nodeitem }}.crt"
-      tags: nodeaction
-
-    - name: save the masters cert as trustedcert
-      shell: icinga2 pki save-cert --key "/etc/icinga2/pki/{{ nodeitem }}.key" --cert "/etc/icinga2/pki/{{ nodeitem }}.crt" --trustedcert /etc/icinga2/pki/trusted-master.crt --host "{{ master_hostname }}"
-      become: yes
-      tags: nodeaction
-
-    - name: request the certificate from the icinga server
-      shell: icinga2 pki request --host "{{ master_hostname }}" --port 5665 --ticket "{{ hostvars[masteritem]['ticket']['stdout'] }}" --key "/etc/icinga2/pki/{{ nodeitem }}.key" --cert "/etc/icinga2/pki/{{ nodeitem }}.crt" --trustedcert "/etc/icinga2/pki/trusted-master.crt" --ca "/etc/icinga2/pki/ca.key"
-      tags: nodeaction
-
-    - name: node setup
-      shell: icinga2 node setup --ticket {{ hostvars[masteritem]['ticket']['stdout'] }} --endpoint {{ master_hostname }} --zone {{ nodeitem }}.aptrust.org --master_host {{ master_hostname }} --trustedcert /etc/icinga2/pki/trusted-master.crt --cn {{ nodeitem }}.aptrust.org --accept-config --accept-commands
-      tags: nodeaction
-
-    - name: Update master zone
-      replace: >
-        dest="/etc/icinga2/zones.conf"
-        regexp='(.*)(master)(.*)'
-        replace='\1{{masteritem}}.aptrust.org\3'
-        backup=yes
-      register: masterzone
-      tags: ['nodeedit','nodemasteredit']
-
-    - name: Add global zone
-      tags: ['nodeedit']
-      lineinfile: >
-        dest="/etc/icinga2/zones.conf"
-        line="object Zone "global" { global = true }"
-        regexp="^object Zone "global" { global = true }"
-        state=present
-      register: globalzone
-
-    - name: Restart icinga2
-      tags: ['nodeedit']
-      when: masterzone|changed or globalzone|changed
-      service: name=icinga2 state=restarted
-
-- hosts: "{{ masteritem | default('monitoring_servers')}}"
-  tags: ['masteraction']
-  tasks:
-   - name: add host
-     shell: icinga2 node add {{ nodeitem }}.aptrust.org
-
-   - name: set host ip
-     shell: icinga2 node set {{ nodeitem }}.aptrust.org --host {{ nodeitem }}.aptrust.org --port 5665
-
-   - name: update node config
-     shell: icinga2 node update-config
-
-   - name: insert/update zones.conf
-     tags: ['updatefiles']
-     blockinfile:
-         dest: /etc/icinga2/zones.conf
-         marker: "# {mark} ANSIBLE MANAGED BLOCK {{nodeitem}}"
-         block: |
-            object Endpoint "{{nodeitem}}.aptrust.org" {
-                host = "{{nodeitem}}.aptrust.org"
-                port = "5665"
-            }
-            object Zone "{{nodeitem}}.aptrust.org" {
-                parent = "{{masteritem}}.aptrust.org"
-                endpoints = [ "{{nodeitem}}.aptrust.org" ]
-            }
-
-   - name: insert/update hosts.conf
-     tags: ['updatefiles']
-     blockinfile:
-         dest: "/etc/icinga2/zones.d/{{masteritem}}.aptrust.org/hosts.conf"
-         marker: "# {mark} ANSIBLE MANAGED BLOCK {{nodeitem}}"
-         block: |
-            object Host "{{nodeitem}}.aptrust.org" {
-                import "Icinga Agent"
-                display_name = "{{nodeitem}}"
-                address = "{{nodeitem}}.aptrust.org"
-
-                enable_notifications = true
-                vars.os = "Linux"
-                vars.disks["disk"] = {}
-                vars.ssh_port = "1984"
-                vars.notification["mail"] = {
-                  groups = [ "apt-ops-group" ]
-              }
-            }
-
-   - name: restart icinga2
-     tags: ['updatefiles']
-     service: name=icinga2 state=restarted
-
