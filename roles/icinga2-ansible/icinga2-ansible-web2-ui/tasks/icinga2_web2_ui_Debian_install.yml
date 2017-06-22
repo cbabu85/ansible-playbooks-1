@@ -145,6 +145,54 @@
     - monitoring
     - translation
 
+- name: Setup icingaweb2 config directory
+  shell: icingacli setup config directory --group icingaweb2;
+  tags: newsteps
+
+- name: Create setup token
+  shell: icingacli setup token create;
+  register: tokenme
+  tags: newsteps
+
+- name: Debug token
+  debug: var=tokenme
+  tags: newsteps
+
+- name: Add configuration files
+  template:
+    src: "{{item}}"
+    dest: "/etc/icingaweb2/{{item}}"
+    backup: yes
+    owner: www-data
+    group: icingaweb2
+    mode: 0640
+  with_items:
+    - authentication.ini
+    - config.ini
+    - groups.ini
+    - resources.ini
+    - roles.ini
+  tags: icingaweb2config
+
+- name: Enable monitoring module
+  file:
+    src: /usr/share/icingaweb2/modules/monitoring
+    dest: /etc/icingaweb2/enabledModules/monitoring
+    state: link
+
+- name: Add configuration files
+  template:
+    src: "{{item}}"
+    dest: "/etc/icingaweb2/modules/monitoring/{{item}}"
+    backup: yes
+    owner: www-data
+    group: icingaweb2
+    mode: 0755
+  with_items:
+    - backends.ini
+    - commandtransports.ini
+  tags: icingaweb2config
+
 - name: Icinga Web2 Installation finished (Debian)
   debug: msg="Now generate a token with 'icingacli setup token create' and visit http://SERVERIP/icingaweb2/setup to continue the installation"
   tags: icinga2-ansible-web2-ui-install
