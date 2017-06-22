@@ -47,7 +47,7 @@
     create: yes
     owner: "{{system_default_user}}"
     group: "{{deploy_group}}"
-    mode: 0660
+    mode: 0664
     content: |
         [Credentials]
         # These are read-only credentials.
