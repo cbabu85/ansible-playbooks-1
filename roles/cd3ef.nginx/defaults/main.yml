@@ -52,6 +52,7 @@ install_php: false
 
 php_trusty_packages:
   - php5-common
+  - php5-fpm
   - php5-mysql
   #  - php5-suhosin
   - php5-gd
@@ -66,6 +67,8 @@ php_trusty_packages:
   - php5-xdebug
   - php5-xmlrpc
   - php-apc
+  - php5-imagick
+  - imagemagick
 
 php_xenial_packages:
   - php
@@ -88,4 +91,7 @@ php_xenial_packages:
   - php-json
   - php-opcache
   - php-mbstring
+
+php_tunables:
+  date.timezone: "America/New_York"
 
