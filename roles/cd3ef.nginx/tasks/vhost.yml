@@ -3,6 +3,7 @@
         src: nginx_vhost.conf.j2
         dest: "{{ nginx_vhost_path }}/{{ nginx_vhost_filename }}"
         mode: 0644
+        group: "{{ nginx_group}}"
   when: nginx_vhosts|length > 0
   notify: nginx reload
 
