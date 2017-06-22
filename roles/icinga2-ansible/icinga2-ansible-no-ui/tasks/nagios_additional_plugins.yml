@@ -16,7 +16,7 @@
     lineinfile: >
         dest="{{icinga2_const_conf}}"
         line="const AdditionalPluginDir=\"{{nagios_plugin_dir}}/nagios-plugins\""
-        regexp="^const AdditionalPluginDir = \"{{nagios_plugin_dir}}/nagios-plugins\""
+        regexp="^const AdditionalPluginDir=\"{{nagios_plugin_dir}}/nagios-plugins\""
         state=present
     notify: restart icinga2
     tags: nagios-additional-plugins
