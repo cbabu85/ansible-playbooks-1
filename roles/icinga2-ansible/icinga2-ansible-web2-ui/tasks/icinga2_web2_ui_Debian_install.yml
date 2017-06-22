@@ -3,8 +3,39 @@
   apt: name=python-mysqldb
 
 - name: Install Icinga2 IDO modules on Debian family
-  apt: name=icinga2-ido-mysql
-       state=latest
+  shell: apt-get install --assume-no icinga2-ido-mysql
+  tags: assumeno
+
+# Create DB on RDS if it doesn't exist.
+# Note: When command is changed to modify, comment [db_name, subnet, tags] out.
+- name: Create DB Instance on RDS
+  rds:
+    command: create
+    instance_name: "icinga2"
+    instance_type: "{{ pharos_rds_instance_type | default('db.t2.micro') }}"
+    size: "{{icinga2_web2_db_size | default('10') }}"
+    username: "{{icinga2_web2_db_user}}"
+    password: "{{icinga2_web2_db_pass}}"
+    db_name: "{{icinga2_web2_db}}"
+    db_engine: MySQL
+    multi_zone: "{{icinga_rds_multi_az | default('no')}}"
+    region: "{{icinga_rds_region | default('us-east-1')}}"
+# TODO: dependent on environment. set default to demo
+# Note: security group name doesn't work, only id. Security groups have to be
+#       configured manually via AWS web console.
+    vpc_security_groups: "{{  icinga_vpc_sec_group | default('sg-af43acde') }}"
+    subnet: "{{ icinga_rds_subnet | default('demo') }}"
+# Note: Timeout is set high since inital RDS creation may take a while.
+    wait_timeout: 600
+    wait: yes
+    aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+    aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    backup_retention: "{{icinga2_rds_backup_retention | default('1')}}"
+    backup_window: '10:00-10:30'
+    maint_window: 'Tue:10:30-Tue:11:00'
+    tags:
+        Environment: "{{APP_ENV}}"
+  when: icingaweb2_local_db == False
 
 - name: Create a IDO Database for Icinga2
   mysql_db: name={{ icinga2_db }}
