@@ -23,12 +23,6 @@
       # NGINX Webserver
       install_php: true
       nginx_vhosts:
-          - listen: "80 default_server"
-            server_name: "_"
-            return: 301 https://$host$request_uri
-            location:
-              - name: "/favicon.ico"
-                content: "access_log off; log_not_found off;"
           - listen: "443 ssl"
             server_name: "{{ansible_fqdn}}"
             root: "{{ mediawiki_path }}"
@@ -40,6 +34,9 @@
                 ssl_certificate    {{ssl_cert_path}};
                 ssl_certificate_key {{ ssl_key_path }};
             nginx_client_max_body_size: 0
+            location:
+              - name: "/favicon.ico"
+                content: "access_log off; log_not_found off;"
             location:
               - name: "/"
                 content: |

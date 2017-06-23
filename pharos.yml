@@ -28,9 +28,6 @@
         install_passenger: true
 
         nginx_vhosts:
-          - listen: "80 default_server"
-            server_name: "_"
-            return: 301 https://$host$request_uri
           - listen: "443 ssl"
             server_name: "{{ansible_fqdn}}"
             root: "{{ ansistrano_deploy_to }}/current/public"
