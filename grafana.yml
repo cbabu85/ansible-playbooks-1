@@ -16,6 +16,7 @@
 
         # Grafana
         # grafana_admin_password set by vault.
+        APP_ENV: demo
         grafana_dir_data: "{{ops_data_grafana}}"
         grafana_database:
           type: postgres
@@ -24,12 +25,14 @@
           user: "{{grafana_psql_owner}}"
           password: "{{grafana_psql_pwd}}"
           path: "{{ops_data_grafana}}"
-/
+
         # InfluxDB
         influxdb_admin_https_enabled: "true"
-        # influxdb_admin_https_certificate: "{{ssl_cert_path}}"
+        influxdb_admin_https_certificate: "{{ssl_cert_path}}"
+        influxdb_admin_https_key: "/etc/ssl/influxdb.key"
         influxdb_http_https_enabled: "true"
-        # influxdb_http_https_certificate: "{{ssl_cert_path}}"
+        influxdb_http_https_certificate: "{{ssl_cert_path}}"
+        influxdb_http_https_key: "/etc/ssl/influxdb.key"
         influxdb_data_dir: "{{ops_data_influxdb}}"
 
         influxdb_hostname: 'ops.aptrust.org'
@@ -92,11 +95,15 @@
             - { dir: "{{ops_data}}/grafana", owner: grafana }
         tags: opsdatadir
 
-      - name: Copy SSL cert+key
+        # Note: Yes it's not great to give access to ssl key to most users but
+        # influx has an issue reading pems. Referencing the ssl_key in the proper
+        # directory doesn't work because of file permissions. So I shame
+        # influxdb here
+      - name: Copy SSL key
         become: yes
         copy:
-          content="{{ssl_cert}}\n{{ssl_key}}"
-          dest="/etc/ssl/influxdb.pem"
+          content="{{ssl_key}}"
+          dest="/etc/ssl/influxdb.key"
           force=yes
           owner=root
           group=deploy
