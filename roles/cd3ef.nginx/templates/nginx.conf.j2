@@ -39,6 +39,7 @@ http {
   # https://www.owasp.org/index.php/List_of_useful_HTTP_headers
   add_header X-XSS-Protection "1; mode=block";
 
+{% if content_security_policy == true %}
   # with Content Security Policy (CSP) enabled(and a browser that supports it(http://caniuse.com/#feat=contentsecuritypolicy),
   # you can tell the browser that it can only download content from the domains you explicitly allow
   # http://www.html5rocks.com/en/tutorials/security/content-security-policy/
@@ -48,7 +49,7 @@ http {
   #  more: http://www.html5rocks.com/en/tutorials/security/content-security-policy/#inline-code-considered-harmful
   add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com/analytics.js https://ssl.google-analytics.com https://secure.gravatar.com https://connect.facebook.net https://cdn.jsdelivr.net/jquery.flot/; img-src 'self' https://www.google-analytics.com https://s-static.ak.facebook.com https://secure.gravatar.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://secure.gravatar.com; font-src 'self' https://themes.googleusercontent.com; frame-src https://secure.gravatar.com https://www.facebook.com https://s-static.ak.facebook.com https://tautt.zendesk.com; object-src 'none'";
 
-
+{% endif %}
 
 	##
 	# SSL Settings

@@ -95,3 +95,4 @@ php_xenial_packages:
 php_tunables:
   date.timezone: "America/New_York"
 
+content_security_policy: true

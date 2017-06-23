@@ -30,6 +30,7 @@
 
       #Nginx
       install_php: true
+      content_security_policy: false
       nginx_vhosts:
           - listen: "443 ssl"
             server_name: "icinga.aptrust.org"
