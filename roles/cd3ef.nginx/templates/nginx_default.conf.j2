@@ -2,8 +2,8 @@
 # {{ansible_managed}}
 # Default Server
 server {
-    listen 80;
-    server_name _ default_server;
+    listen 80 default_server;
+    server_name _ ;
 
     client_max_body_size 10;
     index index.html index.htm;
