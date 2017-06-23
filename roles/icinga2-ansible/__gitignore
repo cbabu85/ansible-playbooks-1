@@ -1,0 +1,6 @@
+*.test
+*.list
+*.sh
+*.ini
+*.pem
+site.yml
