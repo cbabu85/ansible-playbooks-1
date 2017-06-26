@@ -1,0 +1,2 @@
+# {{ansible_managed}}
+deb http://apt.postgresql.org/pub/repos/apt/ {{ansible_distribution_release}}-pgdg main"
