@@ -5,9 +5,9 @@ reporting-enabled = {{influxdb_reporting_disabled}}
   dir = "{{influxdb_meta_dir}}"
   bind-address = ":8088"
   http-bind-address = ":8091"
-  https-enabled = false
-  https-certificate = ""
-  https-private-key = ""
+  https-enabled = {{influxdb_meta_https_enabled}}
+  https-certificate = "{{influxdb_meta_https_certificate}}"
+  https-private-key = "{{influxdb_meta_https_key}}"
   retention-autocreate = {{influxdb_meta_retention_autocreate}}
   election-timeout = "1s"
   heartbeat-timeout = "1s"
@@ -62,7 +62,6 @@ reporting-enabled = {{influxdb_reporting_disabled}}
   bind-address = "{{ influxdb_admin_bind_address }}"
   https-enabled = {{influxdb_admin_https_enabled}}
   https-certificate = "{{influxdb_admin_https_certificate}}"
-  https-private-key = "{{influxdb_admin_https_key}}"
 
 [monitor]
   store-enabled = {{influxdb_monitor_store_enabled}}
