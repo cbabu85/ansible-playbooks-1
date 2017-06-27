@@ -26,6 +26,9 @@ influxdb_meta_pprof_enabled: "false"
 # The default duration for leases.
 influxdb_meta_lease_duration: "1m0s"
 
+influxdb_meta_https_enabled: "false"
+influxdb_meta_https_certificate: "/etc/ssl/influxdb.pem"
+influxdb_meta_https_key: "/etc/ssl/influxdb.key"
 ###
 ### [data]
 ###
@@ -92,8 +95,9 @@ influxdb_monitor_store_interval: "10s"
 
 influxdb_admin_enabled: "true"
 influxdb_admin_bind_address: ":8087"
-influxdb_admin_https_enabled: "false"
+influxdb_admin_https_enabled: "true"
 influxdb_admin_https_certificate: "/etc/ssl/influxdb.pem"
+influxdb_admin_https_key: "/etc/ssl/influxdb.key"
 
 ###
 ### [http]
@@ -108,8 +112,9 @@ influxdb_http_auth_enabled: "false"
 influxdb_http_log_enabled: "true"
 influxdb_http_write_tracing: "false"
 influxdb_http_pprof_enabled: "false"
-influxdb_http_https_enabled: "false"
+influxdb_http_https_enabled: "true"
 influxdb_http_https_certificate: "/etc/ssl/influxdb.pem"
+influxdb_http_https_key: "/etc/ssl/influxdb.key"
 
 ###
 ### [subscriber]
