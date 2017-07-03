@@ -41,16 +41,10 @@
 
 
         # InfluxDB
-        influxdb_admin_https_enabled: "true"
-        influxdb_admin_https_certificate: "{{ssl_cert_path}}"
-        influxdb_admin_https_key: "/etc/ssl/influxdb.key"
-        influxdb_http_https_enabled: "true"
-        influxdb_http_https_certificate: "{{ssl_cert_path}}"
-        influxdb_http_https_key: "/etc/ssl/influxdb.key"
         influxdb_data_dir: "{{ops_data_influxdb}}"
-
-        influxdb_hostname: 'ops.aptrust.org'
+        influxdb_hostname: "{{influxdb_host}}
         influxdb_db: 'icinga2'
+
         # NGINX Webserver
         install_passenger: false
 
@@ -113,11 +107,11 @@
         # influx has an issue reading pems. Referencing the ssl_key in the proper
         # directory doesn't work because of file permissions. So I shame
         # influxdb here
-      - name: Copy SSL key
+      - name: Copy SSL Cert pem
         become: yes
         copy:
-          content="{{ssl_key}}"
-          dest="/etc/ssl/influxdb.key"
+          content="{{ssl_key}}{{ssl_chain}}{{ssl_interm_cert}}"
+          dest="/etc/ssl/influxdb.pem"
           force=yes
           owner=root
           group=deploy
