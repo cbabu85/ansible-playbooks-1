@@ -178,6 +178,8 @@ icinga2_web2_db: "{{vault_icinga2_web2_db}}"
 icinga2_web2_db_user: "{{vault_icinga2_web2_db_user}}"
 icinga2_web2_db_pass: "{{vault_icinga2_web2_db_pass}}"
 
+influxdbwriter_host: "{{vault_influxdb_host}}"
+
 # InfluxDB
 influxdb_host: "{{vault_influxdb_host}}"
 influxdb_port: "{{vault_influxdb_port}}"
