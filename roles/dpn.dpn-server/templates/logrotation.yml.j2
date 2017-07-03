@@ -6,4 +6,7 @@
   delaycompress
   notifempty
   copytruncate
+  postrotate
+        mv {{dpnserver_app_root}}/log/*.gz /mnt/ebs/dpn/logs/dpn-prod2/
+  endscript
 }
