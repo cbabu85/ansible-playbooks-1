@@ -9,6 +9,7 @@ object InfluxdbWriter "influxdb" {
   host = "{{influxdbwriter_host | default ('127.0.0.1')}}"
   port = {{influxdbwriter_port | default ('8086')}}
   database = "icinga2"
+  ssl_enable = true
   username = "{{influxdb_username}}"
   password = "{{influxdb_password}}"
   enable_send_thresholds = true

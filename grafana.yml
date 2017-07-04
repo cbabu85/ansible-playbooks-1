@@ -129,8 +129,6 @@
           # state: present
         tags: influxdbdb
 
-
-
         #     shell:  "curl  --ssl "https://ops.aptrust.org:8086/db?u=root&p=root" -d "{\"name\": \"{{influxdb_db}}\"}"
         # uri:
         #  url: https://ops.aptrust.org:8086/query"
@@ -160,30 +158,12 @@
           owner: root
           group: deploy
           mode: 0644
+          backup: yes
         tags: influxdb
 
-      - name: Setup github login.
-        blockinfile:
-          dest: /etc/grafana/grafana.ini
-          insertafter: "auth.github"
-          backup: yes
-          content: |
-            enabled = true
-            allow_sign_up = true
-            client_id = ec80c51083680e044bea
-            client_secret = cc73841f1833df2eedf4964cf05cddd3b3eb9635
-            scopes = user:email
-            auth_url = https://github.com/login/oauth/authorize
-            token_url = https://github.com/login/oauth/access_token
-            api_url = https://api.github.com/user
-            allow_sign_up = true
-            team_ids = 896179
-            allowed_organizations = Academic Preservation Trust
-        tags: githublogin
-
-      - name: Allow auth per reverse proxy
-        blockinfile:
-          dest: /etc/grafana/grafana.ini
-          insertafter: "auth.proxy"
-          content: |
-            enabled = true
+        #      - name: Allow auth per reverse proxy
+        #  blockinfile:
+        #  dest: /etc/grafana/grafana.ini
+        #  insertafter: "auth.proxy"
+        #  content: |
+        #    enabled = true
