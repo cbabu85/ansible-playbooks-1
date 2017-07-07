@@ -86,7 +86,7 @@
         - notification
         - syslog
         - mainlog
-        #    - perfdata
+        - perfdata
 
 # Generate ticket on master to use for client nodes
 # - hosts: "{{ masteritem | default('monitoring_servers')}}"
