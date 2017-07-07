@@ -1,11 +1,6 @@
 ---
 # This role installs icinga2 master for the monitoring nodes.
 
-# TODO
-# - Install icinga2 headless
-# - Install icinga2web
-# -- Pass in RDS db vars
-
 - hosts: apt-ops
   gather_facts: True
   vars_files:
@@ -28,7 +23,7 @@
       # InfluxDB
       icinga2_local_db: False
 
-      #Nginx
+      # Nginx
       install_php: true
       content_security_policy: false
       nginx_vhosts:
