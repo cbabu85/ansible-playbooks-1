@@ -1,6 +1,0 @@
----
-  - hosts: monitor
-    vars:
-      playbook_name: monitoring
-    roles:
-      - psdash
