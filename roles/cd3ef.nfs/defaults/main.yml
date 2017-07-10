@@ -3,6 +3,10 @@
 # Type of node to install: client or server. Defaults to client
 nfs_mode: client
 
+nfs_client_modules: nfs-common
+nfs_server_modules:
+      - rpcbind
+      - nfs-kernel-server
 # Shared directories to export ( line to add to the /etc/exports file )
 # nfs_exports:
 #    - path: "/home"
