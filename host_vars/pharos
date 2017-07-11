@@ -13,3 +13,6 @@ APP_ENV: 'development'
 GO_ENV: 'development'
 RAILS_ENV: 'development'
 
+
+# NFS
+nfs_mode: server
