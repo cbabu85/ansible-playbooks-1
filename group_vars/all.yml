@@ -201,3 +201,6 @@ fail2ban_config_maxretry: 1
 
 # Slack
 slack_token: "{{vault_slack_token}}"
+
+# NFS
+nfs_server_host: 'apt-util'
