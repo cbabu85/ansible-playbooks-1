@@ -14,11 +14,12 @@
   with_items: "{{nfs_client_modules}}"
 
 
-# Example: nfs_client_imports: [{ local: "/home", remote: "/home", server_host: "{{hostvars['server']['ansible_default_ipv4']}}" }] }
+  # Example: nfs_client_imports: [{ local: "/home", remote: "/home", server_host: "{{hostvars['server']['ansible_default_ipv4']}}", state: mounted }] }
 - name: mount the shared directories
   mount:
     name: "{{ item.local }}"
     src: "{{ item.server_host }}:{{ item.remote }}"
-    state: mounted
+    state: "{{ item.state | default('mounted') }}"
     fstype: nfs
+    opts: "{{ item.opts | default('auto',) }}"
   with_items: "{{ nfs_client_imports }}"
