@@ -9,30 +9,12 @@
 # Add ec2_security group module. Probably need to define vpc networks in group_vars
 #
 
-- name: Install nfs client packages
-  apt:  name="{{item}}" state=latest
-  with_items: "{{nfs_client_modules}}"
+- include: server.yml
+  when: nfs_mode == 'server'
+
+- include: client.yml
   when: nfs_mode == 'client'
-
-- name: Install nfs server packages
-  apt:  name="{{item}}" state=latest
-  with_items: "{{nfs_server_modules}}"
-  when: nfs_mode == 'server'
-
-- name: export the directories editing the file /etc/exports
-  lineinfile: dest=/etc/exports regexp="^{{ item.path }} " line="{{ item.path }} {{ item.export }}" create=yes
-  with_items: "{{ nfs_exports }}"
-  register: nfs_exports_result
-  when: nfs_mode == 'server'
 
 - name: Ensure rpcbind is running
   service: name=rpcbind state=started enabled=yes
-  when: nfs_mode == 'server'
 
-- name: Restart NFS server service
-  service: name={{NFS_SERVICE}} state=restarted
-  when: nfs_exports_result|changed and nfs_mode == 'server'
-
-- name: Check if NFS server service is started
-  service: name={{NFS_SERVICE}} state=started
-  when: nfs_mode == 'server'

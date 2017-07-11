@@ -1,0 +1,24 @@
+---
+
+# Install nfs packages
+# Add exports into group vars
+# -- ops_data/logs
+# -- dpn
+# -- apt
+# Define exports
+# Add ec2_security group module. Probably need to define vpc networks in group_vars
+#
+
+- name: Install nfs client packages
+  apt:  name="{{item}}" state=latest
+  with_items: "{{nfs_client_modules}}"
+
+
+# Example: nfs_client_imports: [{ local: "/home", remote: "/home", server_host: "{{hostvars['server']['ansible_default_ipv4']}}" }] }
+- name: mount the shared directories
+  mount:
+    name: "{{ item.local }}"
+    src: "{{ item.server_host }}:{{ item.remote }}"
+    state: mounted
+    fstype: nfs
+  with_items: "{{ nfs_client_imports }}"

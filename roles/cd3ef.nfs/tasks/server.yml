@@ -1,0 +1,29 @@
+---
+
+# Install nfs packages
+# Add exports into group vars
+# -- ops_data/logs
+# -- dpn
+# -- apt
+# Define exports
+# Add ec2_security group module. Probably need to define vpc networks in group_vars
+
+- name: Install nfs server packages
+  apt:  name="{{item}}" state=latest
+  with_items: "{{nfs_server_modules}}"
+
+- name: Export directories in /etc/exports
+  lineinfile: dest=/etc/exports regexp="^{{ item.path }} " line="{{ item.path }} {{ item.export }}" create=yes
+  with_items: "{{ nfs_exports }}"
+  register: nfs_exports_result
+  when: nfs_exports
+
+- name: Ensure rpcbind is running
+  service: name=rpcbind state=started enabled=yes
+
+- name: Restart NFS server service
+  service: name=nfs-kernel-server state=restarted
+  when: nfs_exports_result|changed
+
+- name: Check if NFS service is started
+  service: name=nfs-kernel-server state=started
