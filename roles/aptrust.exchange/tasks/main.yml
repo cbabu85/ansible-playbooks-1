@@ -40,7 +40,7 @@
 #       Applying permissions recursively to avoid Supervisor bug that creates
 #       logfiles only with root:root rw access.
 #       https://github.com/Supervisor/supervisor/issues/114
-- name: Create EBS volume directories
+- name: "Create {{mount_dir}} volume directories"
   become: yes
   file:
     path: "{{mount_dir}}/{{item.0}}/{{item.1}}"

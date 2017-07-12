@@ -3,7 +3,6 @@
 #
 - name: install base packages
   become: yes
-  tags: packages
   apt: pkg={{ item }} state=latest update_cache=true
   with_items:
     - sudo
@@ -31,7 +30,7 @@
 # https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
     - acl
     - ntp
-
+  tags: packages
 
 - name: Ensure ntp deamon is running
   service: name=ntp state=started
@@ -78,6 +77,7 @@
   set_fact: orgmountdir={{mount_dir}}/{{orgtype}}
   tags: [always, mountdir]
 
+# This is a dupliacte from group_vars/all.yml to enure portability of role
 - name: set orgmountdirlogs fact
   set_fact: orgmountdirlogs={{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}
   tags: [always, mountdir]
@@ -159,13 +159,13 @@
   with_items:
     - scott.turnbull
   tags: remove_user
+
 # Message of the day explaining server is under control of Ansible.
 - name: MOTD
   become: yes
   template: src=motd.j2 dest=/etc/motd owner=root mode=0644
   tags: common
   when: "'apt' in ansible_hostname"
-
 
 - name: Adjust /srv permissions.
   become: yes
@@ -180,8 +180,8 @@
     mode: 0775
     state: directory
   with_items:
-    - /mnt/ebs/{{orgtype}}
-    - /mnt/ebs/{{orgtype}}/logs/{{ansible_hostname}}
+    - {{mount_dir}}/{{orgtype}}
+    - {{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}
     - "{{orgmountdirlogs}}"
   when: (ansible_bios_version != 'VirtualBox' and (use_efs == True or use_ebs == True) and mount_stat.rc == 0)
   tags: [aptmount, mountdir]
@@ -192,8 +192,7 @@
   when: (ansible_bios_version != 'VirtualBox')
   tags: awsaz
 
-# TODO Setup EBS mounting
-
+# Obsolete now, remove once nfs is in place.
 # Mount EFS volume.
 - name: Mount EFS volume
   mount:
@@ -204,8 +203,6 @@
     state: mounted
   when: (ansible_bios_version != 'VirtualBox' and use_efs == True)
   tags: nfsmount
-
-
 
 ## Making sure github.com is a known_host
 - name: Ensure github.com is a known host
