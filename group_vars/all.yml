@@ -24,7 +24,7 @@ ruby_env:
     GO_ENV: "{{GO_ENV | default ('')}}"
 
 go_env: "{{ruby_env}}"
-mount_dir: /mnt/efs
+mount_dir: /mnt/ebs
 central_log_dir: "{{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}"
 
 # System default user varies. (e.g. local-vagrant.yml)
