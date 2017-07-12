@@ -12,6 +12,18 @@
   apt:  name="{{item}}" state=latest
   with_items: "{{nfs_server_modules}}"
 
+- name: Ensure existence of export directories
+  file:
+    path: "/mnt/nfs/{{item.0}}/{{item.1}}"
+    owner: "{{system_default_user}}"
+    group: "{{deploy_group}}"
+    mode: 0775
+    recurse: yes
+    state: directory
+  with_nested:
+    - ['apt','dpn']
+    - ['data','logs','restore','replication']
+
 - name: Export directories in /etc/exports
   lineinfile: dest=/etc/exports regexp="^{{ item.path }} " line="{{ item.path }} {{ item.export }}" create=yes
   with_items: "{{ nfs_exports }}"
