@@ -43,7 +43,7 @@
 - name: Create EBS volume directories
   become: yes
   file:
-    path: "/mnt/ebs/{{item.0}}/{{item.1}}"
+    path: "{{mount_dir}}/{{item.0}}/{{item.1}}"
     owner: "{{system_default_user}}"
     group: "{{deploy_group}}"
     mode: 0775
@@ -58,7 +58,7 @@
 - name: Create and symlink outbound directories to EBS staging dir
   become: yes
   file:
-    src: "/mnt/ebs/dpn/staging"
+    src: "{{mount_dir}}/{{orgtype}}/staging"
     dest: "/home/{{item}}/outbound"
     owner: "{{item}}"
     group: "{{deploy_group}}"
