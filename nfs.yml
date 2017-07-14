@@ -1,0 +1,27 @@
+-   hosts: all
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+        playbook_name: 'nfs'
+
+        # NFS Client
+        nfs_client_imports:
+          - local: {{mount_dir}}/{{orgtype}}
+            remote: {{nfs_dir}}/{{orgtype}}
+        # NFS Server:
+        nfs_exports:
+          - path:
+            export:
+          - path:
+            export:
+          - path:
+            export:
+    roles:
+        - cd3ef.nfs
+
+    tasks:
+      #    - name: simulate long running op, allow to run for 45 sec, fire and forget
+      # command: /bin/sleep 150
+      # async: 60
+      # poll: 10
+
