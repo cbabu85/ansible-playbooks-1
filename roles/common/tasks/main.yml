@@ -180,8 +180,8 @@
     mode: 0775
     state: directory
   with_items:
-    - {{mount_dir}}/{{orgtype}}
-    - {{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}
+    - "{{mount_dir}}/{{orgtype}}"
+    - "{{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}"
     - "{{orgmountdirlogs}}"
   when: (ansible_bios_version != 'VirtualBox' and (use_efs == True or use_ebs == True) and mount_stat.rc == 0)
   tags: [aptmount, mountdir]
