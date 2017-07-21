@@ -28,9 +28,9 @@
             remote: "{{nfs_export_dir}}/{{orgtype}}"
         # NFS Server:
         nfs_exports:
-          - path:
-            export:
-          - path:
+          - path: "{{nfs_export_dir}}/{{nfs_directories}}"
+            export: "{{nfs_directories}}"
+            - path:
             export:
           - path:
             export:
