@@ -204,3 +204,4 @@ slack_token: "{{vault_slack_token}}"
 
 # NFS
 nfs_server_host: 'apt-util'
+nfs_export_dir: '/srv/nfs'
