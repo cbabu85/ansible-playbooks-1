@@ -24,8 +24,8 @@
 
         # NFS Client
         nfs_client_imports:
-          - local: {{mount_dir}}/{{orgtype}}
-            remote: {{nfs_dir}}/{{orgtype}}
+          - local: "{{mount_dir}}/{{orgtype}}"
+            remote: "{{nfs_export_dir}}/{{orgtype}}"
         # NFS Server:
         nfs_exports:
           - path:
