@@ -3,6 +3,24 @@
       - "group_vars/vault.yml"
     vars:
         playbook_name: 'nfs'
+        nfs_directories:
+          - name: "apn"
+            subdirs:
+             - "data"
+             - "logs"
+             - "restore"
+             - "replication"
+          - name: "dpn"
+            subdirs:
+             - "data"
+             - "logs"
+             - "restore"
+             - "replication"
+          - name: "ops_data"
+            subdirs:
+              - influxdb
+              - grafana
+              - logs
 
         # NFS Client
         nfs_client_imports:
