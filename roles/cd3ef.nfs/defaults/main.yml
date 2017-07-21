@@ -3,6 +3,12 @@
 # Type of node to install: client or server. Defaults to client
 nfs_mode: client
 
+# Default client mount directory
+mount_dir: /mnt/nfs
+
+# Default server export directory
+nfs_export_dir: /srv/nfs
+
 nfs_client_modules: nfs-common
 nfs_server_modules:
       - rpcbind
@@ -10,6 +16,8 @@ nfs_server_modules:
 
 # NFS server host should only be the node in the Ansible hosts file. e.g. nfs_server_host: 'apt-util'
 nfs_server_host: ""
+
+# This uses the internal IP and not the public IP.
 server_host: "{{hostvars[nfs_server_host]['ansible_default_ipv4']}}"
 
 # Shared directories to export ( line to add to the /etc/exports file )
@@ -17,7 +25,6 @@ server_host: "{{hostvars[nfs_server_host]['ansible_default_ipv4']}}"
 #    - path: "/home"
 #      export: "vnode*.localdomain(fsid=0,rw,async,no_root_squash,no_subtree_check,insecure)"
 nfs_exports: ""
-
 
 # Shared directories to mount
 # # Line to add to the /etc/fstab file
