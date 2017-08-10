@@ -83,6 +83,7 @@
     force: yes
   with_flattened:
     - "{{ mediawiki_extensions }}"
+  tags: mextensions
 
 - name: Enable Mediawiki extensions
   lineinfile: dest="{{mediawiki_path}}/LocalSettings.php"
@@ -91,6 +92,7 @@
               state=present
   with_flattened:
   - "{{ mediawiki_extensions }}"
+  tags: mextensions
 
 - include: visualeditor.yml
   tags: parsoid
