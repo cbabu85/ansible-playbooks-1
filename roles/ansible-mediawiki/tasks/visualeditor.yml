@@ -2,7 +2,7 @@
 # Setting up VisualEditor
 
 - name: Install npm
-  become_user: "{{system_default_user}}
+  become_user: "{{system_default_user}}"
   shell: curl -sL https://deb.nodesource.com/setup_4.x  | sudo -E bash -
   register: addnpm
 
@@ -12,7 +12,7 @@
   when: addnpm
 
 - name: install parsoid
-  npm: name=parsoid path={{mediawiki_path}}/parsoid
+  npm: name=parsoid path="{{mediawiki_path}}/parsoid"
   tags: parsoid
 
 - name: Config parsoid
@@ -22,26 +22,28 @@
   tags: parsoid
 
 - name: Update parsoid config
-  lineinfile: dest="{{mediawiki_path}}/parsoid/config.yml"
-  line: 'https://{{hostname_fqdn}}/api.php'
-  regexp: 'http://localhost/w/api.php'
+  lineinfile:
+    dest: "{{mediawiki_path}}/parsoid/config.yml"
+    line: 'https://"{{hostname_fqdn}}"/api.php'
+    regexp: 'http://localhost/w/api.php'
 
 - name: Update parsoid config
-  lineinfile: dest="{{mediawiki_path}}/parsoid/config.yml"
-  line: 'aptrust.org'
-  regexp: "domain:'localhost'"
+  lineinfile:
+    dest: "{{mediawiki_path}}/parsoid/config.yml"
+    line: 'aptrust.org'
+    regexp: "domain:'localhost'"
 
 - name: Update mediawiki config
   blockinfile: dest="{{mediawiki_path}}/LocalSettings.yml"
-              insertafter="wfLoadExtension\( \'VisualEditor\'\ )\;"
-              content= |
-								$wgVirtualRestConfig\['modules'\]\['parsoid'\] = array(
-									// URL to the Parsoid instance
-									// Use port 8142 if you use the Debian package
-									'url' => 'https://{{hostname_fqdn}}:8000',
-									// Parsoid "domain", see below (optional)
-									'domain' => '{{ansible_domain}}',
-									// Parsoid "prefix", see below (optional)
-									'prefix' => '{{ansible_domain}}'
-								);
-              state=present
+               insertafter="wfLoadExtension\( \'VisualEditor\'\ )\;"
+               content= |
+                  $wgVirtualRestConfig\['modules'\]\['parsoid'\] = array(
+                  // URL to the Parsoid instance
+                  // Use port 8142 if you use the Debian package
+                  'url' => 'https://{{hostname_fqdn}}:8000',
+                  // Parsoid "domain", see below (optional)
+                  'domain' => '{{ansible_domain}}',
+                  // Parsoid "prefix", see below (optional)
+                  'prefix' => '{{ansible_domain}}'
+                  );
+                state=present
