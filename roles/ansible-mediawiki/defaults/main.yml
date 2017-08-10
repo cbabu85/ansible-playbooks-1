@@ -76,3 +76,4 @@ mediawiki_extensions:
   #  - { package: 'LastModified' }                 #Provides a Last modified date for wiki articles
   # - { package: 'BreadCrumbs2' }                 #Provides a Last modified date for wiki articles
   - { package: 'PageForms' }
+  - { package: 'LabeledSectionTransclusion' }
