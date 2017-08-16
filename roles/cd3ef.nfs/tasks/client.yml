@@ -13,12 +13,18 @@
   apt:  name="{{item}}" state=latest
   with_items: "{{nfs_client_modules}}"
 
+- name: Limit export to node
+  delegate_to: "{{nfs_server_host}}"
+  shell: touch /tmp/iwashere
+  with_items: "{{ nfs_client_imports }}"
+  tags: nfshostonly
 
-  # Example: nfs_client_imports: [{ local: "/home", remote: "/home", server_host: "{{hostvars['server']['ansible_default_ipv4']}}", state: mounted }] }
+# Example: nfs_client_imports: [{ local: "/home", remote: "/home", remote: /home }] }
 - name: mount the shared directories
   mount:
     name: "{{ item.local }}"
-    src: "{{ item.server_host }}:{{ item.remote }}"
+    boot: yes
+    src: "{{ nfs_server_hostname}}:{{ item.remote }}"
     state: "{{ item.state | default('mounted') }}"
     fstype: nfs
     opts: "{{ item.opts | default('nfsvers=4.1,rsize=1048576,wsize=1048576,hard,intr,timeo=600,retrans=2') }}"
