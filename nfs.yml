@@ -27,18 +27,15 @@
 
         # NFS Client
         nfs_client_imports:
-          - local: "{{mount_dir}}/{{orgtype}}"
+          - local: "{{nfs_mount_dir}}/{{orgtype}}"
             remote: "{{nfs_export_dir}}/{{orgtype}}"
         # NFS Server:
         nfs_exports:
           - path: "{{nfs_export_dir}}/{{nfs_directories}}"
             export: "{{nfs_directories}}"
-            - path:
-            export:
-          - path:
-            export:
     roles:
-        - cd3ef.nfs
+        - {role: common, tags: common}
+        - {role: cd3ef.nfs, tags: nfs}
 
     tasks:
       #    - name: simulate long running op, allow to run for 45 sec, fire and forget
