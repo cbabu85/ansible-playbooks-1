@@ -1,5 +1,14 @@
+- name: Set PHP version fact
+  set_fact: php_version_fact=/7.0
+  when: ansible_distribution_release == 'xenial'
+
+- name: Set PHP version fact
+  set_fact: php_version_fact=php5
+  when: ansible_distribution_release == 'trusty'
+
+
 - name: Set PHP tunables
-  lineinfile: dest=/etc/php5/fpm/php.ini
+  lineinfile: dest=/etc/php{{php_version_fact}}/fpm/php.ini
               regexp="^;?{{item.key}}"
               line="{{item.key}} = {{item.value}}"
               backup=yes
