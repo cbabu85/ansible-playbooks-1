@@ -3,8 +3,10 @@
       - "group_vars/vault.yml"
     vars:
         playbook_name: 'nfs'
+        # TODO: Move to all.yml
+        # name is root, subdirs are subdirs
         nfs_directories:
-          - name: "apn"
+          - name: "apt"
             subdirs:
              - "data"
              - "logs"
