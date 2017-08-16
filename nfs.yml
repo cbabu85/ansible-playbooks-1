@@ -18,6 +18,7 @@
              - "logs"
              - "restore"
              - "replication"
+             - "staging"
           - name: "ops_data"
             subdirs:
               - influxdb
