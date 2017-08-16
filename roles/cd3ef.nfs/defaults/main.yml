@@ -17,9 +17,6 @@ nfs_server_modules:
 # NFS server host should only be the node in the Ansible hosts file. e.g. nfs_server_host: 'apt-util'
 nfs_server_host: ""
 
-# This uses the internal IP and not the public IP.
-server_host: "{{hostvars[nfs_server_host]['ansible_default_ipv4']}}"
-
 # Shared directories to export ( line to add to the /etc/exports file )
 # nfs_exports:
 #    - path: "/home"
@@ -32,3 +29,5 @@ nfs_exports: ""
 #   - local: "/home"
 #     remote: "/home"
 nfs_client_imports: ""
+
+nfs_export_options: "(rw,sync,no_subtree_check)"
