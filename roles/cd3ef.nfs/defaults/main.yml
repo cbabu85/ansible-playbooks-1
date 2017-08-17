@@ -30,4 +30,4 @@ nfs_exports: ""
 #     remote: "/home"
 nfs_client_imports: ""
 
-nfs_export_options: "(rw,sync,no_subtree_check)"
+nfs_export_options: "(rw,async,no_subtree_check)"
