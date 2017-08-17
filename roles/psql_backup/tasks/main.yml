@@ -67,6 +67,7 @@
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
     mode: 0644
+    state: touch
 
 - name: Set up cron job for regular backups
   cron:
