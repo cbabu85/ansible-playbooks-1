@@ -73,9 +73,9 @@
     - {role: icinga2-ansible/icinga2-ansible-no-ui, tags: icinga2}
 # TODO: Enable once config is in group_vars
 #    - {role: ansible-influxdb, tags: influxdb}
-    - {role: icinga2-ansible/icinga2-ansible-web2-ui, tags: icingaweb2}
     - {role: tersmitten.composer, tags: [composer, nginx], when: ansible_distribution_release == 'xenial'}
     - {role: cd3ef.nginx, tags: nginx}
+    - {role: icinga2-ansible/icinga2-ansible-web2-ui, tags: icingaweb2}
   tasks:
     - name: Enable {{ item }} feature
       become: true
