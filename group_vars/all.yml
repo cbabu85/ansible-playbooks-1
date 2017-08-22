@@ -187,6 +187,12 @@ influxdb_host: "{{vault_influxdb_host}}"
 influxdb_port: "{{vault_influxdb_port}}"
 influxdb_username: "{{vault_influxdb_username}}"
 influxdb_password: "{{vault_influxdb_password}}"
+
+ops_data_influxdb: /mnt/efs/apt/ops_data/influxdb
+influxdb_data_dir: "{{ops_data_influxdb}}"
+influxdb_hostname: "{{influxdb_host}}"
+influxdb_db: 'icinga2'
+
 #
 # Grafana
 grafana_admin_password: "{{vault_grafana_admin_password}}"
