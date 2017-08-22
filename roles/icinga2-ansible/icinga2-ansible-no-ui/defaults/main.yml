@@ -27,6 +27,7 @@ icinga2_yum:
 icinga2_main_conf: "/etc/icinga2/icinga2.conf"
 icinga2_conf_d: "/etc/icinga2/conf.d"
 icinga2_const_conf: "/etc/icinga2/constants.conf"
+nagios_plugins: true
 nagios_plugin_dir: "/usr/lib/nagios/plugins"
 
 icinga_dont_start: False

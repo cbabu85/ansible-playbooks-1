@@ -28,6 +28,7 @@
 
 - name: Install additional Nagios plugins
   include: nagios_additional_plugins.yml
+  when: nagios_plugins
   tags: nagios-additional-plugins
 
 - name: Add additional plugins
