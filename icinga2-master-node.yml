@@ -16,6 +16,9 @@
          include <plugins-contrib>
          include "features-enabled/*.conf"
 
+      # Slack integration
+      icinga2_slack: true
+
       # Icingaweb2
       icingaweb2_local_db: False
       web_server_daemon: nginx
@@ -72,7 +75,7 @@
   roles:
     - {role: icinga2-ansible/icinga2-ansible-no-ui, tags: icinga2}
 # TODO: Enable once config is in group_vars
-#    - {role: ansible-influxdb, tags: influxdb}
+    - {role: ansible-influxdb, tags: influxdb}
     - {role: tersmitten.composer, tags: [composer, nginx], when: ansible_distribution_release == 'xenial'}
     - {role: cd3ef.nginx, tags: nginx}
     - {role: icinga2-ansible/icinga2-ansible-web2-ui, tags: icingaweb2}
@@ -87,6 +90,71 @@
         - syslog
         - mainlog
         - perfdata
+
+    - name: Master node setup
+      shell: icinga2 node setup --master --cn apt-ops.aptrust.org
+      tags: masternodesetup
+
+    - name: Create master and global zone directory
+      file:
+        path: "/etc/icinga2/zones.d/{{item}}"
+        state: directory
+        mode: 0755
+        owner: nagios
+        group: nagios
+      with_items:
+        - global
+        - apt-ops.aptrust.org
+
+    - name: Copy default config to global zone
+      copy:
+        src: "{{item}}"
+        dest: "/etc/icinga2/zones.d/global/"
+      with_fileglob:
+           - /etc/icinga2/conf.d/*
+
+    - name: Update zones.conf to master setup
+      template:
+        src: "~/aptrust/ansible-playbooks/roles/icinga2-ansible/icinga2-ansible-no-ui/templates/zones.conf"
+        dest: /etc/icinga2/zones.conf
+        mode: 0644
+        owner: root
+        group: root
+      tags: zonefile
+      ignore_errors: yes
+      register: zoneresult
+
+# TODO: Setup SLack notifications
+    - name: Add apt key slack notification plugin
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 10779AB4
+      tags: slacknotify
+
+    - name: Add repo for slack notification plugin
+      apt_repository:
+        repo: deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main
+        state: present
+      tags: slacknotify
+
+    - name: Install slack notification plugin
+      apt:
+        name: icinga2-slack-notifications
+        state: latest
+        update_cache: yes
+      tags: slacknotify
+
+    - name: Ensure that icinga features are enabled
+      shell: icinga2 feature enable {{item}}
+      with_items:
+        - checker
+        - notification
+        - command
+      tags: slacknotify
+
+
+# TODO: Add RDS checks
+# TODO: Add NFS checks
 
 # Generate ticket on master to use for client nodes
 # - hosts: "{{ masteritem | default('monitoring_servers')}}"
