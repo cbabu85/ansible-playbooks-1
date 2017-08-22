@@ -168,6 +168,8 @@ nagios_server: nagios.aptrust.org
 icinga_server: icinga.aptrust.org
 icinga2_master: "{{vault_icinga2_master}}"
 icinga2_db_host: "{{vault_icinga2_db_host}}"
+icinga2_slack_webhook: "{{vault_icinga2_slack_webhook}}
+icinga2_slack_base_url: "{{vault_icinga2_slack_base_url}}"
 
 # Icinga IDO dB
 icinga2_db: "{{vault_icinga2_db}}"
