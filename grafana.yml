@@ -42,11 +42,12 @@
 
         # InfluxDB
         influxdb_data_dir: "{{ops_data_influxdb}}"
-        influxdb_hostname: "{{influxdb_host}}
+        influxdb_hostname: "{{influxdb_host}}"
         influxdb_db: 'icinga2'
 
         # NGINX Webserver
         install_passenger: false
+        content_security_policy: false
 
         nginx_vhosts:
           - listen: "443 ssl"
@@ -117,6 +118,18 @@
           owner=root
           group=deploy
           mode=0755
+        tags: sslcopypem
+
+      - name: Copy SSL Key
+        become: yes
+        copy:
+          content="{{ssl_key}}{{ssl_chain}}{{ssl_interm_cert}}"
+          dest="/etc/ssl/influxdb.key"
+          force=yes
+          owner=root
+          group=deploy
+          mode=0755
+        tags: sslcopypem
 
       - name: Create icinga2 database
         command: influx --ssl --host={{influxdb_hostname}} -execute 'CREATE DATABASE {{influxdb_db}}'
