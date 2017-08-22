@@ -92,6 +92,12 @@
     - restart postfix
   tags: [configuration, postfix, postfix-aliases]
 
+- name: postmap generic and sasl
+  command: postmap {{item}}
+  with_items:
+    - /etc/postfix/generic
+    - /etc/postfix/sasl_passwd
+
 - name: configure aliases
   #  lineinfile:
   #  dest: /etc/aliases
