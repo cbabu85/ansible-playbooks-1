@@ -3,8 +3,9 @@
   apt: name=python-mysqldb
 
 - name: Install Icinga2 IDO modules on Debian family
-  shell: apt-get install --assume-no icinga2-ido-mysql
-  tags: assumeno
+  #  shell: apt-get install --assume-no icinga2-ido-mysql
+  apt: name=icinga2-ido-mysql
+       state=latest
 
 # Create DB on RDS if it doesn't exist.
 # Note: When command is changed to modify, comment [db_name, subnet, tags] out.
@@ -144,6 +145,8 @@
   with_items:
     - monitoring
     - translation
+    - ../enabledModules
+  tags: createdirs
 
 - name: Setup icingaweb2 config directory
   shell: icingacli setup config directory --group icingaweb2;
