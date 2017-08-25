@@ -8,13 +8,18 @@
   vars:
       playbook_name: icinga2-master
       # Icinga2
-      icinga2_conf_global: |
-         include "constants.conf"
-         include "zones.conf"
-         include <itl>
-         include <plugins>
-         include <plugins-contrib>
-         include "features-enabled/*.conf"
+      icinga2_master: True
+      # TODO: Add to role as option
+      icinga2_add_template: |
+          template Host "RDS Instance"{
+          check_command = "check_aws_rds"
+          max_check_attempts = "3"
+          check_interval = 1m
+          retry_interval = 30s
+          enable_notifications = true
+          vars.slack_notifications = "enabled"
+          enable_perfdata = true
+          }
 
       # Slack integration
       icinga2_slack: true
