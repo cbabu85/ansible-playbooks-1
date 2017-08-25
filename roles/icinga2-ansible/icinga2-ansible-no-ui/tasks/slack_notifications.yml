@@ -1,0 +1,53 @@
+---
+## This installs slack notifications for Icinga.
+- name: Add apt key slack notification plugin
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 10779AB4
+  tags: slacknotify
+
+- name: Add repo for slack notification plugin
+  apt_repository:
+    repo: deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main
+    state: present
+  tags: slacknotify
+
+- name: Install slack notification plugin
+  apt:
+    name: icinga2-slack-notifications
+    state: latest
+    update_cache: yes
+  tags: slacknotify
+
+- name: Ensure that icinga features are enabled
+  shell: icinga2 feature enable {{item}}
+  with_items:
+    - checker
+    - notification
+    - command
+  tags: slacknotify
+
+- name: Update Slack notification config.
+  template:
+      src: "{{item}}"
+      dest: "/etc/icinga2/conf.d/slack-notifications/{{item}}"
+      mode: 0644
+      owner: nagios
+      group: nagios
+  with_items:
+     - slack-notifications-user-configuration.conf
+     - slack-notifications-configuration.conf
+
+
+- name: Symlink slack config to load it.
+  file:
+    src: '/etc/icinga2/conf.d/slack-notifications'
+    dest: '/etc/icinga2/features-enabled/slack-notifications'
+    state: link
+
+      # - name: Load slack config from icinga2.conf
+      #   lineinfile:
+      #    dest: /etc/icinga2/icinga2.conf
+      #    line: "include \"slack-notifications/slack-notifications-user-configuration.conf\""
+      #    regexp: "^include \"slack-notifications.*"
+
