@@ -74,7 +74,6 @@
 
   roles:
     - {role: icinga2-ansible/icinga2-ansible-no-ui, tags: icinga2}
-# TODO: Enable once config is in group_vars
     - {role: ansible-influxdb, tags: influxdb}
     - {role: tersmitten.composer, tags: [composer, nginx], when: ansible_distribution_release == 'xenial'}
     - {role: cd3ef.nginx, tags: nginx}
@@ -91,79 +90,27 @@
         - mainlog
         - perfdata
 
-    - name: Master node setup
-      shell: icinga2 node setup --master --cn apt-ops.aptrust.org
-      tags: masternodesetup
+# TODO: Add to role as option
+    - name: Monitor RDS hosts
+      blockinfile:
+         dest: "/etc/icinga2/zones.d/master/hosts.conf"
+         marker: "# {mark} ANSIBLE MANAGED BLOCK {{item.name}}"
+         block: |
+            object Host "{{item.name}}" {
+                import "RDS Instance"
+                display_name = "{{item.display_name}}"
 
-    - name: Create master and global zone directory
-      file:
-        path: "/etc/icinga2/zones.d/{{item}}"
-        state: directory
-        mode: 0755
-        owner: nagios
-        group: nagios
+                enable_notifications = true
+                vars.aws_rds = true
+                vars.aws_rds_instance = "{{item.rds_instance}}"
+             }
       with_items:
-        - global
-        - apt-ops.aptrust.org
+          - { name: 'pharos_demo_rds', display_name: 'Pharos Demo DB',rds_instance: 'pharos-demo'}
+          - { name: 'pharos_prod_rds', display_name: 'Pharos Prod DB',rds_instance: 'pharos-production'}
+          - { name: 'dpn_demo_rds', display_name: 'DPN Demo DB',rds_instance: 'dpn-demo'}
+          - { name: 'dpn_prod_rds', display_name: 'DPN Prod DB',rds_instance: 'dpn-production'}
+          - { name: 'icinga2', display_name: 'Icinga2 Prod DB',rds_instance: 'icinga2'}
+          - { name: 'Mediawiki', display_name: 'APT Wiki DB',rds_instance: 'mediawiki-production'}
+      tags: add_rds_hosts
 
-    - name: Copy default config to global zone
-      copy:
-        src: "{{item}}"
-        dest: "/etc/icinga2/zones.d/global/"
-      with_fileglob:
-           - /etc/icinga2/conf.d/*
-
-    - name: Update zones.conf to master setup
-      template:
-        src: "~/aptrust/ansible-playbooks/roles/icinga2-ansible/icinga2-ansible-no-ui/templates/zones.conf"
-        dest: /etc/icinga2/zones.conf
-        mode: 0644
-        owner: root
-        group: root
-      tags: zonefile
-      ignore_errors: yes
-      register: zoneresult
-
-# TODO: Setup SLack notifications
-    - name: Add apt key slack notification plugin
-      apt_key:
-        keyserver: keyserver.ubuntu.com
-        id: 10779AB4
-      tags: slacknotify
-
-    - name: Add repo for slack notification plugin
-      apt_repository:
-        repo: deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main
-        state: present
-      tags: slacknotify
-
-    - name: Install slack notification plugin
-      apt:
-        name: icinga2-slack-notifications
-        state: latest
-        update_cache: yes
-      tags: slacknotify
-
-    - name: Ensure that icinga features are enabled
-      shell: icinga2 feature enable {{item}}
-      with_items:
-        - checker
-        - notification
-        - command
-      tags: slacknotify
-
-
-# TODO: Add RDS checks
 # TODO: Add NFS checks
-
-# Generate ticket on master to use for client nodes
-# - hosts: "{{ masteritem | default('monitoring_servers')}}"
-#  tags: ['nodeaction']
-#  vars:
-#   hostitem: apt-prod-repo.aptrust.org
-#  tasks:
-#   - name: generate ticket on the icinga master and save it as a variable
-     # shell: /usr/sbin/icinga2 pki ticket --cn {{ masteritem }}
-     #     shell: /usr/sbin/icinga2 pki ticket --cn {{ nodeitem }}.aptrust.org
-     #  register: ticket
-     # tags: nodeaction
