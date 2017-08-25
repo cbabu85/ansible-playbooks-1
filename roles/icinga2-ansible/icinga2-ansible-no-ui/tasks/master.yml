@@ -1,0 +1,62 @@
+    - name: Is master node setup already
+      stat:
+        path: "/etc/icinga2/pki/{{icinga2_master_hostname}}.crt"
+      register: mastercert
+
+    - name: Master node setup
+      shell: icinga2 node setup --master --cn "{{icinga2_master_hostname}}"
+      when: mastercert.stat.exists == False
+      tags: masternodesetup
+
+    - name: Create master and global zone directory
+      file:
+        path: "/etc/icinga2/zones.d/{{item}}"
+        state: directory
+        mode: 0755
+        owner: nagios
+        group: nagios
+      with_items:
+        - global
+        - master
+
+    - name: Copy default config to global zone
+      synchronize:
+        src: "/etc/icinga2/conf.d/{{item}}"
+        dest: /etc/icinga2/zones.d/global/
+        recursive: yes
+        rsync_opts: --ignore-existing
+      delegate_to: "{{inventory_hostname}}"
+      ignore_errors: yes
+      with_items:
+        - api-users.conf
+        - commands.conf
+        - downtimes.conf
+        - groups.conf
+        - slack-notifications
+        - templates.conf
+        - timeperiods.conf
+        - users.conf
+
+    - name: Add template configuration
+      blockinfile:
+        path: /etc/icinga2/zones.d/global/templates.conf
+        backup: yes
+        block: |
+          {{icinga2_add_template}}
+      when: icinga2_add_template is defined
+      tags: icinga2addtemplate
+
+    - name: Update masterzones.conf to master setup
+      blockinfile:
+        path: /etc/icinga2/zones.conf
+        backup: yes
+        insertbefore: BOF
+        block: |
+          object Endpoint NodeName {
+          }
+
+          object Zone "master" {
+            endpoints = [ NodeName ]
+          }
+
+          object Zone "global" { global = true }
