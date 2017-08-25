@@ -16,3 +16,10 @@
 - include: icinga2_configure.yml
   tags:
    - icinga2_configure
+
+- include: master.yml
+  tags: icingamaster
+  when: icinga2_master
+
+- include: slack_notifications.yml
+  when: icinga2_slack
