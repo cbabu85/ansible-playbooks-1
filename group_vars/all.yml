@@ -193,6 +193,17 @@ influxdb_host: "{{vault_influxdb_host}}"
 influxdb_port: "{{vault_influxdb_port}}"
 influxdb_username: "{{vault_influxdb_username}}"
 influxdb_password: "{{vault_influxdb_password}}"
+influxdb_data_wal_dir: "{{ops_data_influxdb}}/wal"
+
+influxdb_meta_https_enabled: "true"
+influxdb_meta_https_certificate: "/etc/ssl/influxdb.pem"
+influxdb_meta_https_key: "/etc/ssl/influxdb.pem"
+influxdb_admin_https_enabled: "true"
+influxdb_admin_https_certificate: "/etc/ssl/influxdb.pem"
+influxdb_admin_https_key: "/etc/ssl/influxdb.pem"
+influxdb_http_https_enabled: "true"
+influxdb_http_https_certificate: "/etc/ssl/influxdb.pem"
+influxdb_http_https_key: "/etc/ssl/influxdb.pem"
 
 influxdb_hostname: "{{influxdb_host}}"
 influxdb_db: 'icinga2'
