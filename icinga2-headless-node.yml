@@ -35,30 +35,21 @@
       tags: nodeaction
 
     - name: create cert on new node
-      shell: icinga2 pki new-cert --cn "{{ nodeitem }}.aptrust.org" --key "/etc/icinga2/pki/{{ nodeitem }}.key" --cert "/etc/icinga2/pki/{{ nodeitem }}.crt"
+      shell: icinga2 pki new-cert --cn "{{ ansible_hostname }}.aptrust.org" --key "/etc/icinga2/pki/{{ ansible_hostname }}.key" --cert "/etc/icinga2/pki/{{ ansible_hostname }}.crt"
       tags: nodeaction
 
     - name: save the masters cert as trustedcert
-      shell: icinga2 pki save-cert --key "/etc/icinga2/pki/{{ nodeitem }}.key" --cert "/etc/icinga2/pki/{{ nodeitem }}.crt" --trustedcert /etc/icinga2/pki/trusted-master.crt --host "{{ master_hostname }}"
+      shell: icinga2 pki save-cert --key "/etc/icinga2/pki/{{ ansible_hostname }}.key" --cert "/etc/icinga2/pki/{{ ansible_hostname }}.crt" --trustedcert /etc/icinga2/pki/trusted-master.crt --host "{{ icinga2_master_hostname }}"
       become: yes
       tags: nodeaction
 
     - name: request the certificate from the icinga server
-      shell: icinga2 pki request --host "{{ master_hostname }}" --port 5665 --ticket "{{ hostvars[masteritem]['ticket']['stdout'] }}" --key "/etc/icinga2/pki/{{ nodeitem }}.key" --cert "/etc/icinga2/pki/{{ nodeitem }}.crt" --trustedcert "/etc/icinga2/pki/trusted-master.crt" --ca "/etc/icinga2/pki/ca.key"
+      shell: icinga2 pki request --host "{{ icinga2_master_hostname }}" --port 5665 --ticket "{{ticket.stdout}}" --key "/etc/icinga2/pki/{{ ansible_hostname }}.key" --cert "/etc/icinga2/pki/{{ ansible_hostname }}.crt" --trustedcert "/etc/icinga2/pki/trusted-master.crt" --ca "/etc/icinga2/pki/ca.key"
       tags: nodeaction
 
     - name: node setup
-      shell: icinga2 node setup --ticket {{ hostvars[masteritem]['ticket']['stdout'] }} --endpoint {{ master_hostname }} --zone {{ nodeitem }}.aptrust.org --master_host {{ master_hostname }} --trustedcert /etc/icinga2/pki/trusted-master.crt --cn {{ nodeitem }}.aptrust.org --accept-config --accept-commands
+      shell: icinga2 node setup --ticket {{ ticket.stdout }} --endpoint {{ icinga2_master_hostname }} --zone {{ ansible_hostname }}.aptrust.org --master_host {{ icinga2_master_hostname }} --trustedcert /etc/icinga2/pki/trusted-master.crt --cn {{ ansible_hostname }}.aptrust.org --accept-config --accept-commands
       tags: nodeaction
-
-    - name: Update master zone
-      replace: >
-        dest="/etc/icinga2/zones.conf"
-        regexp='(.*)(master)(.*)'
-        replace='\1{{masteritem}}.aptrust.org\3'
-        backup=yes
-      register: masterzone
-      tags: ['nodeedit','nodemasteredit']
 
     - name: Add global zone
       tags: ['nodeedit']
@@ -71,46 +62,38 @@
 
     - name: Restart icinga2
       tags: ['nodeedit']
-      when: masterzone|changed or globalzone|changed
+      when: globalzone|changed
       service: name=icinga2 state=restarted
 
-- hosts: "{{ masteritem | default('monitoring_servers')}}"
+- hosts: "{{ icinga2_master_host | default('monitoring_servers')}}"
   tags: ['masteraction']
   tasks:
-   - name: add host
-     shell: icinga2 node add {{ nodeitem }}.aptrust.org
-
-   - name: set host ip
-     shell: icinga2 node set {{ nodeitem }}.aptrust.org --host {{ nodeitem }}.aptrust.org --port 5665
-
-   - name: update node config
-     shell: icinga2 node update-config
 
    - name: insert/update zones.conf
      tags: ['updatefiles']
      blockinfile:
          dest: /etc/icinga2/zones.conf
-         marker: "# {mark} ANSIBLE MANAGED BLOCK {{nodeitem}}"
+         marker: "# {mark} ANSIBLE MANAGED BLOCK {{ansible_hostname}}"
          block: |
-            object Endpoint "{{nodeitem}}.aptrust.org" {
-                host = "{{nodeitem}}.aptrust.org"
+            object Endpoint "{{ansible_hostname}}.aptrust.org" {
+                host = "{{ansible_hostname}}.aptrust.org"
                 port = "5665"
             }
-            object Zone "{{nodeitem}}.aptrust.org" {
-                parent = "{{masteritem}}.aptrust.org"
-                endpoints = [ "{{nodeitem}}.aptrust.org" ]
+            object Zone "{{ansible_hostname}}.aptrust.org" {
+                parent = "master"
+                endpoints = [ "{{ansible_hostname}}.aptrust.org" ]
             }
 
    - name: insert/update hosts.conf
      tags: ['updatefiles']
      blockinfile:
-         dest: "/etc/icinga2/zones.d/{{masteritem}}.aptrust.org/hosts.conf"
-         marker: "# {mark} ANSIBLE MANAGED BLOCK {{nodeitem}}"
+         dest: "/etc/icinga2/zones.d/master/hosts.conf"
+         marker: "# {mark} ANSIBLE MANAGED BLOCK {{ansible_hostname}}"
          block: |
-            object Host "{{nodeitem}}.aptrust.org" {
+            object Host "{{ansible_hostname}}.aptrust.org" {
                 import "Icinga Agent"
-                display_name = "{{nodeitem}}"
-                address = "{{nodeitem}}.aptrust.org"
+                display_name = "{{ansible_hostname}}"
+                address = "{{ansible_hostname}}.aptrust.org"
 
                 enable_notifications = true
                 vars.os = "Linux"
