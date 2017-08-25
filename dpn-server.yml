@@ -63,7 +63,7 @@
         pg_hostname: "{{dpnserver_db_hostname}}"
         pg_username: "{{dpnserver_db_user}}"
         pg_pass: "{{dpnserver_db_pwd}}"
-        pg_backup_dir: "/mnt/efs/dpn/psql_backup/"
+        pg_backup_dir: "/mnt/nfs/dpn/psql_backup/"
 
     roles:
       - {role: common, tags: common}
