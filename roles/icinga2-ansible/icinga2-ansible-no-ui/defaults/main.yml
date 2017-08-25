@@ -47,3 +47,10 @@ nagios_plugins: true
 nagios_plugin_dir: "/usr/lib/nagios/plugins"
 
 icinga_dont_start: False
+
+# Install Slack notifications for Icinga2
+icinga2_slack: false
+# Slack webhook URL
+icinga2_slack_webhook: ''
+# Base URL for the icinga installation, e.g. https://icinga.aptrust.org
+icinga2_slack_base_url: ''
