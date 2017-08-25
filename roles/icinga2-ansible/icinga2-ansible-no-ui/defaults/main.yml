@@ -27,6 +27,22 @@ icinga2_yum:
 icinga2_main_conf: "/etc/icinga2/icinga2.conf"
 icinga2_conf_d: "/etc/icinga2/conf.d"
 icinga2_const_conf: "/etc/icinga2/constants.conf"
+
+icinga2_master: False
+icinga2_conf_global: |
+   include "constants.conf"
+   include "zones.conf"
+   include <itl>
+   include <plugins>
+   include <plugins-contrib>
+   include "features-enabled/*.conf"
+
+icinga2_add_template: ''
+
+#Icinga2 features
+enable_perfdata: true
+enable_notifications: true
+
 nagios_plugins: true
 nagios_plugin_dir: "/usr/lib/nagios/plugins"
 
