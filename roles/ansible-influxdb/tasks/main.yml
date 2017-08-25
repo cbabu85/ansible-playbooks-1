@@ -30,6 +30,19 @@
     state: latest
   become: true
 
+- name: Copy ssl cert and key to influxdb.pem
+  become: yes
+  become_user: root
+  copy:
+    content="{{ ssl_key }}\n{{ssl_cert}}"
+    dest="{{influxdb_http_https_certificate}}"
+    force=yes
+    owner=root
+    group=root
+    mode=0755
+    backup=yes
+  when: ssl_key and ssl_cert is defined
+
 - name: Configure InfluxDB
   template:
     src: influxdb.conf.j2
