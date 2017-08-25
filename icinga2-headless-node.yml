@@ -24,25 +24,12 @@
       become: true
       shell: icinga2 feature enable api
 
-# Generate ticket on master to use for client nodes
-- hosts: "{{ masteritem | default('monitoring_servers')}}"
-  tags: ['nodeaction']
-#  vars:
-#   hostitem: apt-prod-repo.aptrust.org
-  tasks:
-   - name: generate ticket on the icinga master and save it as a variable
-     # shell: /usr/sbin/icinga2 pki ticket --cn {{ masteritem }}
-     shell: /usr/sbin/icinga2 pki ticket --cn {{ nodeitem }}.aptrust.org
-     register: ticket
-     tags: nodeaction
+    - name: generate ticket on the icinga master and save it as a variable
+      shell: /usr/sbin/icinga2 pki ticket --cn {{ ansible_hostname }}.aptrust.org
+      register: ticket
+      tags: tickets
+      delegate_to: "{{icinga2_master_host}}"
 
-- hosts: "{{ nodeitem | default('all')}}"
-  tags: ['nodeaction', 'nodecerts']
-  vars:
-   master_hostname: apt-util.aptrust.org
-   master_ip:  hostvars['apt-util'].host_eip
-   master_port: 5665
-  tasks:
     - name: create pki folder
       file: path=/etc/icinga2/pki state=directory mode=0700 owner=nagios group=nagios
       tags: nodeaction
