@@ -1,0 +1,18 @@
+
+- name: Install "{{item.package}}" extensions per Composer
+  #  become_user: "{{system_default_user}}"
+  composer:
+    command: require
+    arguments: "{{item.url}}"
+    working_dir: "{{mediawiki_path}}"
+  with_items:
+    - "{{mediawiki_ext_composer}}"
+
+- name: Enable Mediawiki extensions "{{item.package}}"
+  lineinfile: dest="{{mediawiki_path}}/LocalSettings.php"
+              regexp="^wfLoadExtension\( \'{{item.package}}'\ \)\;"
+              line="wfLoadExtension( '{{item.package}}' );"
+              state=present
+  with_items:
+    - "{{mediawiki_ext_composer}}"
+

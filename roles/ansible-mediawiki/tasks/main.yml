@@ -102,3 +102,6 @@
 
 - include: wikieditor.yml
   tags: wikieditor
+
+- include: composer_ext.yml
+  tags: composerext

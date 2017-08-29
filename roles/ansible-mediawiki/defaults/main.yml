@@ -77,3 +77,6 @@ mediawiki_extensions:
   # - { package: 'BreadCrumbs2' }                 #Provides a Last modified date for wiki articles
   - { package: 'PageForms' }
   - { package: 'LabeledSectionTransclusion' }
+
+mediawiki_ext_composer:
+  - { package: 'SemanticFormsSelect', url: "mediawiki/semantic-forms-select:~2.1.1"}
