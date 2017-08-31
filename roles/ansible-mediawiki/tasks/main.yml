@@ -94,6 +94,9 @@
   - "{{ mediawiki_extensions }}"
   tags: mextensions
 
+- include: syntaxhighlight.yml
+  tags: mextensions
+
 - include: visualeditor.yml
   tags: parsoid
 

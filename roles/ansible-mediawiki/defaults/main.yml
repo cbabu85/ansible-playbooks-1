@@ -61,7 +61,8 @@ mediawiki_extensions:
   # Note: To be installed by composer
   #  - { package: 'SemanticCompoundQueries' }    # allows for the display of more than one SMW inline query in one result display set
   #  - { package: 'SemanticForms' }              # allows to create forms for creating and editing pages that use infobox-style templates
-  - { package: 'SyntaxHighlight_GeSHi' }      # provides rich formating of source code using the <syntaxhighlight> tag
+  #  Syntaxhighlight is installed with its own taskfile.
+  #  - { package: 'SyntaxHighlight_GeSHi' }      # provides rich formating of source code using the <syntaxhighlight> tag
   - { package: 'TemplateData' }               # allows to store, retrieve and visualise information about templates
   - { package: 'TitleBlacklist' }             # allows wiki admin to block the creation, movement and upload of pages
   # Note: Needs more config settings.
