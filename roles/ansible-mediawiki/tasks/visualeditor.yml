@@ -47,3 +47,18 @@
                   'prefix' => '{{ansible_domain}}'
                   );
                 state=present
+                backup=yes
+
+- name: Install node parsoid systemd service
+  copy:
+    src: node-parsoid.service
+    dest: /etc/systemd/system/node-parsoid.service
+    mode: 0644
+    owner: root
+    group: root
+  when: ansible_distribution_release == 'xenial'
+
+- name: Start parsoid service
+  service:
+    name: node-parsoid
+    state: started
