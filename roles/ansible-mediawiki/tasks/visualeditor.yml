@@ -23,18 +23,18 @@
 
 - name: Update parsoid config
   lineinfile:
-    dest: "{{mediawiki_path}}/parsoid/config.yml"
+    dest: "{{mediawiki_path}}/parsoid/config.yaml"
     line: 'https://"{{hostname_fqdn}}"/api.php'
     regexp: 'http://localhost/w/api.php'
 
 - name: Update parsoid config
   lineinfile:
-    dest: "{{mediawiki_path}}/parsoid/config.yml"
+    dest: "{{mediawiki_path}}/parsoid/config.yaml"
     line: 'aptrust.org'
     regexp: "domain:'localhost'"
 
 - name: Update mediawiki config
-  blockinfile: dest="{{mediawiki_path}}/LocalSettings.yml"
+  blockinfile: dest="{{mediawiki_path}}/LocalSettings.php"
                insertafter="wfLoadExtension\( \'VisualEditor\'\ )\;"
                content= |
                   $wgVirtualRestConfig\['modules'\]\['parsoid'\] = array(
