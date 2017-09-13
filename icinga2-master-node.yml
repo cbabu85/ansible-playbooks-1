@@ -27,6 +27,7 @@
       # Icingaweb2
       icingaweb2_local_db: False
       web_server_daemon: nginx
+      icingaweb2_grafana_module: true
 
       # InfluxDB
       icinga2_local_db: False
