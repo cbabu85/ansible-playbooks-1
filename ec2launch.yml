@@ -47,6 +47,7 @@
                       keypair={{ keypair }}
                       count={{count}}
                       count_tag={{instance_name}}
+                      assign_public_ip=yes
         register: ec2
 
       - name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
