@@ -43,7 +43,6 @@
                       instance_type={{ instance_type}}
                       termination_protection=yes
                       image={{ image }}
-                      wait=true
                       region={{ region }}
                       keypair={{ keypair }}
                       count={{count}}
