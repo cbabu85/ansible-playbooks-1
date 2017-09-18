@@ -6,12 +6,14 @@
     become: no
     tags: instantiate
     # Necessary Variables for creating/provisioning the EC2 Instance
+    vars_files:
+      - "group_vars/vault.yml"
     vars:
       instance_type: t2.medium
       instance_name: apt-ebs-test
       instance_class: demo-servers
       instance_orgtype: apt
-      security_group: ebs_scale_test # Change the security group name here
+      security_group: ebs_scale_test
       image: ami-cd0f5cb6
       region: us-east-1
       keypair: staging-test
@@ -26,10 +28,12 @@
           description: Security Group for ebs-scale-test
           region: "{{ region }}"
           rules:
+            # Default SSH for provisioning
             - proto: tcp
               from_port: 22
               to_port: 22
               cidr_ip: 0.0.0.0/0
+            # Non-Default SSH post-provision
             - proto: tcp
               from_port: 1984
               to_port: 1984
