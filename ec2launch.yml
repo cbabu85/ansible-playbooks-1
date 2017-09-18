@@ -1,10 +1,10 @@
 ---
-  - name: Provision an EC2 Instance
+  - name: Instantiating an EC2 Instance
     hosts: localhost
     connection: local
     gather_facts: False
     become: no
-    tags: provisioning
+    tags: instantiate
     # Necessary Variables for creating/provisioning the EC2 Instance
     vars:
       instance_type: t2.medium
