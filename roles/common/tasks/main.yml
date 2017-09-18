@@ -164,7 +164,7 @@
 - name: MOTD
   become: yes
   template: src=motd.j2 dest=/etc/motd owner=root mode=0644
-  tags: common
+  tags: ["common","motd"]
   when: "'apt' in ansible_hostname"
 
 - name: Adjust /srv permissions.
