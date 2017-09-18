@@ -38,7 +38,7 @@ pharos_rds_subnet: "demo"
 
 # AWS EFS/DBS
 # External Filesystems
-use_efs: true
+use_efs: false
 use_ebs: false
 # EFS PROD
 efs_mount_uri: "fs-97ff5bde.efs.us-east-1.amazonaws.com:/"
