@@ -61,8 +61,21 @@
       - name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
         local_action: lineinfile
                       dest="./hosts"
-                      regexp="{{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }}"
-                      insertafter="[{{instance_class}}]" line="{{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }}"
+                      regexp="{{instance_name}} hostname_name={{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }} instance_id={{item.id}}"
+                      insertafter="\[{{instance_class}}\]"
+                      line="{{instance_name}} hostname_name={{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }} instance_id={{item.id}}"
+        with_items: "{{ ec2.instances }}"
+
+      - name: Add the newly created EC2 instance(s) to the local ssh hosts
+        delegate_to: localhost
+        blockinfile:
+          path: "~/.ssh/config"
+          block: |
+                  Host {{instance_name}}
+                  Hostname "{{item.public_dns_name}}"
+                  User ubuntu
+                  IdentityFile "~/.ssh/{{keypair}}.pem"
+          marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.tags['Name'] }}"
         with_items: "{{ ec2.instances }}"
 
 
