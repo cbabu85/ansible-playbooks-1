@@ -130,6 +130,8 @@
     hosts: apt-ebs-test
     become: yes
     tags: provision
+    vars_files:
+      - "group_vars/vault.yml"
     vars:
       instance_type: t2.medium
       instance_name: apt-ebs-test
