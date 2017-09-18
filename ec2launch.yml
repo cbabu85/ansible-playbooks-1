@@ -92,6 +92,53 @@
         args:
           tags:
             Name: "{{instance_name}}"
+            Purpose: "EBS-TEST"
             environment: demo
             orgtype: "{{instance_orgtype}}"
 
+      - name: Create and attach base EBS volume
+        ec2_vol:
+          instance: "{{item.id}}"
+          name: "{{instance_name}}_data"
+          volume_type: gp2
+          volume_size: 100
+          region: "{{ region }}"
+          tags:
+            Name: "{{instance_name}}_data"
+            Purpose: "EBS-TEST"
+            environment: demo
+            orgtype: "{{instance_orgtype}}"
+        with_items: "{{ec2.instances}}"
+
+  - hosts: apt-ebs-test
+    gather_facts: False
+    tags: provision
+    tasks:
+        - name: install python 2
+          raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+  - name: Provision an EC2 Instance
+    # TODO: prohibits the use of a loop. rethink this.
+    hosts: apt-ebs-test
+    become: yes
+    tags: provision
+    vars:
+      instance_type: t2.medium
+      instance_name: apt-ebs-test
+      instance_class: demo-servers
+      instance_orgtype: apt
+      security_group: ebs_scale_test # Change the security group name here
+      image: ami-cd0f5cb6
+      region: us-east-1
+      keypair: staging-test
+      count: 1
+
+    pre_tasks:
+     - name: Install python for Ansible
+       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+       register: output
+       changed_when: output.stdout != ""
+     - setup: # aka gather_facts
+
+    roles:
+      - { role: common, tags: common}
