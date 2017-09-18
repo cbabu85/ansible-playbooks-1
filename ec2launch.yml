@@ -38,6 +38,10 @@
               from_port: 1984
               to_port: 1984
               cidr_ip: 0.0.0.0/0
+          rules_egress:
+            # Let the dogs out.
+              - proto: all
+                cidr_ip: 0.0.0.0/0
 
 
       - name: Launch the new EC2 Instance
