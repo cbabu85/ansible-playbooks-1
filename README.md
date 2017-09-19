@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 # Ansible 2.1 Vault issue:
 There is a bug in Ansible 2.0.1 that prevents saving changes to an Ansible vault file. A fix requires changing an Ansible file as follows.
 /usr/local/Cellar/ansible/2.0.1.0/libexec/lib/python2.7/site-packages/ansible/parsing/vault
@@ -185,6 +183,10 @@ Deploy exchange to demo:
 Deploy exchange to production:
 
 `ansible-playbook exchange.yml --diff -t exchange -b -l apt-prod-services`
+
+Deploy exchange to production without restarting services:
+
+`ansible-playbook exchange.yml -t buildgo -l apt-prod-services`
 
 Deploy exchange to DPN demo:
 
