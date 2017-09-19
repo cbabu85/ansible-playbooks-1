@@ -11,6 +11,9 @@ Some of the configuration has to be kept in Ansible as many variables create dep
 
 At last, supervisor configuration is being written according to the list of edeployed services. All services are grouped under `exchange` (i.e. exchange:apt_fetch` and therefore have to be called that way to be restarted or checked on status.
 
+Run the full playbook with `ansible-playbook exchange.yml --diff -l server1`
+Only update the code (no restarting of services) `ansible-playbook exchange.yml --diff -l server1 -t buildgo`
+
 Requirements
 ------------
 This role is designed to be deployed on a Ubuntu Linux system.
@@ -45,7 +48,6 @@ Example Playbook
 
     roles:
       - {role: common, tags: common}
-      - {role: oracle-java8, tags: oracle-java8 }
       - {role: futurice.supervisor, tags: supervisor}
       - {role: sansible.golang, tags: golang}
       - {role: retr0h.nsq, tags: nsq}
