@@ -86,7 +86,7 @@
   become_user: "{{system_default_user}}"
   become: true
   register: gitclone
-  tags: gitclone
+  tags: buildgo, gitclone
 
 # Checkout Exchange repo
 - name: Go get exchange repo
@@ -131,12 +131,12 @@
 - name: Update Exchange config file
   template: src=exchange.json.j2
             dest="/{{goapp_cfg_path}}/{{GO_ENV}}.json"
-  tags: exchangetemplate
+  tags: buildgo, exchangetemplate
 
 - name: Update NSQ config file
   template: src=nsq.config.j2
             dest="{{goapp_cfg_path}}/nsq/{{GO_ENV}}.config"
-  tags: nsq_supervisor
+  tags: buildgo, nsq_supervisor
 
 - name: Set Supervisor config for Exchange and NSQ Services
   template: src="{{item.name}}"
