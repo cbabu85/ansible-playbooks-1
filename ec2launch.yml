@@ -10,12 +10,14 @@
       - "group_vars/vault.yml"
     vars:
       instance_type: t2.medium
-      instance_name: apt-ebs-test
+      instance_name: apt-ebs-test3
       instance_class: demo-servers
       instance_orgtype: apt
-      security_group: ebs_scale_test
+      security_group: EBS-Scale-Test
       image: ami-cd0f5cb6
       region: us-east-1
+      vpc_subnet_id: subnet-f92326bf
+      vpc_id: vpc-0ce02669
       keypair: staging-test
       count: 1
 
@@ -27,6 +29,7 @@
           name: "{{ security_group }}"
           description: Security Group for ebs-scale-test
           region: "{{ region }}"
+          vpc_id: "{{vpc_id}}"
           rules:
             # Default SSH for provisioning
             - proto: tcp
