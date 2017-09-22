@@ -19,8 +19,12 @@
     dest={{ sshd_config_basedir }}/sshd_config
     validate="/usr/sbin/sshd -t -f %s"
     backup=yes
-  notify: restart sshd
+  register: sshd_config
   tags: configuration
+
+- name: restart sshd
+  service: name={{ sshd_service_name }} state=restarted
+  when: sshd_config|changed
 
 - name: enable sshd
   service: name={{ sshd_service_name }} state=started enabled=yes
