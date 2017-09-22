@@ -160,6 +160,8 @@
       region: us-east-1
       keypair: staging-test
       count: 1
+      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 
       lvm_vgroup: "{{instance_name}}_lvmdata"
       lvm_lvname: data
@@ -174,7 +176,7 @@
      - setup: # aka gather_facts
 
     roles:
-        - { role: common, tags: common}
+      - { role: common, tags: common}
 
     tasks:
       - name: Gather AWS Facts
@@ -182,6 +184,8 @@
           filters:
             "tag:Name": "{{instance_name}}"
           region: "{{region}}"
+          aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+          aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
         register: ec2vol
 
 
