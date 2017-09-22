@@ -48,18 +48,26 @@
 
 
       - name: Launch the new EC2 Instance
-        local_action: ec2
-                      group={{ security_group }}
-                      id="{{instance_name}}"
-                      instance_type={{ instance_type}}
-                      termination_protection=yes
-                      image={{ image }}
-                      region={{ region }}
-                      keypair={{ keypair }}
-                      count={{count}}
-                      count_tag={{instance_name}}
-                      assign_public_ip=yes
+        ec2:
+          group: "{{security_group}}"
+          id: "{{instance_name}}"
+          instance_type: "{{ instance_type}}"
+          termination_protection: yes
+          image: "{{ image }}"
+          region: "{{ region }}"
+          keypair: "{{ keypair }}"
+          count: "{{count}}"
+          count_tag: "{{instance_name}}"
+          vpc_subnet_id: "{{vpc_subnet_id}}"
+          assign_public_ip: yes
+          wait: yes
+          instance_tags:
+             Name: "{{ instance_name }}"
+             purpose: "EBS scaling test"
+             environment: "demo"
+             orgtype: "{{instance_orgtype}}"
         register: ec2
+        tags: ec2launch
 
       - name: Run instance run.
         local_action: ec2
