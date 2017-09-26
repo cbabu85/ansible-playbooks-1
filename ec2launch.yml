@@ -81,9 +81,9 @@
       - name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
         local_action: lineinfile
                       dest="./hosts"
-                      regexp="{{instance_name}} hostname_name={{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }} instance_id={{item.id}}"
+                      regexp="{{instance_name}} ansible_ssh_user=ubuntu hostname_name={{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }} instance_id={{item.id}}"
                       insertafter="\[{{instance_class}}\]"
-                      line="{{instance_name}} hostname_name={{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }} instance_id={{item.id}}"
+                      line="{{instance_name}} ansible_ssh_user=ubuntu hostname_name={{instance_name}} hostname_fqdn={{item.public_dns_name}} host_eip={{ item.public_ip }} instance_id={{item.id}}"
         with_items: "{{ ec2.instances }}"
 
       - name: Add the newly created EC2 instance(s) to the local ssh hosts
