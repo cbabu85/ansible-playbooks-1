@@ -191,7 +191,6 @@
 
 
   # LVM SETUP
-  # Volume Group is a named collection of physical and logical volumes
       - name: Install LVM packages
         apt: name=lvm2 state=latest
 
@@ -223,8 +222,8 @@
 # TODO:
 # x mount ebs drive
 # x mkfs ext4 on drive, add conditional if needed
-# - Create LVM, extend it if already there
-# - Add ebs scale script.
+# x Create LVM, VG,LVolume
+# x Add ebs scale script.
 # - Add ebs scale script cron job?
 #
 
