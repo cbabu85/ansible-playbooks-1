@@ -1,5 +1,5 @@
-# [localhost]
-# localhost ansible_connection=local host_eip=127.0.0.1
+[local]
+localhost ansible_connection=local host_eip=127.0.0.1
 
 [personal]
 rtfaws ansible_user=ubuntu hostname_name=rtf-aws system_default_user=ubuntu host_eip=192.168.33.10
@@ -13,15 +13,17 @@ wiki ansible_user=vagrant hostname_name=wiki hostname_fqdn=wiki.aptrust.local ho
 dpn-local-demo ansible_user=vagrant hostname_name=dpn-local-demo hostname_fqdn=dpn-demo.aptrust.local host_eip=192.168.33.13
 
 [monitoring_servers]
-apt-util hostname_name=apt-util hostname_fqdn=icinga.aptrust.org  host_eip=54.175.28.251 # Test Ingest+Restore+Utility
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 
 # APTrust 2.0 world
 # All new servers have '2' suffix in their hostname except demo, since it's a new 'namespace'
 [demo-servers]
+apt-ebs-test3 ansible_ssh_user=ubuntu hostname_name=apt-ebs-test3 hostname_fqdn=ec2-34-229-209-155.compute-1.amazonaws.com host_eip=34.229.209.155 instance_id=i-0190b2cbadc599343
+apt-ebs-test3 hostname_name=apt-ebs-test3 hostname_fqdn=ec2-34-229-209-155.compute-1.amazonaws.com host_eip=34.229.209.155 instance_id=i-0190b2cbadc599343
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
+apt-util hostname_name=apt-util hostname_fqdn=nfs.aptrust.org  host_eip=54.175.28.251 # NFS Server
 
 [pharos-servers]
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
