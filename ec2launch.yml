@@ -76,7 +76,6 @@
                       state=running
         with_items: "{{ ec2.instances }}"
 
-
      # TODO: Use add_hosts once upgraded to Ansible 2.4
       - name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
         local_action: lineinfile
@@ -97,6 +96,7 @@
                   IdentityFile "~/.ssh/{{keypair}}.pem"
           marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.tags['Name'] }}"
         with_items: "{{ ec2.instances }}"
+        when: ec2|changed
 
 
       - name: Wait for SSH to come up
@@ -136,13 +136,6 @@
       - name: spill the beans
         debug: var=ec2_vol_facts.results
 
-
-  - hosts: apt-ebs-test3
-    gather_facts: False
-    tags: provisionpython
-    tasks:
-        - name: install python 2
-          raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
   - name: Provision an EC2 Instance
     # TODO: prohibits the use of a loop. rethink this.
