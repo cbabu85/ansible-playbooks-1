@@ -1,2 +1,34 @@
 ---
 
+iam_policy_name: "EBS_AutoScaling"
+
+# Base name for VG and LV.
+# VG = vg_$NAME
+# LV = lv_$NAME
+vg_name: "vg_lvm"
+
+#Where to mount it
+vg_mount_point: "/mnt/vglvm"
+
+# Size of each disk in GB
+# Maximum EBS size is 16,384GB
+vg_disk_size: "5"
+
+# %age of free space (relative to disk size) before adding a new disk
+vg_space_up: "25"
+
+# %age of free space above 1 free disk (relative to disk size) before removing one.
+vg_space_down: "50"
+
+# If you want to start with a higher disk identifier to leave room for other partitions.
+# /dev/sda is the root device
+# /dev/sdb is the default instance-store partition
+# No disk above /dev/sdz will be created
+
+vg_start_disk_letter: 'f'
+
+# Minimum number of disks to keep
+vg_min_disks: 1
+
+# Maximum number of disks to use
+vg_max_disks: 10

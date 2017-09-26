@@ -40,33 +40,33 @@
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-NAME="junk"
+NAME="{{vg_name}}"
 
 # Where to mount it
-MOUNT_POINT="/media/$NAME"
+MOUNT_POINT="{{vg_mount_point}}"
 
 # Size of each disk in GB
 # Maximum EBS size is 1024GB
-DISK_SIZE="2"
+DISK_SIZE="{{vg_disk_size}}"
 
 # %age of free space (relative to disk size) before adding a new disk
-SPACE_UP="25"
+SPACE_UP="{{vg_space_up}}"
 
 # %age of free space above 1 free disk (relative to disk size) before removing one.
-SPACE_DOWN="50"
+SPACE_DOWN="{{vg_space_down}}"
 
 # If you want to start with a higher disk identifier to leave room for other partitions.
 # /dev/sda is the root device
 # /dev/sdb is the default instance-store partition
 # No disk above /dev/sdz will be created
 
-START_DISK_LETTER='c'
+START_DISK_LETTER='{{vg_start_disk_letter}}'
 
 # Minimum number of disks to keep
-MIN_DISKS=1
+MIN_DISKS="{{vg_min_disks}}"
 
 # Maximum number of disks to use
-MAX_DISKS=10
+MAX_DISKS="{{vg_max_disks}}"
 
 # base AWS CLI command
 AWS_EC2="/usr/local/bin/aws ec2"
