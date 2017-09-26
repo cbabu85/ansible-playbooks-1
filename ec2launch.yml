@@ -155,13 +155,14 @@
       region: us-east-1
       keypair: staging-test
       count: 1
-      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 
       lvm_vgroup: "{{instance_name}}_lvmdata"
       lvm_lvname: data
       lvm_lvsize: 90g
       lvm_filesystem: ext4
+    environment:
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
 
     pre_tasks:
      - name: Install python for Ansible
