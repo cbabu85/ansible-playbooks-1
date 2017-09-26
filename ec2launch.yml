@@ -147,6 +147,7 @@
     vars:
       instance_type: t2.medium
       instance_name: apt-ebs-test3
+      instance_id: "{{hostvars[inventory_hostname]['instance_id']}}"
       instance_class: demo-servers
       instance_orgtype: apt
       security_group: ebs_scale_test # Change the security group name here
