@@ -30,3 +30,27 @@
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
 
+#
+- name: set instance fact
+  set_fact: instance_id="{{ hostvars[inventory_hostname]['instance_id'] }}"
+
+# Need to use aws cli since function doesn't exist yet in Ansible
+- name: Apply IAM policy to instance
+  delegate_to: localhost
+  command: "aws ec2 associate-iam-instance-profile --instance-id {{instance_id}} --iam-instance-profile Name={{iam_policy_name}} --region {{region}}"
+  become: False
+  register: iam_pol_result
+  when: instance_name is defined
+  # This is stupid but there is currently no other sane way.
+  ignore_errors: yes
+
+
+
+# TODO: Consider using root as owner and executor
+- name: Copy EBS_Scale script
+  template:
+    src: "ebs_autoscale.sh.j2"
+    dest: "/usr/local/bin/ebs_autoscale.sh"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 750
