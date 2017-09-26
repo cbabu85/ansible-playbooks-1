@@ -1,0 +1,29 @@
+---
+# TODO:
+# - Input: need node name to apply policy to
+# - Upload and create IAM role
+# - Template out EBS scaling script
+# - Upload EBS scaling script
+
+- name: Setup EBS_AutoScaling IAM Role
+  iam:
+    iam_type: role
+    name: EBS_AutoScaling
+    state: present
+    trust_policy:
+      Version: '2012-10-17'
+      Statement:
+      - Action: sts:AssumeRole
+        Effect: Allow
+        Principal:
+          Service: ec2.amazonaws.com
+
+- name: Add inline policy to EBS_AutoScaling Role
+  iam_policy:
+    iam_type:
+    iam_name: EBS_AutoScaling
+    policy_document: "../templates/ebs_autoscale_role.json.j2"
+    state: present
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+
