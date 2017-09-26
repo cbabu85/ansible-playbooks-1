@@ -8,8 +8,10 @@
 - name: Setup EBS_AutoScaling IAM Role
   iam:
     iam_type: role
-    name: EBS_AutoScaling
+    name: "{{iam_policy_name}}"
     state: present
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
     trust_policy:
       Version: '2012-10-17'
       Statement:
@@ -20,9 +22,10 @@
 
 - name: Add inline policy to EBS_AutoScaling Role
   iam_policy:
-    iam_type:
-    iam_name: EBS_AutoScaling
-    policy_document: "../templates/ebs_autoscale_role.json.j2"
+    iam_type: role
+    iam_name: "{{iam_policy_name}}"
+    policy_name: "{{iam_policy_name}}"
+    policy_json: "{{ lookup( 'template', 'ebs_autoscale_role.json.j2') }}"
     state: present
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
