@@ -138,6 +138,11 @@ ssl_certs_common_name: "{{ansible_fqdn}}"
 ##
 var_aws_access_key_id: "{% if ansible_bios_version != 'VirtualBox' %}{{ vault_aws_access_prod_key_id }}{% else %}{{ vault_aws_access_dev_key_id }}{% endif %}"
 var_aws_secret_access_key: "{% if ansible_bios_version != 'VirtualBox' %}{{ vault_aws_secret_access_prod_key}}{% else %}{{ vault_aws_secret_access_dev_key }}{% endif %}"
+# var_aws_access_key: "{{vault_aws_access_key}}"
+# var_aws_secret_key: "{{vault_aws_secret_key}}"
+aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+
 
 var_fluctus_prod_db_host: "{{ vault_fluctus_prod_db_host}}"
 var_fluctus_prod_db_user: "{{ vault_fluctus_prod_db_user}}"
