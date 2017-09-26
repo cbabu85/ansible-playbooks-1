@@ -26,6 +26,11 @@
   service: name={{ sshd_service_name }} state=restarted
   when: sshd_config|changed
 
+- name: Set new sshd port as a fact
+  set_fact:
+       ansible_port: "{{sshd_port[0]}}"
+  tags: updatessh
+
 - name: enable sshd
   service: name={{ sshd_service_name }} state=started enabled=yes
   tags: service
