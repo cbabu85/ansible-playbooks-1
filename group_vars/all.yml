@@ -143,6 +143,9 @@ var_aws_secret_access_key: "{% if ansible_bios_version != 'VirtualBox' %}{{ vaul
 aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
 aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 
+# AWS CLI Role
+aws_cli_user: "{{system_default_user}}"
+aws_cli_group: "{{system_default_group}}"
 
 var_fluctus_prod_db_host: "{{ vault_fluctus_prod_db_host}}"
 var_fluctus_prod_db_user: "{{ vault_fluctus_prod_db_user}}"
