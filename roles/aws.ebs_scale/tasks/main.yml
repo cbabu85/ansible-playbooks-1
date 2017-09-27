@@ -1,10 +1,4 @@
 ---
-# TODO:
-# - Input: need node name to apply policy to
-# - Upload and create IAM role
-# - Template out EBS scaling script
-# - Upload EBS scaling script
-
 - name: Setup EBS_AutoScaling IAM Role
   iam:
     iam_type: role
@@ -30,7 +24,6 @@
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
 
-#
 - name: set instance fact
   set_fact: instance_id="{{ hostvars[inventory_hostname]['instance_id'] }}"
 
@@ -44,6 +37,7 @@
   # This is stupid but there is currently no other sane way.
   ignore_errors: yes
 
+- include lvm_setup.yml
 
 
 # TODO: Consider using root as owner and executor
