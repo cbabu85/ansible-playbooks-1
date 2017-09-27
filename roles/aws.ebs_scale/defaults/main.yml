@@ -2,13 +2,22 @@
 
 iam_policy_name: "EBS_AutoScaling"
 
+lvm_lvname: data
+lvm_lvsize: 10g
+lvm_filesystem: ext4
+
+#TODO: ADJUST VARS BELOW. CHECK FOR SANITY VALUES. RUN MANUAL EBS TESTS ON INSTANCE
+# ALSO SETUP UBUNTU AWS CREDENTIALS TO USE FOR EBS OPS# Write readme about whats needed.
+# PHASE 2: define EBS shrinking process and find a safe trigger. probably during downtime window once a week?
+
+
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-vg_name: "vg_lvm"
+lvm_vgroup: "{{hostvars[inventory_hostname]}}_lvmdata"
 
 #Where to mount it
-vg_mount_point: "/mnt/vglvm"
+vg_mount_point: "/mnt/lvm"
 
 # Size of each disk in GB
 # Maximum EBS size is 16,384GB
