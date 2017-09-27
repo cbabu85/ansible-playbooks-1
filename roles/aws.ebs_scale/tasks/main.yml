@@ -37,7 +37,7 @@
   # This is stupid but there is currently no other sane way.
   ignore_errors: yes
 
-- include lvm_setup.yml
+- include: lvm_setup.yml
 
 - name: Install jq for json queries
   apt: name=jq state=present
