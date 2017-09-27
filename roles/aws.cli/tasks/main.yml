@@ -2,16 +2,15 @@
 - name: 'Install Python PIP'
   tags: 'aws-cli'
   become: 'yes'
-  apt: >
-    name=python-pip
-    state=latest
+  apt: name=python-pip state=latest
 
 - name: 'Install AWS CLI'
   tags: 'aws-cli'
   become: 'yes'
-  pip: >
-    name=awscli
-    state=latest
+  pip: name="{{item}}" state=latest
+  with_items:
+    - awscli
+    - boto
 
 - name: Set home directory of the user
   set_fact:
