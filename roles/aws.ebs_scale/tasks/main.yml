@@ -39,8 +39,11 @@
 
 - include: lvm_setup.yml
 
-- name: Install jq for json queries
+- name: Install jq for json queries and bc for bash arithmetic
   apt: name=jq state=present
+  with_items:
+    - jq
+    - bc
 
 # TODO: Consider using root as owner and executor
 - name: Copy EBS_Scale script
