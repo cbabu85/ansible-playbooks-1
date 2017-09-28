@@ -160,6 +160,11 @@
       lvm_lvname: data
       lvm_lvsize: 90g
       lvm_filesystem: ext4
+
+      # AWS.cli
+      aws_access_key_id: "{{aws_access_key_ubuntu}}"
+      aws_secret_access_key: "{{aws_secret_access_key_ubuntu}}"
+
     environment:
       aws_access_key: "{{aws_access_key}}"
       aws_secret_key: "{{aws_secret_key}}"
@@ -172,7 +177,9 @@
      - setup: # aka gather_facts
 
     roles:
-      - { role: common, tags: common}
+      #      - { role: common, tags: common}
+        - { role: aws.cli, tags: aws.cli}
+        - { role: aws.ebs_scale, tags: ebs_scale}
 
     tasks:
       - name: Gather AWS Facts
@@ -180,39 +187,9 @@
           filters:
             "tag:Name": "{{instance_name}}"
           region: "{{region}}"
-          aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-          aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+          #          aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+          # aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
         register: ec2vol
-
-
-  # LVM SETUP
-      - name: Install LVM packages
-        apt: name=lvm2 state=latest
-
-## INSTALL reference https://gist.githubusercontent.com/mrlesmithjr/1da992b648771b9afd50/raw/33a9e42c4148553fc73fefbf33b97b3d1ea35495/confg_lvm.yml
-# lvm_vgroup: Volume group to be named after instance_vg
-# lvm_lvname: Logical volume name
-# lvm_vsize: Logical volume size
-# lvm_filesystem: FS, ext4
-      - name: Create new LVM volume group
-        lvg: vg={{ lvm_vgroup }} pvs=/dev/xvdf state=present
-
-      - name: Create new LVM logical volume
-        lvol: vg={{ lvm_vgroup }} lv={{ lvm_lvname }} size={{ lvm_lvsize }}
-        # when: create and config_lvm
-
-      - name: Create new filesystem on new LVM logical volume
-        filesystem: fstype={{ lvm_filesystem }} dev=/dev/{{ lvm_vgroup }}/{{ lvm_lvname }}
-        register: fsstats
-       # when: create and config_lvm
-
-# TODO: Mount dest should be a variable.
-      - name: Mount EBS data drive
-        mount:
-          src: /dev/{{lvm_vgroup}}/{{lvm_lvname}}
-          path: /mnt/ebs
-          fstype: ext4
-          state: mounted
 
 # TODO:
 # x mount ebs drive
