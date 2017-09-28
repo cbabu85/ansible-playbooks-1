@@ -80,6 +80,7 @@ ord() {
 }
 
 next_disk() {
+    printf '%s\n' ${FUNCNAME[0]}
     # No disk is existing yet
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
