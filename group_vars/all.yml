@@ -98,6 +98,10 @@ aws_ro_pwd: "{{ vault_aws_ro_pwd }}"
 aws_go_user: "{{ vault_aws_go_user }}"
 aws_go_pwd: "{{ vault_aws_go_pwd }}"
 
+# AWS Ubuntu user
+aws_access_key_ubuntu: "{{vault_aws_access_key_ubuntu}}"
+aws_secret_access_key_ubuntu: "{{vault_aws_secret_access_key_ubuntu}}"
+
 # Fluctus AWS SES sending-only
 fluctus_aws_ses_user: "{{ vault_fluctus_aws_ses_user }}"
 fluctus_aws_ses_pwd: "{{ vault_fluctus_aws_ses_pwd }}"
