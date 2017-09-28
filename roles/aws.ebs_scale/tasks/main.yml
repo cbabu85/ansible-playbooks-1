@@ -52,4 +52,4 @@
     dest: "/usr/local/bin/ebs_autoscale.sh"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
-    mode: 750
+    mode: 0750
