@@ -34,7 +34,7 @@ vg_space_down: "50"
 # /dev/sdb is the default instance-store partition
 # No disk above /dev/sdz will be created
 
-vg_start_disk_letter: 'f'
+vg_start_disk_letter: 'g'
 
 # Minimum number of disks to keep
 vg_min_disks: 1
