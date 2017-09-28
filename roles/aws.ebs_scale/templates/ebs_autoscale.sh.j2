@@ -40,7 +40,7 @@
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-NAME="{{vg_name}}"
+NAME="{{lvm_vgroup}}"
 
 # Where to mount it
 MOUNT_POINT="{{vg_mount_point}}"
@@ -97,7 +97,7 @@ next_disk() {
 }
 
 add_disk() {
-    $AWS_EC2 create-volume --volume-type gp2 --size $DISK_SIZE --availability-zone $AV_ZONE > /tmp/volume_info
+    $AWS_EC2 create-volume --volume-type gp2 --size $DISK_SIZE --availability-zone $AV_ZONE --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=ebs_scale_${NAME}_disk_${DISK_LETTER}}]" > /tmp/volume_info
     volume_id=`jq -r '.VolumeId' /tmp/volume_info`
 
     volume_status=""
