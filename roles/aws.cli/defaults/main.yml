@@ -1,5 +1,4 @@
 ---
----
 aws_cli_user: '{{ ansible_ssh_user }}'
 aws_cli_group: '{{ ansible_ssh_user }}'
 aws_output_format: 'json'
