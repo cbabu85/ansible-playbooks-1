@@ -127,28 +127,31 @@ add_disk() {
     done
     $AWS_EC2 modify-instance-attribute --instance-id $INSTANCE_ID --block-device-mappings "[{\"DeviceName\": \"/dev/sd${DISK_LETTER}\",\"Ebs\":{\"DeleteOnTermination\":true}}]" || return 1
 
-    pvcreate /dev/xvd${DISK_LETTER} || return 1 #/dev/sdX is attached as /dev/xvdX
+    sudo pvcreate /dev/xvd${DISK_LETTER} || return 1 #/dev/sdX is attached as /dev/xvdX
 }
 
 last_disk() {
+    printf '%s\n' ${FUNCNAME[0]}
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /tmp/instance_info
     root_device=`jq -r '.Reservations[].Instances[].RootDeviceName' /tmp/instance_info`
     LAST_DISK_LETTER=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /tmp/instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/'`
 }
 
 initialize_lv() {
-    vgcreate vg_$NAME /dev/xvd${DISK_LETTER}
-    lvcreate -l 100%VG -n lv_$NAME vg_$NAME
-    mkfs.ext4 /dev/vg_$NAME/lv_$NAME
+    printf '%s\n' ${FUNCNAME[0]}
+    $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /tmp/instance_info
+    sudo vgcreate vg_$NAME /dev/xvd${DISK_LETTER}
+    sudo lvcreate -l 100%VG -n lv_$NAME vg_$NAME
+    sudo mkfs.ext4 /dev/vg_$NAME/lv_$NAME
 
-    mkdir -p $MOUNT_POINT
-    mount /dev/vg_$NAME/lv_$NAME $MOUNT_POINT
+    sudo mkdir -p $MOUNT_POINT
+    sudo mount /dev/vg_$NAME/lv_$NAME $MOUNT_POINT
 }
 
 extend_lv() {
-    vgextend vg_$NAME /dev/xvd${DISK_LETTER}
-    lvextend -l +100%FREE /dev/vg_$NAME/lv_$NAME
-    resize2fs /dev/vg_$NAME/lv_$NAME
+    sudo vgextend vg_$NAME /dev/xvd${DISK_LETTER}
+    sudo lvextend -l +100%FREE /dev/vg_$NAME/lv_$NAME
+    sudo esize2fs /dev/vg_$NAME/lv_$NAME
 }
 
 INSTANCE_ID=`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`
@@ -199,7 +202,7 @@ more_space_needed=`echo $free_space'<'$min_free_space | bc -l`
 less_space_needed=`echo $free_space'>'$max_free_space | bc -l`
 
 # Amount of mounted disks
-actual_disks=`lvdisplay /dev/vg_${NAME}/lv_${NAME}|grep Segments|awk '{print $2}'`
+actual_disks=`sudo lvdisplay /dev/vg_${NAME}/lv_${NAME}|grep Segments|awk '{print $2}'`
 
 # Check if we are inside disk limit bounds
 max_limit_reached=`echo $actual_disks'>='$MAX_DISKS | bc -l`
