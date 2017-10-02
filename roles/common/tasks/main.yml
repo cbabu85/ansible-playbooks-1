@@ -30,6 +30,7 @@
 # https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
     - acl
     - ntp
+    - jq
   tags: packages
 
 - name: Ensure ntp deamon is running

@@ -151,7 +151,7 @@ initialize_lv() {
 extend_lv() {
     sudo vgextend vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvextend -l +100%FREE /dev/vg_$NAME/lv_$NAME
-    sudo esize2fs /dev/vg_$NAME/lv_$NAME
+    sudo resize2fs /dev/vg_$NAME/lv_$NAME
 }
 
 INSTANCE_ID=`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`
