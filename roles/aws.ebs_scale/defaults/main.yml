@@ -2,9 +2,7 @@
 
 iam_policy_name: "EBS_AutoScaling"
 
-lvm_lvname: data
-lvm_lvsize: 10g
-lvm_filesystem: ext4
+vg_filesystem: ext4
 
 #TODO: ADJUST VARS BELOW. CHECK FOR SANITY VALUES. RUN MANUAL EBS TESTS ON INSTANCE
 # ALSO SETUP UBUNTU AWS CREDENTIALS TO USE FOR EBS OPS# Write readme about whats needed.
@@ -14,7 +12,7 @@ lvm_filesystem: ext4
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-lvm_vgroup: "{{hostvars[inventory_hostname]}}_lvmdata"
+vg_name: "{{hostvars[inventory_hostname]}}_lvm"
 
 #Where to mount it
 vg_mount_point: "/mnt/lvm"

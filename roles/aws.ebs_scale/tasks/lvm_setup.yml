@@ -8,22 +8,21 @@
   apt: name=lvm2 state=latest
 
 - name: Create new LVM volume group
-  lvg: vg={{ lvm_vgroup }} pvs=/dev/xvdf state=present
+  lvg: vg={{ vg_name }} pvs=/dev/xvdf state=present
 
 - name: Create new LVM logical volume
-  lvol: vg={{ lvm_vgroup }} lv={{ lvm_lvname }} size={{ lvm_lvsize }}
+  lvol: vg={{ vg_name }} lv={{ vg_name }} size={{ vg_disk_size }}
   # when: create and config_lvm
 
 - name: Create new filesystem on new LVM logical volume
-  filesystem: fstype={{ lvm_filesystem }} dev=/dev/{{ lvm_vgroup }}/{{ lvm_lvname }}
+  filesystem: fstype={{ vg_filesystem }} dev=/dev/{{ vg_name }}/{{ vg_name }}
   register: fsstats
  # when: create and config_lvm
 
 # TODO: Mount dest should be a variable.
 - name: Mount EBS data drive
   mount:
-    src: /dev/{{lvm_vgroup}}/{{lvm_lvname}}
+    src: /dev/{{vg_name}}/{{vg_name}}
     path: /mnt/ebs
     fstype: ext4
     state: mounted
-
