@@ -51,7 +51,7 @@ apt_cronjobs:
   apt_bucket_reader:
     hour: "*"
     minute: "*/16"
-    params: "-stats={{goapp_log_path}}/apt_bucked_reader_stats.json"
+    params: "-stats={{goapp_log_path}}/apt_bucket_reader_stats.json"
   apt_queue:
     hour: "*/1"
     minute: "*/30"
