@@ -17,6 +17,8 @@
 #        "ec2:AttachVolume",
 #        "ec2:CreateVolume",
 #        "ec2:DeleteVolume",
+#        "ec2:CreateTags",
+#        "ec2:DeleteTags",
 #        "ec2:DescribeInstanceAttribute",
 #        "ec2:DescribeInstances",
 #        "ec2:DescribeVolumeAttribute",
@@ -231,6 +233,8 @@ if [[ $less_space_needed -eq 1 ]]; then
         LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /tmp/instance_info | tail -n1`
 
         cat << EOF
+## TODO: Move shrinking into separate script and query NSQ to ensure nothing
+## is working right now before unmounting and shrinking the drive.
 Too much empty space.
 Unable to perform an online shrinking. The partion need to be unmounted.
 
