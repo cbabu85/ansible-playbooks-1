@@ -17,7 +17,7 @@ vg_filesystem: ext4
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-vg_name: "{{hostvars[inventory_hostname]}}_lvm"
+vg_name: "{{ansible_nodename}}_lvm"
 
 #Where to mount it
 vg_mount_point: "/mnt/lvm"
