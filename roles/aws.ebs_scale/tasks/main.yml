@@ -37,7 +37,11 @@
   # This is stupid but there is currently no other sane way.
   ignore_errors: yes
 
-- include: lvm_setup.yml
+- name: Install LVM packages
+  apt: name=lvm2 state=latest
+
+# TODO: Once some functions of the ebs_scale script are factored out, this may be enabled again. For now its just for documentation reasons. It is working and tested but includes redundant functions as long as the scaling script takes care of them.
+# - include: lvm_setup.yml
 
 - name: Install jq for json queries and bc for bash arithmetic
   apt: name=jq state=present

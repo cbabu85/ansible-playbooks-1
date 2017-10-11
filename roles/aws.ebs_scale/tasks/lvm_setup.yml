@@ -4,8 +4,6 @@
 # lvm_vsize: Logical volume size
 # lvm_filesystem: FS, ext4
 
-- name: Install LVM packages
-  apt: name=lvm2 state=latest
 
 - name: Create new LVM volume group
   lvg: vg={{ vg_name }} pvs=/dev/xvdf state=present
