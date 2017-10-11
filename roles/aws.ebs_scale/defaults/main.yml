@@ -1,8 +1,13 @@
 ---
 
 iam_policy_name: "EBS_AutoScaling"
+ebs_autoscale_script_dest: "/usr/local/bin/ebs_autoscale.sh"
 
+#Cronjob
+cron_minute: '*/8'
+cron_hour: '*/1'
 vg_filesystem: ext4
+
 
 #TODO: ADJUST VARS BELOW. CHECK FOR SANITY VALUES. RUN MANUAL EBS TESTS ON INSTANCE
 # ALSO SETUP UBUNTU AWS CREDENTIALS TO USE FOR EBS OPS# Write readme about whats needed.
