@@ -117,24 +117,24 @@
             environment: demo
             orgtype: "{{instance_orgtype}}"
 
-      - name: Create and attach base EBS volume
-        ec2_vol:
-          instance: "{{item.id}}"
-          name: "{{instance_name}}_data"
-          device_name: "/dev/xvdf"
-          volume_type: gp2
-          volume_size: 100
-          region: "{{ region }}"
-          tags:
-            Name: "{{instance_name}}_data"
-            Purpose: "EBS-TEST"
-            environment: demo
-            orgtype: "{{instance_orgtype}}"
-        with_items: "{{ec2.instances}}"
-        register: ec2_vol_facts
+            # -  name: Create and attach base EBS volume
+        # ec2_vol:
+        #   instance: "{{item.id}}"
+        #   name: "{{instance_name}}_data"
+        #   device_name: "/dev/xvdf"
+        #   volume_type: gp2
+        #   volume_size: 100
+        #   region: "{{ region }}"
+        #   tags:
+        #     Name: "{{instance_name}}_data"
+        #     Purpose: "EBS-TEST"
+        #     environment: demo
+        #     orgtype: "{{instance_orgtype}}"
+        # with_items: "{{ec2.instances}}"
+        # register: ec2_vol_facts
 
-      - name: spill the beans
-        debug: var=ec2_vol_facts.results
+        #  -  name: spill the beans
+        # debug: var=ec2_vol_facts.results
 
 
   - name: Provision an EC2 Instance
@@ -156,9 +156,8 @@
       keypair: staging-test
       count: 1
 
-      lvm_vgroup: "{{instance_name}}_lvmdata"
-      lvm_lvname: data
-      lvm_lvsize: 90g
+      # LVM settings
+      vg_disk_size: 100
       lvm_filesystem: ext4
 
       # AWS.cli
