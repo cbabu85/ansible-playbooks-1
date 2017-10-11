@@ -42,7 +42,7 @@
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-NAME="{{lvm_vgroup}}"
+NAME="{{vg_name}}"
 
 # Where to mount it
 MOUNT_POINT="{{vg_mount_point}}"
@@ -83,7 +83,7 @@ ord() {
 
 next_disk() {
     printf '%s\n' ${FUNCNAME[0]}
-    # No disk is existing yet
+    # No disk exist yet
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
     else
@@ -100,22 +100,22 @@ next_disk() {
 }
 
 add_disk() {
-    printf '%s\n' ${FUNCNAME[0]}
+    printf 'FUNCTION: %s\n%s' "${FUNCNAME[0]}" "$1"
     if [ "x"$1 == "x" ]; then
         ADISK_LETTER=$START_DISK_LETTER
     else
-	      ADISK_LETTER=$DISK_LETTER
+	      ADISK_LETTER=$1
     fi
     printf 'Adding disk letter: %s\n' $ADISK_LETTER
 
-    $AWS_EC2 create-volume --volume-type gp2 --size $DISK_SIZE --availability-zone $AV_ZONE --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=ebs_scale_${NAME}_disk_${ADISK_LETTER}}]" > /tmp/volume_info
-    volume_id=`jq -r '.VolumeId' /tmp/volume_info`
+    $AWS_EC2 create-volume --volume-type gp2 --size $DISK_SIZE --availability-zone $AV_ZONE --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=ebs_scale_${NAME}_disk_${ADISK_LETTER}}]" > /etc/ebs_volume_info
+    volume_id=`jq -r '.VolumeId' /etc/ebs_volume_info`
 
     volume_status=""
     while [ "x"$volume_status != "xavailable" ]; do
         sleep 1
-        $AWS_EC2 describe-volumes --volume-ids $volume_id > /tmp/volume_info
-        volume_status=`jq -r '.Volumes[].State' /tmp/volume_info`
+        $AWS_EC2 describe-volumes --volume-ids $volume_id > /etc/ebs_volume_info
+        volume_status=`jq -r '.Volumes[].State' /etc/ebs_volume_info`
     done
     last_disk
     next_disk $LAST_DISK_LETTER || return 1
@@ -124,8 +124,8 @@ add_disk() {
     attached=""
     while [ "x"$attached != "xattached" ]; do
         sleep 1
-        $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /tmp/instance_info
-        attached=`jq --arg drive "/dev/sd${DISK_LETTER}" -r '.Reservations[].Instances[].BlockDeviceMappings[] | {name: .DeviceName, status: .Ebs.Status}|select(.name==$drive)|.status' /tmp/instance_info`
+        $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
+        attached=`jq --arg drive "/dev/sd${DISK_LETTER}" -r '.Reservations[].Instances[].BlockDeviceMappings[] | {name: .DeviceName, status: .Ebs.Status}|select(.name==$drive)|.status' /etc/ec2_instance_info`
     done
     $AWS_EC2 modify-instance-attribute --instance-id $INSTANCE_ID --block-device-mappings "[{\"DeviceName\": \"/dev/sd${DISK_LETTER}\",\"Ebs\":{\"DeleteOnTermination\":true}}]" || return 1
 
@@ -134,14 +134,14 @@ add_disk() {
 
 last_disk() {
     printf '%s\n' ${FUNCNAME[0]}
-    $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /tmp/instance_info
-    root_device=`jq -r '.Reservations[].Instances[].RootDeviceName' /tmp/instance_info`
-    LAST_DISK_LETTER=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /tmp/instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/'`
+    $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
+    root_device=`jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info`
+    LAST_DISK_LETTER=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /etc/ec2_instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/'`
 }
 
 initialize_lv() {
     printf '%s\n' ${FUNCNAME[0]}
-    $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /tmp/instance_info
+    $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
     sudo vgcreate vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvcreate -l 100%VG -n lv_$NAME vg_$NAME
     sudo mkfs.ext4 /dev/vg_$NAME/lv_$NAME
@@ -184,6 +184,7 @@ if [[ ! -d "/dev/vg_$NAME/lv_$NAME" && ! -L "/dev/vg_$NAME/lv_$NAME" ]]; then
 region = $REGION
 EOF
     fi
+# Main function
     add_disk || exit 1
     initialize_lv || exit 1
     for n in $(seq 2 $MIN_DISKS);do
@@ -230,7 +231,7 @@ if [[ $less_space_needed -eq 1 ]]; then
     else
         TOTAL_SPACE=`df | grep $MOUNT_POINT | awk '{print $2}'`
         NEW_SIZE=`echo "($TOTAL_SPACE-($DISK_SIZE*1000000*1.1))/1024" | bc`
-        LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /tmp/instance_info | tail -n1`
+        LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
 
         cat << EOF
 ## TODO: Move shrinking into separate script and query NSQ to ensure nothing
