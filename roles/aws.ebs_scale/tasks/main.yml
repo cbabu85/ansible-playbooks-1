@@ -59,6 +59,14 @@
     group: "{{system_default_group}}"
     mode: 0750
 
+- name: Touch logfile
+  file:
+    dest: "/var/log/ebs_autoscale.log"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0644
+    state: touch
+
 #TODO: Cron interval is set low for testing reasons. Interval size depends on
 # base drive size and performance. 25% of a 100G drive could be filled in
 # about 2.5 hrs
