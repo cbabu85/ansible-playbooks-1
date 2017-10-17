@@ -9,6 +9,7 @@
       fail2ban_config_ignoreip: "{{ hostvars|fetchlistfromdict(groups.all)|map(attribute='host_eip')|join (' ')}}"
       fail2ban_config_destemail: ops@aptrust.org
       fail2ban_config_maxretry: 1
+
 # Workaround for using Ubuntu 16.04LTS which doesn't come with Python 2.x
 # Alternatively add `ansible_python_interpreter: /usr/bin/python3` to group_vars/all.yml
     pre_tasks:
@@ -19,3 +20,4 @@
     - setup: # aka gather_facts
     roles:
       - {role: common, tags: common}
+      - {role: 030.certbot, tags: certbot}
