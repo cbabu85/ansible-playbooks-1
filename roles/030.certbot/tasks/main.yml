@@ -6,15 +6,23 @@
     port: 443
     state: stopped
     timeout: "{{ certbot_waitfor_port_seconds }}"
+  when: certbot_standalone
 
 - name: certs created
   command: certbot certonly --standalone -d {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --text
   args:
     creates: "{{ certbot_live_home }}/{{ item }}/fullchain.pem"
-  when: certbot_create_certs
+  when: (certbot_create_certs) and (certbot_standalone)
   with_items:
     - "{{ certbot_list_of_certs_to_create }}"
 
+- name: certs for nginx created
+  command: certbot --nginx -d {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive
+  args:
+    creates: "{{ certbot_live_home }}/{{ item }}/fullchain.pem"
+  when: (certbot_create_certs) and (certbot_nginx)
+  with_items:
+    - "{{ certbot_list_of_certs_to_create }}"
 - name: renew certs every month
   cron:
     name: renewCertbotCerts
