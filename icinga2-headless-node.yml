@@ -99,7 +99,7 @@
                 vars.os = "Linux"
                 vars.disks["disk"] = {}
                 vars.ssh_port = "1984"
-                vars.notification["mail"] = {
+                vars.notification["slack"] = {
                   groups = [ "apt-ops-group" ]
               }
             }
