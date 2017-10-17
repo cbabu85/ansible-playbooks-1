@@ -248,3 +248,10 @@ nfs_export_dir: '/srv/nfs'
 # Mount dir for nfs clients
 nfs_mount_dir: '/mnt/nfs'
 
+
+# Certbot LetsEncrypt
+certbot_create_certs: true
+certbot_mail_address: admin@aptrust.org
+certbot_renew_certs: true
+certbot_nginx: true
+certbot_standalone: false
