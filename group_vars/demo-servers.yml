@@ -43,6 +43,10 @@ use_ebs: false
 # EFS PROD
 efs_mount_uri: "fs-97ff5bde.efs.us-east-1.amazonaws.com:/"
 
+# AWS EBS Autoscale
+# Starter disk volume in GB.
+vg_disk_size: 500
+
 # Exchange Go Services
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
 pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
