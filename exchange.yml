@@ -15,9 +15,6 @@
         supervisor_user_group: "{{system_default_group}}"
         supervisor_pid_path: "/tmp"
 
-        # Exchange
-        goapp_log_path: "/mnt/ebs/{{orgtype}}/logs"
-
     roles:
       - {role: common, tags: common}
       - {role: futurice.supervisor, tags: supervisor}
