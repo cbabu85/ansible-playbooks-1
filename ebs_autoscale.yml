@@ -1,0 +1,32 @@
+---
+  - name: Provision an EC2 Instance
+    # TODO: prohibits the use of a loop. rethink this.
+    hosts: all
+    become: yes
+    tags: provision
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+
+      # LVM settings
+      vg_disk_size: 100
+
+      # AWS.cli
+      aws_access_key_id: "{{aws_access_key_ubuntu}}"
+      aws_secret_access_key: "{{aws_secret_access_key_ubuntu}}"
+
+    environment:
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
+
+    pre_tasks:
+     - name: Install python for Ansible
+       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+       register: output
+       changed_when: output.stdout != ""
+     - setup: # aka gather_facts
+
+    roles:
+      #      - { role: common, tags: common}
+        - { role: aws.cli, tags: aws.cli}
+        - { role: aws.ebs_scale, tags: ebs_scale}
