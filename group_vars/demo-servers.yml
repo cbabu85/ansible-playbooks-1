@@ -44,8 +44,8 @@ use_ebs: false
 efs_mount_uri: "fs-97ff5bde.efs.us-east-1.amazonaws.com:/"
 
 # AWS EBS Autoscale
-# Starter disk volume in GB.
-vg_disk_size: 500
+# Starter disk volume in GB for LVM
+vg_disk_size: 50
 
 # Exchange Go Services
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
