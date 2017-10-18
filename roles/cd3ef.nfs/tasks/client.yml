@@ -19,6 +19,15 @@
   with_items: "{{ nfs_client_imports }}"
   tags: nfshostonly
 
+- name: Touch the mountdir
+  file:
+    dest: "{{item}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    state: directory
+    mode: 0755
+  with_items: "{{ nfs_mount_dir }}"
+
 # Example: nfs_client_imports: [{ local: "/home", remote: "/home", remote: /home }] }
 - name: mount the shared directories
   mount:
