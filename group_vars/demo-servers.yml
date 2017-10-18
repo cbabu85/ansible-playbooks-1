@@ -65,10 +65,10 @@ apt_cronjobs:
     minute: "*/30"
     params: "-maxfiles=2500"
 
-ex_tardirectory: "/mnt/ebs/apt/data"
-ex_restoredirectory: "/mnt/ebs/apt/restore"
-ex_logdirectory: "/mnt/ebs/apt/logs"
-ex_replicationdirectory: "/mnt/ebs/apt/replication"
+ex_tardirectory: "/mnt/lvm/apt/data"
+ex_restoredirectory: "/mnt/lvm/apt/restore"
+ex_logdirectory: "/mnt/lvm/apt/logs"
+ex_replicationdirectory: "/mnt/lvm/apt/replication"
 ex_maxfilesize: "5368709120"
 ex_skipalreadyprocessed: "true"
 ex_deleteonsuccess: "true"
@@ -211,8 +211,8 @@ ex_receivingbuckets: [
 
 ex_dpn: {
         localnode: "aptrust",
-        logdirectory: "/mnt/ebs/dpn/logs",
-        stagingdirectory: "/mnt/ebs/dpn/staging",
+        logdirectory: "/mnt/lvm/dpn/logs",
+        stagingdirectory: "/mnt/lvm/dpn/staging",
         remotenodehomedirectory: "/home",
         loglevel: "4",
         logtostderr: "false",
