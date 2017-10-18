@@ -1,8 +1,7 @@
 ## INSTALL reference https://gist.githubusercontent.com/mrlesmithjr/1da992b648771b9afd50/raw/33a9e42c4148553fc73fefbf33b97b3d1ea35495/confg_lvm.yml
-# lvm_vgroup: Volume group to be named after instance_vg
-# lvm_lvname: Logical volume name
-# lvm_vsize: Logical volume size
-# lvm_filesystem: FS, ext4
+# vg_name: Volume group and Logical volume name
+# vg_disk_size: Logical volume size
+# vg_filesystem: FS, ext4
 
 
 - name: Create new LVM volume group
