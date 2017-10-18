@@ -82,3 +82,7 @@
     job: "sudo {{ebs_autoscale_script_dest}} >> /var/log/ebs_autoscale.log 2>&1"
     state: present
     disabled: no
+
+- name: Execute initial EBS_Autoscale if it hasn't run yet
+  become: true
+  command: "{{ebs_autoscale_script_dest}}"
