@@ -68,7 +68,7 @@ rbenv_users:
     - cd3ef
 
 
-goapp_log_path: "/mnt/ebs/{{orgtype}}/logs"
+goapp_log_path: "/mnt/lvm/{{orgtype}}/logs"
 
 ##
 # Postfix variables
