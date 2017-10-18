@@ -12,6 +12,10 @@
     - awscli
     - boto
 
+# Note: Gets EC2 facts to overwrite defaults
+- name: Get the EC2 facts straight
+  ec2_facts:
+
 - name: Set home directory of the user
   set_fact:
     home_dir: /home/{{ aws_cli_user }}
