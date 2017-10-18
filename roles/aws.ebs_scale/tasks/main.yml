@@ -24,13 +24,13 @@
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
 
-- name: set instance fact
-  set_fact: instance_id="{{ hostvars[inventory_hostname]['instance_id'] }}"
+- name: Gimme non-alternative facts
+  ec2_facts:
 
 # Need to use aws cli since function doesn't exist yet in Ansible
 - name: Apply IAM policy to instance
   delegate_to: localhost
-  command: "aws ec2 associate-iam-instance-profile --instance-id {{instance_id}} --iam-instance-profile Name={{iam_policy_name}} --region {{region}}"
+  command: "aws ec2 associate-iam-instance-profile --instance-id {{ansible_ec2_instance_id}} --iam-instance-profile Name={{iam_policy_name}} --region {{ansible_ec2_placement_region}}"
   become: False
   register: iam_pol_result
   when: instance_name is defined
@@ -40,7 +40,10 @@
 - name: Install LVM packages
   apt: name=lvm2 state=latest
 
-# TODO: Once some functions of the ebs_scale script are factored out, this may be enabled again. For now its just for documentation reasons. It is working and tested but includes redundant functions as long as the scaling script takes care of them.
+# TODO: Once some functions of the ebs_scale script are factored out, this may
+# be enabled again. For now its just for documentation reasons. It is working
+# and tested but includes redundant functions as long as the scaling script
+# takes care of them.
 # - include: lvm_setup.yml
 
 - name: Install jq for json queries and bc for bash arithmetic
