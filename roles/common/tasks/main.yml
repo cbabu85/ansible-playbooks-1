@@ -172,7 +172,7 @@
   become: yes
   file: path=/srv owner="{{system_default_user}}" group="{{deploy_group}}" mode=0775
 
-- name: Create /mnt/efs/apt or /mnt/efs/dpn if not mounted already
+- name: Create {{mount_dir}}/{apt,dpn} if not mounted already
   become: yes
   file:
     path: "{{item}}"
