@@ -9,7 +9,7 @@
     vars:
 
       # LVM settings
-      vg_disk_size: 100
+      #      vg_disk_size: 100
 
       # AWS.cli
       aws_access_key_id: "{{aws_access_key_ubuntu}}"
