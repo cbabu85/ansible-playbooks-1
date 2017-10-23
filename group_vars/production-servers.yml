@@ -34,7 +34,7 @@ pharos_rds_backup_retention: '10'
 
 # AWS EFS/DBS
 # External Filesystems
-use_efs: true
+use_efs: false
 use_ebs: true
 # EFS PROD
 efs_mount_uri: "fs-b4c91cfd.efs.us-east-1.amazonaws.com:/"
@@ -47,10 +47,10 @@ vg_disk_size: 300
 pharos_api_user: "{{vault_pharos_prod_api_user}}"
 pharos_api_key: "{{vault_pharos_prod_api_pwd}}"
 
-ex_tardirectory: "/mnt/ebs/apt/data"
-ex_restoredirectory: "/mnt/ebs/apt/restore"
-ex_logdirectory: "/mnt/ebs/apt/logs"
-ex_replicationdirectory: "/mnt/ebs/apt/replication"
+ex_tardirectory: "/mnt/lvm/apt/data"
+ex_restoredirectory: "/mnt/lvm/apt/restore"
+ex_logdirectory: "/mnt/lvm/apt/logs"
+ex_replicationdirectory: "/mnt/lvm/apt/replication"
 ex_maxfilesize: "5497558138880"
 ex_skipalreadyprocessed: "true"
 ex_deleteonsuccess: "true"
@@ -193,9 +193,9 @@ ex_receivingbuckets: [
 
 ex_dpn: {
     localnode: "aptrust",
-    logdirectory: "/mnt/ebs/dpn/logs",
-    stagingdirectory: "/mnt/ebs/dpn/staging",
-    remotenodehomedirectory: "/mnt/ebs/dpn",
+    logdirectory: "/mnt/lvm/dpn/logs",
+    stagingdirectory: "/mnt/lvm/dpn/staging",
+    remotenodehomedirectory: "/mnt/lvm/dpn",
     loglevel: "4",
     logtostderr: "false",
     replicatetonumnodes: "2",
