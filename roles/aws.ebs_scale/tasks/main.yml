@@ -84,7 +84,7 @@
     disabled: no
 
 - name: Execute initial EBS_Autoscale if it hasn't run yet
-  become: true
+  become_user: "{{system_default_user}}"
   shell: "sudo {{ebs_autoscale_script_dest}}"
 
 - name: Update permissions to lvm mount dir
