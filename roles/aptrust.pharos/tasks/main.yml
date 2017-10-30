@@ -111,9 +111,25 @@
     vars:
         PHAROS_RELEASE: "{{PHAROS_RELEASE}}"
 
+  - name: Set PHAROS API system user credentials as ENV
+    no_log: true
+    lineinfile: >
+      dest="/home/{{system_default_user}}/.profile"
+      state=present
+      regexp="{{item.name}}=.*"
+      line="export {{item.name}}={{item.value}}"
+    with_items:
+      - { name: "PHAROS_HOST", value: "{{ansible_fqdn}}"}
+      - { name: "PHAROS_API_USER", value: "{{pharos_system_user}}"}
+      - { name: "PHAROS_API_KEY", value: "{{pharos_system_user_key}}"}
+    tags: pharos_api_env
+
+
 # Only loads DB schema at first deploy. Skipped when .schema_loaded exists
 # Note: Careful! This assumes pharos has been deployed with this role before.
 #       Otherwise the DB might be wiped!
+#       Creates .schema_loaded file to skip this task if the RAILS_ENV when
+#       conditional fails.
   - name: Load DB Schema at first deploy
     shell: "bundle exec rake db:schema:load RAILS_ENV={{RAILS_ENV}} && touch log/.schema_loaded"
     args:
@@ -169,3 +185,13 @@
         mode: 0644
     tags: pharos_logrotate
 
+  - name: Setup Cron job for email notification helper script
+    cron: name="pharos notify"
+          user="{{system_default_user}}"
+          minute='*/1'
+          hour='*/1'
+          job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py
+             >> {{pharos_app_root}}/log/cron_pharos_notify.log 2>&1"
+          state=present
+          disabled=no
+    tags: pharos_notify_cron
