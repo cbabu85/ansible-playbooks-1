@@ -78,15 +78,14 @@ Example Playbook
         ansistrano_before_symlink_shared_tasks_file: "roles/aptrust.pharos/tasks/before-symlink.yml"
 
         # Pharos Role
+        pharos_setup: false # Set this to true if it's an initial deploy to run
+                              setup and db tasks.
         pharos_app_root: "{{ ansistrano_deploy_to }}/current"
         pharos_environment: "{{ruby_env}}"
         pharos_local_db: false
 
         # NGINX Webserver
         nginx_vhosts:
-          - listen: "80 default_server"
-            server_name: "_"
-            return: 301 https://$host$request_uri
           - listen: "443 ssl"
             server_name: "{{ansible_fqdn}}"
             root: "{{ ansistrano_deploy_to }}/current/public"
