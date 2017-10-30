@@ -22,6 +22,16 @@ pharos_url: "https://repo.aptrust.org"
 pharos_aws_ses_user: "{{vault_pharos_prod_aws_ses_user}}"
 pharos_aws_ses_pwd: "{{vault_pharos_prod_aws_ses_pwd}}"
 
+pharos_system_user: "system@aptrust.org"
+pharos_system_user_pwd:	!vault |
+   $ANSIBLE_VAULT;1.1;AES256
+   61613031333162343831343038373233623064633539633836393366643233613431663764323465
+   3561313364386164313939666330323232363635373636390a653631663739326633313163313532
+   36616535376432656662393061613866623163363334373830333933366337666562316436656634
+   6132633435313633330a616562346661666330383164393065383134363937313730303661613665
+   3234
+pharos_system_user_key: "{{vault_pharos_prod_api_pwd}}"
+
 # AWS RDS
 pharos_rds_instance_type: "db.m4.large"
 pharos_vpc_sec_group: "sg-27544d5d"
