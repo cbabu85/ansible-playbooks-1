@@ -10,7 +10,7 @@
       - "group_vars/vault.yml"
     vars:
       instance_type: t2.medium
-      instance_name: apt-ebs-test3
+      instance_name: tmp-ebs-test2
       instance_class: demo-servers
       instance_orgtype: apt
       security_group: EBS-Scale-Test
@@ -139,14 +139,15 @@
 
   - name: Provision an EC2 Instance
     # TODO: prohibits the use of a loop. rethink this.
-    hosts: apt-ebs-test3
+    hosts: tmp-ebs-test2
     become: yes
     tags: provision
+    gather_facts: False
     vars_files:
       - "group_vars/vault.yml"
     vars:
       instance_type: t2.medium
-      instance_name: apt-ebs-test3
+      instance_name: tmp-ebs-test2
       instance_id: "{{hostvars[inventory_hostname]['instance_id']}}"
       instance_class: demo-servers
       instance_orgtype: apt
@@ -157,7 +158,7 @@
       count: 1
 
       # LVM settings
-      vg_disk_size: 100
+      vg_disk_size: 10
       lvm_filesystem: ext4
 
       # AWS.cli
@@ -176,7 +177,7 @@
      - setup: # aka gather_facts
 
     roles:
-      #      - { role: common, tags: common}
+        - { role: common, tags: common}
         - { role: aws.cli, tags: aws.cli}
         - { role: aws.ebs_scale, tags: ebs_scale}
 
@@ -186,8 +187,8 @@
           filters:
             "tag:Name": "{{instance_name}}"
           region: "{{region}}"
-          #          aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-          # aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+          aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+          aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
         register: ec2vol
 
 # TODO:
