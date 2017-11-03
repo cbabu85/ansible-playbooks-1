@@ -47,7 +47,7 @@
 # - include: lvm_setup.yml
 
 - name: Install jq for json queries and bc for bash arithmetic
-  apt: name=jq state=present
+  apt: name={{item}} state=present
   with_items:
     - jq
     - bc
