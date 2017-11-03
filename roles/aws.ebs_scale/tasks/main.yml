@@ -77,15 +77,17 @@
   cron:
     name: "EBS Autoscaling"
     user: "{{system_default_user}}"
-    minute: "{{cron_minute | default('*/1')}}"
-    hour: "{{cron_hour | default('*/1')}}"
+    minute: "{{cron_minute | default('30')}}"
+    hour: "{{cron_hour | default('*')}}"
     job: "sudo {{ebs_autoscale_script_dest}} >> /var/log/ebs_autoscale.log 2>&1"
     state: present
     disabled: no
 
 - name: Execute initial EBS_Autoscale if it hasn't run yet
   become_user: "{{system_default_user}}"
-  shell: "sudo {{ebs_autoscale_script_dest}}"
+  become: true
+  shell: sudo "{{ebs_autoscale_script_dest}}"
+  tags: initebsrun
 
 - name: Update permissions to lvm mount dir
   file:
