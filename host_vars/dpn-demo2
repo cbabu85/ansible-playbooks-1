@@ -5,4 +5,4 @@ sshd_port:
 
 ruby_version: 2.3.1
 
-use_efs: true
+use_efs: false
