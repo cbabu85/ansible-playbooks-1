@@ -1,2 +1,4 @@
 ---
+dependencies:
+  - {role: 030.certbot, tags: certbot, when: letsencrypt_ssl == true}
 
