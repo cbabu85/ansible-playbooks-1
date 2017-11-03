@@ -8,17 +8,17 @@
         nfs_directories:
           - name: "apt"
             subdirs:
-             - "data"
-             - "logs"
-             - "restore"
-             - "replication"
+              #- "data"
+              #- "logs"
+              #- "restore"
+              #- "replication"
           - name: "dpn"
             subdirs:
-             - "data"
-             - "logs"
-             - "restore"
-             - "replication"
-             - "staging"
+              #  - "data"
+              # - "logs"
+              # - "restore"
+              # - "replication"
+              # - "staging"
           - name: "ops_data"
             subdirs:
               - influxdb
