@@ -96,3 +96,6 @@ php_tunables:
   date.timezone: "America/New_York"
 
 content_security_policy: true
+
+# Dependency condition for certbot role. Look in meta/main.yml
+letsencrypt_ssl: true
