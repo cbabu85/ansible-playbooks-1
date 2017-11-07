@@ -65,7 +65,7 @@ ex_maxfilesize: "5497558138880"
 ex_skipalreadyprocessed: "true"
 ex_deleteonsuccess: "true"
 ex_logtostderr: "false"
-ex_usevolumeservice: "true"
+ex_usevolumeservice: "false"
 ex_volumeserviceport: 8898
 ex_loglevel: 4
 ex_bucketreadercachehours: 24
