@@ -94,6 +94,17 @@ ord() {
   printf '%d' "'$1"
 }
 
+add_to_fstab(){
+    fstab=/etc/fstab
+    fstab_entry="/dev/vg_$NAME/lv_$NAME $MOUNT_POINT ext4 rw,nobootwait 0 0"
+    if [[ $(grep -q "$fstab_entry" $fstab) ]]; then
+         echo "Entry in fstab exists. Doing nothing."
+    else
+         echo "Entry in fstab does not exists. Adding for persistence."
+        sudo echo $fstab_entry >> /etc/fstab
+    fi
+  }
+
 next_disk() {
     printf '%s\n' ${FUNCNAME[0]}
     # No disk exist yet
@@ -163,6 +174,8 @@ initialize_lv() {
 
     sudo mkdir -p $MOUNT_POINT
     sudo mount /dev/vg_$NAME/lv_$NAME $MOUNT_POINT
+    add_to_fstab
+
 }
 
 extend_lv() {
