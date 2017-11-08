@@ -73,6 +73,19 @@ MAX_DISKS="{{vg_max_disks}}"
 # base AWS CLI command
 AWS_EC2="/usr/local/bin/aws ec2"
 
+send_email_notification() {
+		SERVER_NAME=$HOSTNAME
+		SENDER=$(whoami)
+		USER="noreply"
+
+		SUBJECT="EBS Scale /dev/xvd${DISK_LETTER} on server $SERVER_NAME"
+		RECEIVER="christian@aptrust.org"
+		TEXT="EBS scale extended the LVM."
+
+		MAIL_TXT="Subject: $SUBJECT\nFrom: $SENDER\nTo: $RECEIVER\n\n$TEXT"
+		echo -e $MAIL_TXT | sendmail -t
+}
+
 
 chr() {
   printf \\$(printf '%03o' $1)
@@ -130,6 +143,8 @@ add_disk() {
     $AWS_EC2 modify-instance-attribute --instance-id $INSTANCE_ID --block-device-mappings "[{\"DeviceName\": \"/dev/sd${DISK_LETTER}\",\"Ebs\":{\"DeleteOnTermination\":true}}]" || return 1
 
     sudo pvcreate /dev/xvd${DISK_LETTER} || return 1 #/dev/sdX is attached as /dev/xvdX
+    add_to_fstab
+    send_email_notification
 }
 
 last_disk() {
