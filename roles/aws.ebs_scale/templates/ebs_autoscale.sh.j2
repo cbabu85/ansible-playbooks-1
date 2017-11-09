@@ -94,6 +94,8 @@ ord() {
   printf '%d' "'$1"
 }
 
+timestamp=$(date --rfc-3339=seconds)
+
 add_to_fstab(){
     fstab=/etc/fstab
     fstab_entry="/dev/vg_$NAME/lv_$NAME $MOUNT_POINT ext4 rw,nobootwait 0 0"
@@ -106,7 +108,7 @@ add_to_fstab(){
   }
 
 next_disk() {
-    printf '%s\n' ${FUNCNAME[0]}
+    printf '%s %s\n' $timestamp ${FUNCNAME[0]}
     # No disk exist yet
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
@@ -124,7 +126,7 @@ next_disk() {
 }
 
 add_disk() {
-    printf 'FUNCTION: %s\n%s' "${FUNCNAME[0]}" "$1"
+    printf '%s %s %s\n' $timestamp "${FUNCNAME[0]}" "$1"
     if [ "x"$1 == "x" ]; then
         ADISK_LETTER=$START_DISK_LETTER
     else
@@ -159,14 +161,14 @@ add_disk() {
 }
 
 last_disk() {
-    printf '%s\n' ${FUNCNAME[0]}
+    printf '%s %s\n' $timestamp "${FUNCNAME[0]}"
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
     root_device=`jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info`
     LAST_DISK_LETTER=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /etc/ec2_instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/'`
 }
 
 initialize_lv() {
-    printf '%s\n' ${FUNCNAME[0]}
+    printf '%s %s\n' $timestamp "${FUNCNAME[0]}"
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
     sudo vgcreate vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvcreate -l 100%VG -n lv_$NAME vg_$NAME
@@ -179,6 +181,7 @@ initialize_lv() {
 }
 
 extend_lv() {
+    printf '%s %s\n' $timestamp "${FUNCNAME[0]}"
     sudo vgextend vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvextend -l +100%FREE /dev/vg_$NAME/lv_$NAME
     sudo resize2fs /dev/vg_$NAME/lv_$NAME
@@ -260,7 +263,6 @@ if [[ $less_space_needed -eq 1 ]]; then
         TOTAL_SPACE=`df | grep $MOUNT_POINT | awk '{print $2}'`
         NEW_SIZE=`echo "($TOTAL_SPACE-($DISK_SIZE*1000000*1.1))/1024" | bc`
         LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
-
         cat << EOF
 ## TODO: Move shrinking into separate script and query NSQ to ensure nothing
 ## is working right now before unmounting and shrinking the drive.
@@ -269,6 +271,7 @@ Unable to perform an online shrinking. The partion need to be unmounted.
 
 Tasks to perform:
 
+$timestamp ---SHRINKING VOLUME START----
 Check if any bags are in NSQ flight
 umount $MOUNT_POINT
 e2fsck -f /dev/vg_${NAME}/lv_${NAME}
@@ -283,6 +286,7 @@ $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
 $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
 Detach and delete volume in AWS console
 
+$timestamp ---SHRINKING VOLUME END----
 
 EOF
     fi
