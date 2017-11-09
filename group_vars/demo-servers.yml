@@ -67,10 +67,10 @@ apt_cronjobs:
     params: "-stats={{goapp_log_path}}/apt_bucket_reader_stats.json"
   apt_queue:
     hour: "*/1"
-    minute: "*/30"
+    minute: "30"
     params: "-stats={{goapp_log_path}}/apt_queue_stats.json"
   apt_queue_fixity:
-    hour: "*/1"
+    hour: "*"
     minute: "*/30"
     params: "-maxfiles=2500"
 
