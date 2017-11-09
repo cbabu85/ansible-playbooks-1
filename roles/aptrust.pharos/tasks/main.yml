@@ -188,8 +188,8 @@
   - name: Setup Cron job for email notification helper script
     cron: name="pharos notify"
           user="{{system_default_user}}"
-          minute='*/1'
-          hour='*/1'
+          minute='*/10'
+          hour='*'
           job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py
              >> {{pharos_app_root}}/log/cron_pharos_notify.log 2>&1"
           state=present
