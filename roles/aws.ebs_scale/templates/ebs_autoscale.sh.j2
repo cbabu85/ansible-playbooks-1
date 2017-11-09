@@ -269,6 +269,7 @@ Unable to perform an online shrinking. The partion need to be unmounted.
 
 Tasks to perform:
 
+Check if any bags are in NSQ flight
 umount $MOUNT_POINT
 e2fsck -f /dev/vg_${NAME}/lv_${NAME}
 resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
@@ -281,7 +282,19 @@ mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
 $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
 $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
 Detach and delete volume in AWS console
+
+
 EOF
     fi
+
+check_nsq_flight(){
+     airtraffic=`curl http://127.0.0.1:4151/stats -v | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
+     if [ "$airtraffic" -gt "0" ]; then
+       echo "Seeing some air traffic. Please stand by."
+     else
+       echo "Nobody is flying. Good to go."
+     fi
+}
+
 fi
 
