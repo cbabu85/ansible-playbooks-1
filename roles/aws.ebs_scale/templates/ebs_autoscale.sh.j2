@@ -293,6 +293,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
             $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
             $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
+            sudo supervisorctl start all
             echo "$timestamp ---SHRINKING VOLUME END----"
         else
             echo "$timestamp -- Can't shrink right now, trying again later"
