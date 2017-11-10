@@ -73,6 +73,9 @@ MAX_DISKS="{{vg_max_disks}}"
 # base AWS CLI command
 AWS_EC2="/usr/local/bin/aws ec2"
 
+# NSQ Address
+NSQ_ADDRESS="127.0.0.1:4151"
+
 send_email_notification() {
 		SERVER_NAME=$HOSTNAME
 		SENDER=$(whoami)
@@ -252,6 +255,17 @@ if [[ $more_space_needed -eq 1 ]]; then
     fi
 fi
 
+check_nsq_inflight(){
+     airtraffic=`curl http://$NSQ_ADDRESS/stats -v | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
+     if [ "$airtraffic" -gt "0" ]; then
+       echo "Seeing some air traffic. Please stand by."
+       nsq_result='standby'
+     else
+       echo "Nobody is flying. Good to go. Shutting down services"
+       nsq_result='takeoff'
+     fi
+}
+
 # When less space needed and still inside the disk limit print out manual action to carry out.
 # resize2fs can't do a resize while the parition is mounted. The partition needs to be unmounted first,
 # which mostly requires the service to be put in maintencance mode
@@ -271,34 +285,8 @@ Unable to perform an online shrinking. The partion need to be unmounted.
 
 Tasks to perform:
 
-$timestamp ---SHRINKING VOLUME START----
 Check if any bags are in NSQ flight
-umount $MOUNT_POINT
-e2fsck -f /dev/vg_${NAME}/lv_${NAME}
-resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
-lvreduce -f -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
-vgreduce -a vg_${NAME}
-lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
-e2fsck -f /dev/vg_${NAME}/lv_${NAME}
-resize2fs /dev/vg_${NAME}/lv_${NAME}
-mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
-$AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
-$AWS_EC2 delete-volume --volume-id $LAST_VOLUME
 Detach and delete volume in AWS console
-
-$timestamp ---SHRINKING VOLUME END----
-
 EOF
     fi
-
-check_nsq_flight(){
-     airtraffic=`curl http://127.0.0.1:4151/stats -v | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
-     if [ "$airtraffic" -gt "0" ]; then
-       echo "Seeing some air traffic. Please stand by."
-     else
-       echo "Nobody is flying. Good to go."
-     fi
-}
-
 fi
-
