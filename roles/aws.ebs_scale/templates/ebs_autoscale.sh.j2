@@ -274,9 +274,29 @@ if [[ $less_space_needed -eq 1 ]]; then
     if [[ $min_limit_reached -eq 1 ]]; then
         echo "Too much space but minimum disk limit reached"
     else
+        echo "$timestamp ---SHRINKING VOLUME START----"
         TOTAL_SPACE=`df | grep $MOUNT_POINT | awk '{print $2}'`
         NEW_SIZE=`echo "($TOTAL_SPACE-($DISK_SIZE*1000000*1.1))/1024" | bc`
         LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
+        check_nsq_inflight()
+        if [[ nsq_result == 'takeoff' ]];then
+            echo "$timestamp - Stopping exchange services"
+            sudo supervisorctl stop all
+            umount $MOUNT_POINT
+            e2fsck -f /dev/vg_${NAME}/lv_${NAME}
+            resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
+            lvreduce -f -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
+            vgreduce -a vg_${NAME}
+            lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
+            e2fsck -f /dev/vg_${NAME}/lv_${NAME}
+            resize2fs /dev/vg_${NAME}/lv_${NAME}
+            mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
+            $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
+            $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
+            echo "$timestamp ---SHRINKING VOLUME END----"
+        else
+            echo "$timestamp -- Can't shrink right now, trying again later"
+        fi
         cat << EOF
 ## TODO: Move shrinking into separate script and query NSQ to ensure nothing
 ## is working right now before unmounting and shrinking the drive.
