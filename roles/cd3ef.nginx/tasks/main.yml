@@ -94,3 +94,8 @@
     tags: logrotatefix
 
   - include: vhost.yml
+
+  - name: Ensure SSL setup by certbot
+    become: true
+    shell: "certbot --nginx -d {{ansible_fqdn}} -m admin@aptrust.org --agree-tos --noninteractive"
+    tags: ensurecertbot
