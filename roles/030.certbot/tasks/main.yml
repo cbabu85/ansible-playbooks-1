@@ -23,6 +23,7 @@
   when: (certbot_create_certs) and (certbot_nginx)
   with_items:
     - "{{ certbot_list_of_certs_to_create }}"
+
 - name: renew certs every month
   cron:
     name: renewCertbotCerts
