@@ -1,4 +1,4 @@
-certbot_create_certs: false
+certbot_create_certs: true
 
 certbot_renew_certs: false
 certbot_renew_certs_minute: 12,45
