@@ -241,8 +241,8 @@ slack_token: "{{vault_slack_token}}"
 
 # NFS
 # Ansible host that is serving NFS
-nfs_server_host: apt-util
-nfs_server_hostname: 'nfs.aptrust.org'
+nfs_server_host: apt-ops
+nfs_server_hostname: 'apt-ops.aptrust.org'
 # Directory where NFS exports are served from on nfs server
 nfs_export_dir: '/srv/nfs'
 # Mount dir for nfs clients
