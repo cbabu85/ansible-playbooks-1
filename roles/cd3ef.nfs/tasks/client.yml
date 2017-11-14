@@ -26,7 +26,9 @@
     group: "{{system_default_user}}"
     state: directory
     mode: 0755
-  with_items: "{{ nfs_mount_dir }}"
+  with_items:
+    - "{{ nfs_mount_dir }}"
+    - "{{ nfs_client_imports }}"
 
 # Example: nfs_client_imports: [{ local: "/home", remote: "/home", remote: /home }] }
 - name: mount the shared directories
