@@ -5,13 +5,16 @@
 # Copy sh scripts into folder. chmod +x
 # Later: Add cronjob
 
-- name: Create psql_backup folder
+- name: Create psql_backup config folder
   file:
-    path: /etc/psql_backup
+    path: "{{item}}"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
     mode: 0755
     state: directory
+  with_items:
+    - '/etc/psql_backup'
+    - "{{pg_backup_dir}}"
 
 - name: Copy psql_backup scripts
   copy:
