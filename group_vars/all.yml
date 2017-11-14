@@ -252,10 +252,12 @@ nfs_directories:
    - path: "backups"
      source:
         - "apt-demo-repo2.aptrust.org"
+        - "apt-demo-services.aptrust.org"
         - "apt-prod-repo2.aptrust.org"
    - path: "logs"
      source:
         - "apt-demo-repo2.aptrust.org"
+        - "apt-demo-services.aptrust.org"
         - "apt-prod-repo2.aptrust.org"
      options: '(rw,async)'
 
