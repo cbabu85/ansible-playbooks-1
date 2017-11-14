@@ -9,6 +9,8 @@
 # /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
 #
 
-{%for item in nfs_directories %}
-{{nfs_export_dir}}/{{item.name}} *{{nfs_export_options}}
+{%for dir in nfs_directories %}
+{{nfs_export_dir}}/{{dir.path}} {% for source in dir.source %}{{source|default('*')}}{{dir.options|default('(rw,async,no_subtree_check,no_root_squash)')}} {% endfor %}
+
 {% endfor %}
+
