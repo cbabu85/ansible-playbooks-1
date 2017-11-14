@@ -6,15 +6,14 @@
 
 - name: Ensure existence of export directories
   file:
-    path: "{{nfs_export_dir}}/{{item.0.name}}/{{item.1}}"
+    path: "{{nfs_export_dir}}/{{item.path}}"
     owner: "{{system_default_user}}"
     group: "{{deploy_group}}"
     mode: 0775
     recurse: yes
     state: directory
-  with_subelements:
+  with_items:
     - "{{nfs_directories}}"
-    - subdirs
   register: existdir
   tags: exportdirs
 
