@@ -247,7 +247,17 @@ nfs_server_hostname: 'apt-ops.aptrust.org'
 nfs_export_dir: '/srv/nfs'
 # Mount dir for nfs clients
 nfs_mount_dir: '/mnt/nfs'
-
+nfs_directories:
+  #  - { path: /mnt/data, source: 127.0.0.1, options: "(rw,sync,no_subtree_check,no_root_squash)" }
+   - path: "backups"
+     source:
+        - "apt-demo-repo2.aptrust.org"
+        - "apt-prod-repo2.aptrust.org"
+   - path: "logs"
+     source:
+        - "apt-demo-repo2.aptrust.org"
+        - "apt-prod-repo2.aptrust.org"
+     options: '(rw,async)'
 
 # Certbot LetsEncrypt
 certbot_create_certs: true
