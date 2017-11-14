@@ -101,3 +101,4 @@ grafana_default:
   max_open_files: 10000
   plugins_dir: "{{ grafana_dir_plugins }}"
   restart_on_upgrade: 'false'
+  pid_file_dir: '/var/run/grafana'
