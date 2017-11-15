@@ -275,3 +275,6 @@ certbot_mail_address: admin@aptrust.org
 certbot_renew_certs: true
 certbot_nginx: true
 certbot_standalone: false
+
+#PSQL_backup
+pg_backup_dir: "/mnt/nfs/backups/psql_backup/{{ansible_hostname}}/"
