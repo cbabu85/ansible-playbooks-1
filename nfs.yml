@@ -3,32 +3,14 @@
       - "group_vars/vault.yml"
     vars:
         playbook_name: 'nfs'
-        # TODO: Move to all.yml
-        # name is root, subdirs are subdirs
-        nfs_directories:
-          - name: "apt"
-            subdirs:
-              #- "data"
-              #- "logs"
-              #- "restore"
-              #- "replication"
-          - name: "dpn"
-            subdirs:
-              #  - "data"
-              # - "logs"
-              # - "restore"
-              # - "replication"
-              # - "staging"
-          - name: "ops_data"
-            subdirs:
-              - influxdb
-              - grafana
-              - logs
 
         # NFS Client
         nfs_client_imports:
-          - local: "{{nfs_mount_dir}}/{{orgtype}}"
-            remote: "{{nfs_export_dir}}/{{orgtype}}"
+          - local: "{{nfs_mount_dir}}/logs"
+            remote: "{{nfs_export_dir}}/logs"
+          - local: "{{nfs_mount_dir}}/backups"
+            remote: "{{nfs_export_dir}}/backups"
+
         # NFS Server:
         nfs_exports:
           - path: "{{nfs_export_dir}}/{{nfs_directories}}"
