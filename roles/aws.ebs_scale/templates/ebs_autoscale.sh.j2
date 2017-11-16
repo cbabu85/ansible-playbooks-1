@@ -79,11 +79,12 @@ NSQ_ADDRESS="127.0.0.1:4151"
 send_email_notification() {
 		SERVER_NAME=$HOSTNAME
 		SENDER=$(whoami)
+		RECEIVER="christian@aptrust.org"
 		USER="noreply"
 
-		SUBJECT="EBS Scale /dev/xvd${DISK_LETTER} on server $SERVER_NAME"
-		RECEIVER="christian@aptrust.org"
-		TEXT="EBS scale extended the LVM."
+		SUBJECT=[[ "x"$1 == "x" ]]"EBS Scale /dev/xvd${DISK_LETTER} on server $SERVER_NAME" && $1
+		TEXT=[[ "x"$2 == "x" ]]"EBS scale extended the LVM." && $2
+
 
 		MAIL_TXT="Subject: $SUBJECT\nFrom: $SENDER\nTo: $RECEIVER\n\n$TEXT"
 		echo -e $MAIL_TXT | sendmail -t
@@ -259,10 +260,10 @@ check_nsq_inflight(){
      airtraffic=`curl http://$NSQ_ADDRESS/stats -v | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
      if [ "$airtraffic" -gt "0" ]; then
        echo "Seeing some air traffic. Please stand by."
-       nsq_result='standby'
+       nsq_result="standby"
      else
        echo "Nobody is flying. Good to go. Shutting down services"
-       nsq_result='takeoff'
+       nsq_result="takeoff"
      fi
 }
 
