@@ -80,7 +80,7 @@
 
 # This is a dupliacte from group_vars/all.yml to enure portability of role
 - name: set orgmountdirlogs fact
-  set_fact: orgmountdirlogs={{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}
+  set_fact: orgmountdirlogs={{mount_dir}}/logs/{{ansible_hostname}}
   tags: [always, mountdir]
 
 - name: "check mount point {{ orgmountdir }}"
