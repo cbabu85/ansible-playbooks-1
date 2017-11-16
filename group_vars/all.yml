@@ -199,7 +199,7 @@ icinga2_web2_db_pass: "{{vault_icinga2_web2_db_pass}}"
 influxdbwriter_host: "{{vault_influxdb_host}}"
 
 # InfluxDB
-ops_data_influxdb: /mnt/efs/apt/ops_data/influxdb
+ops_data_influxdb: /srv/nfs/ops_data/influxdb
 influxdb_data_dir: "{{ops_data_influxdb}}/data"
 
 influxdb_host: "{{vault_influxdb_host}}"

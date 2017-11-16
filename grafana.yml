@@ -7,9 +7,9 @@
         playbook_name: 'grafana'
 
         use_efs: true
-        ops_data: /mnt/efs/apt/ops_data
-        ops_data_influxdb: /mnt/efs/apt/ops_data/influxdb
-        ops_data_grafana: /mnt/efs/apt/ops_data/grafana
+        ops_data: /srv/ops_data
+        ops_data_influxdb: "{{ops_data}}/influxdb"
+        ops_data_grafana: "{{ops_data}}/grafana"
 
         # Postgresql
         grafana_psql_db: grafana
