@@ -284,18 +284,26 @@ if [[ $less_space_needed -eq 1 ]]; then
             echo "$timestamp - Stopping exchange services"
             sudo supervisorctl stop all
             umount $MOUNT_POINT
-            e2fsck -f /dev/vg_${NAME}/lv_${NAME}
-            resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
-            lvreduce -f -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
-            vgreduce -a vg_${NAME}
-            lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
-            e2fsck -f /dev/vg_${NAME}/lv_${NAME}
-            resize2fs /dev/vg_${NAME}/lv_${NAME}
-            mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
-            $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
-            $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
-            sudo supervisorctl start all
-            echo "$timestamp ---SHRINKING VOLUME END----"
+            if [ $? -eq 0 ]; then
+              e2fsck -f /dev/vg_${NAME}/lv_${NAME}
+              resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
+              lvreduce -f -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
+              vgreduce -a vg_${NAME}
+              lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
+              e2fsck -f /dev/vg_${NAME}/lv_${NAME}
+              resize2fs /dev/vg_${NAME}/lv_${NAME}
+              mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
+              $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
+              $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
+              sudo supervisorctl start all
+              echo "$timestamp ---SHRINKING VOLUME END----"
+            else
+              msg="$timestamp \n Unable to unmount. Abort shrinking."
+              subj="Unable to unmount. Abort shrinking on $hostname"
+              echo $msg
+              send_notification $subj $msg
+              exit 1
+            fi
         else
             echo "$timestamp -- Can't shrink right now, trying again later"
         fi
