@@ -102,7 +102,7 @@ timestamp=$(date --rfc-3339=seconds)
 
 add_to_fstab(){
     fstab=/etc/fstab
-    fstab_entry="/dev/vg_$NAME/lv_$NAME $MOUNT_POINT ext4 rw,nobootwait 0 0"
+    fstab_entry="/dev/vg_$NAME/lv_$NAME $MOUNT_POINT ext4 rw,nofail 0 0"
     if [[ $(grep -q "$fstab_entry" $fstab) ]]; then
          echo "Entry in fstab exists. Doing nothing."
     else
