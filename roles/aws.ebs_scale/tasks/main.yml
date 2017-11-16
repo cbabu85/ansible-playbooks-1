@@ -61,6 +61,7 @@
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
     mode: 0750
+  tags: copyebsscript
 
 - name: Touch logfile
   file:
