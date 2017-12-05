@@ -100,7 +100,18 @@ ord() {
 
 timestamp=$(date --rfc-3339=seconds)
 
+check_if_mounted(){
+    printf '%s %s\n' $timestamp ${FUNCNAME[0]}
+    if grep -qs "${MOUNTPOINT}" /proc/mounts; then
+      echo "It's mounted. All good."
+    else
+          echo "It's not mounted. Go panic."
+          exit 1
+        fi
+}
+
 add_to_fstab(){
+    printf '%s %s\n' $timestamp ${FUNCNAME[0]}
     fstab=/etc/fstab
     fstab_entry="/dev/vg_$NAME/lv_$NAME $MOUNT_POINT ext4 rw,nofail 0 0"
     if [[ $(grep -q "$fstab_entry" $fstab) ]]; then
@@ -226,9 +237,11 @@ EOF
         add_disk || exit 1
         extend_lv || exit 1
     done
+    check_if_mounted || exit 1
 fi
 
 # Checking if we need to do something
+# TODO: Add a conditional that checks if mount point exists,if it does not we need to mount it.
 free_space=`df | grep $MOUNT_POINT | awk '{print $4}'`
 
 # Calc threshold values
@@ -294,6 +307,12 @@ if [[ $less_space_needed -eq 1 ]]; then
               resize2fs /dev/vg_${NAME}/lv_${NAME}
               mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
               $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
+              volume_status=""
+              while [ "x"$volume_status != "xavailable" ]; do
+                sleep 1
+                $AWS_EC2 describe-volumes --volume-ids $LAST_VOLUME > /etc/ebs_to_shrink
+                volume_status=`jq -r '.Volumes[].State' /etc/ebs_to_shrink`
+              done
               $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
               sudo supervisorctl start all
               echo "$timestamp ---SHRINKING VOLUME END----"
@@ -310,13 +329,6 @@ if [[ $less_space_needed -eq 1 ]]; then
         cat << EOF
 ## TODO: Move shrinking into separate script and query NSQ to ensure nothing
 ## is working right now before unmounting and shrinking the drive.
-Too much empty space.
-Unable to perform an online shrinking. The partion need to be unmounted.
-
-Tasks to perform:
-
-Check if any bags are in NSQ flight
-Detach and delete volume in AWS console
 EOF
     fi
 fi
