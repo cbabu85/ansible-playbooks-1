@@ -314,6 +314,8 @@ if [[ $less_space_needed -eq 1 ]]; then
                 volume_status=`jq -r '.Volumes[].State' /etc/ebs_to_shrink`
               done
               $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
+              # Update ec2_instance_info to have the currrently attached volumes up-to-date.
+              $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
               sudo supervisorctl start all
               echo "$timestamp ---SHRINKING VOLUME END----"
             else
