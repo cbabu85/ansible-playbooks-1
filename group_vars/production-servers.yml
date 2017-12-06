@@ -22,6 +22,8 @@ pharos_url: "https://repo.aptrust.org"
 pharos_aws_ses_user: "{{vault_pharos_prod_aws_ses_user}}"
 pharos_aws_ses_pwd: "{{vault_pharos_prod_aws_ses_pwd}}"
 
+pharos_nsq_base_url: "http://prod-services.aptrust.org:4151"
+
 pharos_system_user: "system@aptrust.org"
 pharos_system_user_pwd: !vault |
    $ANSIBLE_VAULT;1.1;AES256

@@ -29,6 +29,7 @@ pharos_url: "https://demo.aptrust.org"
 pharos_aws_ses_user: "{{vault_pharos_demo_aws_ses_user}}"
 pharos_aws_ses_pwd: "{{vault_pharos_demo_aws_ses_pwd}}"
 
+pharos_nsq_base_url: "http://demo-services.aptrust.org:4151"
 # Pharos System user for API access
 pharos_system_user: "system@aptrust.org"
 pharos_system_user_pwd: !vault |
