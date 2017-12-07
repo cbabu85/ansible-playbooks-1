@@ -293,10 +293,19 @@ if [[ $less_space_needed -eq 1 ]]; then
         TOTAL_SPACE=`df | grep $MOUNT_POINT | awk '{print $2}'`
         NEW_SIZE=`echo "($TOTAL_SPACE-($DISK_SIZE*1000000*1.1))/1024" | bc`
         LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
+        # Check for inflight items to avoid stopping services if not necessary.
+        # Shrinking will commence once no worker is processing items.
         check_nsq_inflight
         if [ $nsq_result == "takeoff" ];then
             echo "$timestamp - Stopping exchange services"
             sudo supervisorctl stop all
+            # Set dummy value to run through loop at least once
+            openfiles=100
+            while [ $openfiles -gt 0 ]; do
+              echo "$timestamp - Making sure no open files are present"
+              sleep 3
+              openfiles=`sudo lsof | grep $MOUNT_POINT |wc -l`
+            done
             umount $MOUNT_POINT
             if [ $? -eq 0 ]; then
               LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
