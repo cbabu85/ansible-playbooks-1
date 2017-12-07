@@ -44,3 +44,5 @@ vg_min_disks: 1
 
 # Maximum number of disks to use
 vg_max_disks: 10
+
+nsq_address: "127.0.0.1:4151"
