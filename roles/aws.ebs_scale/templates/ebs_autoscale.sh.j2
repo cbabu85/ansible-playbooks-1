@@ -298,6 +298,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             sudo supervisorctl stop all
             umount $MOUNT_POINT
             if [ $? -eq 0 ]; then
+              LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
               e2fsck -f /dev/vg_${NAME}/lv_${NAME}
               resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
               lvreduce -f -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
