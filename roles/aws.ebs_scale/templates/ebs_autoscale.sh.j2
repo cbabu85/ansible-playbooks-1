@@ -341,8 +341,6 @@ if [[ $less_space_needed -eq 1 ]]; then
             echo "$timestamp -- Can't shrink right now, trying again later"
         fi
         cat << EOF
-## TODO: Move shrinking into separate script and query NSQ to ensure nothing
-## is working right now before unmounting and shrinking the drive.
 EOF
     fi
 fi
