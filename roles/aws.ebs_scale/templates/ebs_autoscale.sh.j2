@@ -74,6 +74,7 @@ MAX_DISKS="{{vg_max_disks}}"
 AWS_EC2="/usr/local/bin/aws ec2"
 
 # NSQ Address
+# e.g. demo-services.aptrust.org:4151
 NSQ_ADDRESS="{{nsq_address}}"
 
 send_email_notification() {
@@ -271,7 +272,7 @@ fi
 
 check_nsq_inflight(){
     # If NSQ is not used it will default to empty and will default to the else clause below.
-     airtraffic=`curl http://$NSQ_ADDRESS/stats -v | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
+     airtraffic=`curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
      if [ "$airtraffic" -gt "0" ]; then
        echo "Seeing some air traffic. Please stand by."
        nsq_result="standby"
