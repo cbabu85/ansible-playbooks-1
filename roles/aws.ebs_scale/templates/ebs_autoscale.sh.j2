@@ -315,7 +315,7 @@ if [[ $less_space_needed -eq 1 ]]; then
               echo "$timestamp - The LAST_VOLUME is $LAST_VOLUME"
               e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
               resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
-              lvreduce -f -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
+              lvreduce -f -r -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
               vgreduce -a vg_${NAME}
               lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
               e2fsck -f /dev/vg_${NAME}/lv_${NAME}
