@@ -318,7 +318,7 @@ if [[ $less_space_needed -eq 1 ]]; then
               lvreduce -f -r -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
               vgreduce -a vg_${NAME}
               lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
-              e2fsck -f /dev/vg_${NAME}/lv_${NAME}
+              e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
               resize2fs /dev/vg_${NAME}/lv_${NAME}
               mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
               $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
