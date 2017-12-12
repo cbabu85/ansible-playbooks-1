@@ -53,8 +53,8 @@ efs_mount_uri: "fs-b4c91cfd.efs.us-east-1.amazonaws.com:/"
 
 # AWS EBS Autoscale
 # Starter disk volume in GB for LVM
-vg_disk_size: 300
-vg_max_disks: 20
+vg_disk_size: 500
+vg_max_disks: 12
 ebs_cron_minute: "*/15"
 nsq_address: "prod-services.aptrust.org:4151"
 
