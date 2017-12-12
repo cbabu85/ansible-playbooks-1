@@ -274,7 +274,7 @@ check_nsq_inflight(){
     # If NSQ is not used it will default to empty and will default to the else clause below.
      airtraffic=`curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
      if [ "$airtraffic" -gt "0" ]; then
-       echo "Seeing some air traffic. Please stand by."
+       echo "Seeing some air traffic: $airtraffic Please stand by. "
        nsq_result="standby"
      else
        echo "Nobody is flying. Good to go. Shutting down services"
@@ -303,14 +303,16 @@ if [[ $less_space_needed -eq 1 ]]; then
             # Set dummy value to run through loop at least once
             openfiles=100
             while [ $openfiles -gt 0 ]; do
-              echo "$timestamp - Making sure no open files are present"
+              echo "$timestamp - Waiting until no open files are present"
               sleep 3
               openfiles=`sudo lsof | grep $MOUNT_POINT |wc -l`
+              echo "$timestamp - Open files= $openfiles"
             done
             umount $MOUNT_POINT
             if [ $? -eq 0 ]; then
               LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
-              e2fsck -f /dev/vg_${NAME}/lv_${NAME}
+              echo "$timestamp - The LAST_VOLUME is $LAST_VOLUME"
+              e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
               resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
               lvreduce -f -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
               vgreduce -a vg_${NAME}
