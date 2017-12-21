@@ -1,6 +1,6 @@
     - name: Is master node setup already
       stat:
-        path: "/etc/icinga2/pki/{{icinga2_master_hostname}}.crt"
+        path: "/var/lib/icinga2/certs/{{icinga2_master_hostname}}.crt"
       register: mastercert
 
     - name: Master node setup

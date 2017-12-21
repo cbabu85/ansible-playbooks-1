@@ -31,24 +31,24 @@
       delegate_to: "{{icinga2_master_host}}"
 
     - name: create pki folder
-      file: path=/etc/icinga2/pki state=directory mode=0700 owner=nagios group=nagios
+      file: path=/var/lib/icinga2/certs state=directory mode=0700 owner=nagios group=nagios
       tags: nodeaction
 
     - name: create cert on new node
-      shell: icinga2 pki new-cert --cn "{{ ansible_hostname }}.aptrust.org" --key "/etc/icinga2/pki/{{ ansible_hostname }}.key" --cert "/etc/icinga2/pki/{{ ansible_hostname }}.crt"
+      shell: icinga2 pki new-cert --cn "{{ ansible_hostname }}.aptrust.org" --key "/var/lib/icinga2/certs/{{ ansible_hostname }}.key" --cert "/var/lib/icinga2/certs/{{ ansible_hostname }}.crt"
       tags: nodeaction
 
     - name: save the masters cert as trustedcert
-      shell: icinga2 pki save-cert --key "/etc/icinga2/pki/{{ ansible_hostname }}.key" --cert "/etc/icinga2/pki/{{ ansible_hostname }}.crt" --trustedcert /etc/icinga2/pki/trusted-master.crt --host "{{ icinga2_master_hostname }}"
+      shell: icinga2 pki save-cert --key "/var/lib/icinga2/certs/{{ ansible_hostname }}.key" --cert "/var/lib/icinga2/certs/{{ ansible_hostname }}.crt" --trustedcert /var/lib/icinga2/certs/trusted-master.crt --host "{{ icinga2_master_hostname }}"
       become: yes
       tags: nodeaction
 
     - name: request the certificate from the icinga server
-      shell: icinga2 pki request --host "{{ icinga2_master_hostname }}" --port 5665 --ticket "{{ticket.stdout}}" --key "/etc/icinga2/pki/{{ ansible_hostname }}.key" --cert "/etc/icinga2/pki/{{ ansible_hostname }}.crt" --trustedcert "/etc/icinga2/pki/trusted-master.crt" --ca "/etc/icinga2/pki/ca.key"
+      shell: icinga2 pki request --host "{{ icinga2_master_hostname }}" --port 5665 --ticket "{{ticket.stdout}}" --key "/var/lib/icinga2/certs/{{ ansible_hostname }}.key" --cert "/var/lib/icinga2/certs/{{ ansible_hostname }}.crt" --trustedcert "/var/lib/icinga2/certs/trusted-master.crt" --ca "/var/lib/icinga2/certs/ca.key"
       tags: nodeaction
 
     - name: node setup
-      shell: icinga2 node setup --ticket {{ ticket.stdout }} --endpoint {{ icinga2_master_hostname }} --zone {{ ansible_hostname }}.aptrust.org --master_host {{ icinga2_master_hostname }} --trustedcert /etc/icinga2/pki/trusted-master.crt --cn {{ ansible_hostname }}.aptrust.org --accept-config --accept-commands
+      shell: icinga2 node setup --ticket {{ ticket.stdout }} --endpoint {{ icinga2_master_hostname }} --zone {{ ansible_hostname }}.aptrust.org --master_host {{ icinga2_master_hostname }} --trustedcert /var/lib/icinga2/certs/trusted-master.crt --cn {{ ansible_hostname }}.aptrust.org --accept-config --accept-commands
       tags: nodeaction
 
     - name: Add global zone
