@@ -94,7 +94,6 @@
         - notification
         - syslog
         - mainlog
-        - perfdata
 
 # TODO: Add to role as option
     - name: Monitor RDS hosts
