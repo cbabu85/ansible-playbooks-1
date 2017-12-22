@@ -4,7 +4,7 @@ iam_policy_name: "EBS_AutoScaling"
 ebs_autoscale_script_dest: "/usr/local/bin/ebs_autoscale.sh"
 
 #Cronjob
-ebs_cron_minute: '*/30'
+ebs_cron_minute: '*/15'
 ebs_cron_hour: '*'
 vg_filesystem: ext4
 
