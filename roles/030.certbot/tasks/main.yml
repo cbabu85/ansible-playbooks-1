@@ -24,6 +24,16 @@
   with_items:
     - "{{ certbot_list_of_certs_to_create }}"
 
+- name: Set renew job standalone
+  set_fact:
+    certbot_renew_certs_job: /usr/bin/certbot renew
+  when: certbot_standalone
+
+- name: Set renew job nginx
+  set_fact:
+    certbot_renew_certs_job: /usr/bin/certbot renew --nginx
+  when: certbot_nginx
+
 - name: renew certs every month
   cron:
     name: renewCertbotCerts
