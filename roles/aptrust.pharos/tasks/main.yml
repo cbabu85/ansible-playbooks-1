@@ -12,6 +12,7 @@
         - postgresql-client
         - libpq5
         - libpqxx-dev
+        - libxrender1 #Required for PDF report generation
         - libsqlite3-dev
         - nodejs
         - zip
