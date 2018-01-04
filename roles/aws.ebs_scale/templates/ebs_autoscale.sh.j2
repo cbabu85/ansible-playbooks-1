@@ -114,12 +114,12 @@ check_if_mounted(){
 add_to_fstab(){
     printf '%s %s\n' $timestamp ${FUNCNAME[0]}
     fstab=/etc/fstab
-    # Getting the device name since LVM thinks its funny to double dashes in the vg.
+    # Getting the device name since Ubuntu thinks its funny to double
+    # dash the vg.
     MOUNT_DEVICE=`grep $MOUNT_POINT /proc/mounts | awk '{print $1}'`
-    #fstab_entry="/dev/mapper/vg_$NAME/lv_$NAME $MOUNT_POINT ext4 rw,nofail 0 0"
-
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nofail 0 0"
-    if [[ $(grep -q "$fstab_entry" $fstab) ]]; then
+
+    if $(grep -q "$fstab_entry" $fstab); then
          echo "Entry in fstab exists. Doing nothing."
     else
          echo "Entry in fstab does not exists. Adding for persistence."
