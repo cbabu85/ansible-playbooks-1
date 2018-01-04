@@ -99,20 +99,23 @@ ord() {
   printf '%d' "'$1"
 }
 
-timestamp=$(date --rfc-3339=seconds)
+function log {
+    echo "[$(date --rfc-3339=seconds)]: $*"
+    }
 
 check_if_mounted(){
-    printf '%s %s\n' $timestamp ${FUNCNAME[0]}
+    log ${FUNCNAME[0]}
     if grep -qs "${MOUNTPOINT}" /proc/mounts; then
-      echo "It's mounted. All good."
+        log "${MOUNTPOINT} is mounted. All good."
     else
-          echo "It's not mounted. Go panic."
-          exit 1
-        fi
+        log "${MOUNTPOINT} not mounted. Go panic."
+        # TODO: Alert email.
+        exit 1
+    fi
 }
 
 add_to_fstab(){
-    printf '%s %s\n' $timestamp ${FUNCNAME[0]}
+    log ${FUNCNAME[0]}
     fstab=/etc/fstab
     # Getting the device name since Ubuntu thinks its funny to double
     # dash the vg.
@@ -120,15 +123,17 @@ add_to_fstab(){
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nofail 0 0"
 
     if $(grep -q "$fstab_entry" $fstab); then
-         echo "Entry in fstab exists. Doing nothing."
+         log "Entry in fstab exists. Doing nothing."
     else
-         echo "Entry in fstab does not exists. Adding for persistence."
+        log "Entry in fstab does not exists. Adding for persistence."
+        sudo cp $fstab /etc/fstab.bak
         sudo echo $fstab_entry >> /etc/fstab
     fi
   }
 
 next_disk() {
-    printf '%s %s\n' $timestamp ${FUNCNAME[0]}
+    log ${FUNCNAME[0]}
+# TODO: This logic doesn't work. Redo.
     # No disk exist yet
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
@@ -136,7 +141,8 @@ next_disk() {
         num=`ord $1`
         if [ $num -ge 122 ];then
             # Too lazy to handle /dev/sdaa, 24 disks (24TB) should be enough, no?
-            echo "No more disk letter available"
+            log "No more disk letter available"
+            send_email_notification "Ran out of more disk letters." "Need manual intervention"
             DISK_LETTER=""
             return 1
         fi
@@ -146,7 +152,8 @@ next_disk() {
 }
 
 add_disk() {
-    printf '%s %s %s\n' $timestamp "${FUNCNAME[0]}" "$1"
+    log "${FUNCNAME[0]}" "$1"
+# TODO: This condition does not bear the correct result. Need to fix.
     if [ "x"$1 == "x" ]; then
         ADISK_LETTER=$START_DISK_LETTER
     else
@@ -181,14 +188,14 @@ add_disk() {
 }
 
 last_disk() {
-    printf '%s %s\n' $timestamp "${FUNCNAME[0]}"
+    log "${FUNCNAME[0]}"
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
     root_device=`jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info`
     LAST_DISK_LETTER=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /etc/ec2_instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/'`
 }
 
 initialize_lv() {
-    printf '%s %s\n' $timestamp "${FUNCNAME[0]}"
+    log "${FUNCNAME[0]}"
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
     sudo vgcreate vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvcreate -l 100%VG -n lv_$NAME vg_$NAME
@@ -202,7 +209,7 @@ initialize_lv() {
 }
 
 extend_lv() {
-    printf '%s %s\n' $timestamp "${FUNCNAME[0]}"
+    log "${FUNCNAME[0]}"
     sudo vgextend vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvextend -l +100%FREE /dev/vg_$NAME/lv_$NAME
     sudo resize2fs /dev/vg_$NAME/lv_$NAME
