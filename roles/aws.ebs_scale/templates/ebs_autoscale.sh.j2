@@ -179,10 +179,11 @@ next_disk() {
         DISK_LETTER=$START_DISK_LETTER
     else
         num=`ord $1`
+# TODO: Allow for second-level disk letters, https://www.pivotaltracker.com/story/show/154039718
         if [ $num -ge 122 ];then
             # Too lazy to handle /dev/sdaa, 24 disks (24TB) should be enough, no?
             log "No more disk letter available"
-            send_email_notification "Ran out of more disk letters." "Need manual intervention"
+            send_msg "Ran out of more disk letters." "Need manual intervention"
             DISK_LETTER=""
             return 1
         fi
@@ -224,7 +225,8 @@ add_disk() {
 
     sudo pvcreate /dev/xvd${DISK_LETTER} || return 1 #/dev/sdX is attached as /dev/xvdX
     add_to_fstab
-    send_email_notification
+    send_msg "EBS Scale /dev/xvd${DISK_LETTER} on server $HOSTNAME" \
+               "EBS scale extended LVM drive by $DISK_SIZE\n `df -h |grep $MOUNT_POINT`"
 }
 
 last_disk() {
@@ -366,6 +368,8 @@ if [[ $less_space_needed -eq 1 ]]; then
               LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
               echo "$timestamp - The LAST_VOLUME is $LAST_VOLUME"
               e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
+              #NOTE: This may be redundant as lvreduce already resizes..::
+              # WHY does resize2fs need NEW_SIZE
               resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
               lvreduce -f -r -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
               vgreduce -a vg_${NAME}
@@ -386,10 +390,7 @@ if [[ $less_space_needed -eq 1 ]]; then
               sudo supervisorctl start all
               echo "$timestamp ---SHRINKING VOLUME END----"
             else
-              msg="$timestamp \n Unable to unmount. Abort shrinking."
-              subj="Unable to unmount. Abort shrinking on $hostname"
-              echo $msg
-              send_notification $subj $msg
+              send_msg "$timestamp \n Unable to unmount. Aborting shrinking on $hostname"
               exit 1
             fi
         else
