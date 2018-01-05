@@ -79,31 +79,60 @@ AWS_EC2="/usr/local/bin/aws ec2"
 # e.g. demo-services.aptrust.org:4151
 NSQ_ADDRESS="{{nsq_address}}"
 
-send_email_notification() {
-		SERVER_NAME=$HOSTNAME
+NOTIFICATION_TYPE='slack'
+
+function send_msg {
+    if [[ $NOTIFICATION_TYPE == 'slack' ]];then
+      send_slack $*
+    else
+      send_email $*
+    fi
+  }
+
+function log {
+    echo "[$(date --rfc-3339=seconds)]: $*"
+}
+
+send_slack() {
+    EBS_SLACK_WEBHOOK="{{ebs_slack_webhook}}"
+    EBS_SLACK_CHANNEL="{{ebs_slack_channel}}"
+    EBS_SLACK_USERNAME=${EBS_SLACK_USERNAME:-$(hostname | cut --delimiter=. --fields=1)}
+    EBS_SLACK_ICON_EMOJI=${EBS_SLACK_ICON_EMOJI:-:slack:}
+		EBS_SLACK_MESSAGE=$*
+
+		curl --silent --data-urlencode \
+			"$(printf 'payload={"text": "%s", "channel": "%s", "username": "%s",
+            "as_user": "true", "link_names": "true", "icon_emoji": "%s" }' \
+					"${EBS_SLACK_MESSAGE}" \
+					"${EBS_SLACK_CHANNEL}" \
+					"${EBS_SLACK_USERNAME}" \
+					"${EBS_SLACK_ICON_EMOJI}" \
+			)"	${EBS_SLACK_WEBHOOK} || true
+
+}
+
+send_email() {
 		SENDER=$(whoami)
 		RECEIVER="christian@aptrust.org"
 		USER="noreply"
 
-		SUBJECT=[[ "x"$1 == "x" ]]"EBS Scale /dev/xvd${DISK_LETTER} on server $SERVER_NAME" && $1
-		TEXT=[[ "x"$2 == "x" ]]"EBS scale extended the LVM." && $2
+		SUBJECT=$1
+		BODY=${2:-''}
 
-
-		MAIL_TXT="Subject: $SUBJECT\nFrom: $SENDER\nTo: $RECEIVER\n\n$TEXT"
+		MAIL_TXT="Subject: $SUBJECT\nFrom: $SENDER\nTo: $RECEIVER\n\n$BODY"
 		echo -e $MAIL_TXT | sendmail -t
 }
 
 
 chr() {
+  # converts decimal value to its ASCII character representation
   printf \\$(printf '%03o' $1)
 }
 ord() {
+  # converts ASCII character to its decimal value
   printf '%d' "'$1"
 }
 
-function log {
-    echo "[$(date --rfc-3339=seconds)]: $*"
-    }
 
 check_if_mounted(){
     log ${FUNCNAME[0]}
@@ -122,7 +151,7 @@ add_to_fstab(){
     # Getting the device name since Ubuntu thinks its funny to double
     # dash the vg.
     MOUNT_DEVICE=`grep $MOUNT_POINT /proc/mounts | awk '{print $1}'`
-    fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nofail 0 0"
+    fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
 
     if $(grep -q "$fstab_entry" $fstab); then
          log "Entry in fstab exists. Doing nothing."
