@@ -159,6 +159,15 @@ add_to_fstab(){
         log "Entry in fstab does not exists. Adding for persistence."
         sudo cp $fstab /etc/fstab.bak
         sudo echo $fstab_entry >> /etc/fstab
+        if sudo mount -fav; then
+          log "Checked fstab, looks good."
+        else
+          log "Error in fstab entry. Need manual intervention.\
+                Reverting to previous version."
+          sudo cp /etc/fstab.bak $fstab
+          send_msg "fstab entry has error on $HOSTNAME"
+          exit 1
+        fi
     fi
   }
 
