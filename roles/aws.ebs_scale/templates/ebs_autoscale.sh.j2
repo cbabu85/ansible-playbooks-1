@@ -148,7 +148,7 @@ check_if_mounted(){
 add_to_fstab(){
     log ${FUNCNAME[0]}
     fstab=/etc/fstab
-    # Getting the device name since Ubuntu thinks its funny to double
+    # Workaround to get the device name since Ubuntu thinks its funny to double
     # dash the vg.
     MOUNT_DEVICE=`grep $MOUNT_POINT /proc/mounts | awk '{print $1}'`
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
@@ -173,7 +173,6 @@ add_to_fstab(){
 
 next_disk() {
     log ${FUNCNAME[0]}
-# TODO: This logic doesn't work. Redo.
     # No disk exist yet
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
@@ -183,7 +182,7 @@ next_disk() {
         if [ $num -ge 122 ];then
             # Too lazy to handle /dev/sdaa, 24 disks (24TB) should be enough, no?
             log "No more disk letter available"
-            send_msg "Ran out of more disk letters." "Need manual intervention"
+            send_msg "Ran out of disk letters.  Need manual intervention"
             DISK_LETTER=""
             return 1
         fi
@@ -226,11 +225,11 @@ add_disk() {
     sudo pvcreate /dev/xvd${DISK_LETTER} || return 1 #/dev/sdX is attached as /dev/xvdX
     add_to_fstab
     send_msg "EBS Scale /dev/xvd${DISK_LETTER} on server $HOSTNAME" \
-               "EBS scale extended LVM drive by $DISK_SIZE\n `df -h |grep $MOUNT_POINT`"
+             "EBS scale extended LVM drive by $DISK_SIZE\n `df -h |grep $MOUNT_POINT`"
 }
 
 last_disk() {
-    log "${FUNCNAME[0]}"
+    log "Function: ${FUNCNAME[0]}"
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
     root_device=`jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info`
     LAST_DISK_LETTER=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /etc/ec2_instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/'`
@@ -328,10 +327,11 @@ check_nsq_inflight(){
     # If NSQ is not used it will default to empty and will default to the else clause below.
      airtraffic=`curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
      if [ "$airtraffic" -gt "0" ]; then
-       echo "Seeing some air traffic: $airtraffic Please stand by. "
+       log "Seeing some air traffic: $airtraffic Please stand by. "
        nsq_result="standby"
      else
-       echo "Nobody is flying. Good to go. Shutting down services"
+       log "Nobody is flying. Good to go. Shutting down services"
+       send_msg "About to shrink volume on $HOSTNAME \n `df -h |grep $MOUNT_POINT`"
        nsq_result="takeoff"
      fi
 }
