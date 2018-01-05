@@ -136,11 +136,11 @@ ord() {
 
 check_if_mounted(){
     log ${FUNCNAME[0]}
-    if grep -qs "${MOUNTPOINT}" /proc/mounts; then
-        log "${MOUNTPOINT} is mounted. All good."
+    if grep -qs "${MOUNT_POINT}" /proc/mounts; then
+        log "${MOUNT_POINT} is mounted. All good."
     else
-        log "${MOUNTPOINT} not mounted. Go panic."
-        # TODO: Alert email.
+        log "${MOUNT_POINT} not mounted. Go panic."
+        send_msg "${MOUNT_POINT} not mounted. Panic at the disco."
         exit 1
     fi
 }
