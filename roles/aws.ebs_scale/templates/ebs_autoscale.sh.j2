@@ -154,7 +154,7 @@ add_to_fstab(){
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
 
     if $(grep -q "$fstab_entry" $fstab); then
-         log "Entry in fstab exists. Doing nothing."
+         log "Entry in fstab exists. Just made sure it's there."
     else
         log "Entry in fstab does not exists. Adding for persistence."
         sudo cp $fstab /etc/fstab.bak
@@ -212,6 +212,8 @@ add_disk() {
     done
     last_disk
     next_disk $LAST_DISK_LETTER || return 1
+
+    log "Adding disk letter: $DISK_LETTER"
 
     $AWS_EC2 attach-volume --volume-id $volume_id --instance-id $INSTANCE_ID --device /dev/sd${DISK_LETTER} || return 1
     attached=""
@@ -316,7 +318,9 @@ min_limit_reached=`echo $actual_disks'<='$MIN_DISKS | bc -l`
 # When more space needed, add and extend as long we are insinde the disk amount limit
 if [[ $more_space_needed -eq 1 ]]; then
     if [[ $max_limit_reached -eq 1 ]]; then
-        echo "Space needed but maximum disk limit reached"
+        log "Space needed but maximum disk limit reached"
+        send_msg "Space needed but maximum disk limit reached. Please advise. \n
+                    df -h |grep $MOUNT_POINT"
     else
         add_disk || exit 1
         extend_lv || exit 1
@@ -331,7 +335,7 @@ check_nsq_inflight(){
        nsq_result="standby"
      else
        log "Nobody is flying. Good to go. Shutting down services"
-       send_msg "About to shrink volume on $HOSTNAME \n `df -h |grep $MOUNT_POINT`"
+       send_msg "Shutting down exchange services. About to shrink volume on $HOSTNAME \n `df -h |grep $MOUNT_POINT`"
        nsq_result="takeoff"
      fi
 }
@@ -342,60 +346,68 @@ check_nsq_inflight(){
 
 if [[ $less_space_needed -eq 1 ]]; then
     if [[ $min_limit_reached -eq 1 ]]; then
-        echo "Too much space but minimum disk limit reached"
+        log "Too much space but minimum disk limit reached"
     else
-        echo "$timestamp ---SHRINKING VOLUME START----"
+        log "---SHRINKING VOLUME START----"
         TOTAL_SPACE=`df | grep $MOUNT_POINT | awk '{print $2}'`
-        NEW_SIZE=`echo "($TOTAL_SPACE-($DISK_SIZE*1000000*1.1))/1024" | bc`
+        # TODO: Make sure the size is matching the EBS volume
+        LAST_DISK_SIZE=`sudo pvs --units g|tail -n1| awk '{print $5}'| sed 's/.$//'`
+        NEW_SIZE=`echo "($TOTAL_SPACE-($LAST_DISK_SIZE*1000000*1.1))/1024" | bc`
         LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
-        cat << EOF
         # Check for inflight items to avoid stopping services if not necessary.
         # Shrinking will commence once no worker is processing items.
         check_nsq_inflight
         if [ $nsq_result == "takeoff" ];then
-            echo "$timestamp - Stopping exchange services"
+            log  "Nothing in flight. Stopping exchange services"
             sudo supervisorctl stop all
             # Set dummy value to run through loop at least once
             openfiles=100
             while [ $openfiles -gt 0 ]; do
-              echo "$timestamp - Waiting until no open files are present"
+              log "Waiting until no open files are present"
               sleep 3
               openfiles=`sudo lsof | grep $MOUNT_POINT |wc -l`
-              echo "$timestamp - Open files= $openfiles"
+              log "Open files= $openfiles"
             done
             umount $MOUNT_POINT
             if [ $? -eq 0 ]; then
+              # Note: THis may be redundant but surely there was a reason for this ?!
               LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
-              echo "$timestamp - The LAST_VOLUME is $LAST_VOLUME"
+              log "The LAST_VOLUME is $LAST_VOLUME"
               e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
               #NOTE: This may be redundant as lvreduce already resizes..::
               # WHY does resize2fs need NEW_SIZE
-              resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
-              lvreduce -f -r -L -${DISK_SIZE}.1G vg_${NAME}/lv_${NAME}
-              vgreduce -a vg_${NAME}
+#              resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
+              # TODO: DISK SIZE MAY NEED TO BE VERIFIED BEFORE SINCE IT SHOULD BE ABLE TO CHANGE FROM THE START VALUE
+              lvreduce -f -r -L -${LAST_DISK_SIZE}.1G vg_${NAME}/lv_${NAME} || exit 1
+              vgreduce -a vg_${NAME} || exit 1
+              # TODO: This extend might be redundant?!?
               lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
+              # TODO: Second e2fsck too redundant?
               e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
               resize2fs /dev/vg_${NAME}/lv_${NAME}
               mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
+        # TODO : Shouldn't detach if previous actions didn't suceed!!
               $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
               volume_status=""
               while [ "x"$volume_status != "xavailable" ]; do
+                log "Waiting for detached volume to become available..."
                 sleep 1
                 $AWS_EC2 describe-volumes --volume-ids $LAST_VOLUME > /etc/ebs_to_shrink
                 volume_status=`jq -r '.Volumes[].State' /etc/ebs_to_shrink`
               done
+              log "Deleting Volume $LAST_VOLUME"
               $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
               # Update ec2_instance_info to have the currrently attached volumes up-to-date.
               $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
+              log "LVM shrinking completed. Restarting exchange services."
               sudo supervisorctl start all
               echo "$timestamp ---SHRINKING VOLUME END----"
             else
-              send_msg "$timestamp \n Unable to unmount. Aborting shrinking on $hostname"
+              send_msg "Unable to unmount. Aborting shrinking on $hostname"
               exit 1
             fi
         else
-            echo "$timestamp -- Can't shrink right now, trying again later"
+            log "Can't shrink right now, trying again later"
         fi
-EOF
     fi
 fi
