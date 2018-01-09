@@ -424,6 +424,7 @@ if [[ $less_space_needed -eq 1 ]]; then
                 fi
             else
               send_msg "Unable to unmount. Aborting shrinking on $hostname"
+              sudo supervisorctl start all
               exit 1
             fi
         else
