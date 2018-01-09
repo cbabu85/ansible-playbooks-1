@@ -193,15 +193,13 @@ next_disk() {
 
 add_disk() {
     log "${FUNCNAME[0]}" "$1"
-# TODO: This condition does not bear the correct result. Need to fix.
-    if [ "x"$1 == "x" ]; then
-        ADISK_LETTER=$START_DISK_LETTER
-    else
-	      ADISK_LETTER=$1
-    fi
-    printf 'Adding disk letter: %s\n' $ADISK_LETTER
+# TODO: Doesn't know the DISK letter yet since it's only added not attached here
 
-    $AWS_EC2 create-volume --volume-type gp2 --size $DISK_SIZE --availability-zone $AV_ZONE --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=ebs_scale_${NAME}_disk_${ADISK_LETTER}}]" > /etc/ebs_volume_info
+    $AWS_EC2 create-volume \
+      --volume-type gp2 \
+      --size $DISK_SIZE \
+      --availability-zone $AV_ZONE \
+      --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=ebsscale_${NAME}_disk}]" > /etc/ebs_volume_info
     volume_id=`jq -r '.VolumeId' /etc/ebs_volume_info`
 
     volume_status=""
@@ -219,6 +217,8 @@ add_disk() {
     attached=""
     while [ "x"$attached != "xattached" ]; do
         sleep 1
+        $AWS_EC2 update-volume --volume-id $volume_id  --name "ebsscale_${NAME}_disk_${DISK_LETTER}"
+        $AWS_EC2 describe-volumes --volume-ids $volume_id > /etc/ebs_volume_info
         $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
         attached=`jq --arg drive "/dev/sd${DISK_LETTER}" -r '.Reservations[].Instances[].BlockDeviceMappings[] | {name: .DeviceName, status: .Ebs.Status}|select(.name==$drive)|.status' /etc/ec2_instance_info`
     done
