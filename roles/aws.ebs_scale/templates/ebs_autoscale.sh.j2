@@ -389,30 +389,39 @@ if [[ $less_space_needed -eq 1 ]]; then
               # WHY does resize2fs need NEW_SIZE
 #              resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
               # TODO: DISK SIZE MAY NEED TO BE VERIFIED BEFORE SINCE IT SHOULD BE ABLE TO CHANGE FROM THE START VALUE
-              lvreduce -f -r -L -${LAST_DISK_SIZE}.1G vg_${NAME}/lv_${NAME} || exit 1
-              vgreduce -a vg_${NAME} || exit 1
-              # TODO: This extend might be redundant?!?
-              lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
-              # TODO: Second e2fsck too redundant?
-              e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
-              resize2fs /dev/vg_${NAME}/lv_${NAME}
-              mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
-        # TODO : Shouldn't detach if previous actions didn't suceed!!
-              $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
-              volume_status=""
-              while [ "x"$volume_status != "xavailable" ]; do
-                log "Waiting for detached volume to become available..."
-                sleep 1
-                $AWS_EC2 describe-volumes --volume-ids $LAST_VOLUME > /etc/ebs_to_shrink
-                volume_status=`jq -r '.Volumes[].State' /etc/ebs_to_shrink`
-              done
-              log "Deleting Volume $LAST_VOLUME"
-              $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
-              # Update ec2_instance_info to have the currrently attached volumes up-to-date.
-              $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
-              log "LVM shrinking completed. Restarting exchange services."
-              sudo supervisorctl start all
-              echo "$timestamp ---SHRINKING VOLUME END----"
+              #lvreduce -f -r -L -${LAST_DISK_SIZE}.1G vg_${NAME}/lv_${NAME} || exit 1
+              lvreduction=`lvreduce -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME}` || exit 1
+              log $lvreduction
+              #send_msg $lvreduction
+              if [ $? -eq 0 ]; then
+                  reduct=`vgreduce -a vg_${NAME}`
+                  log $reduct
+                  # TODO: This extend might be redundant?!?
+                  lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
+                  # TODO: Second e2fsck too redundant?
+                  e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
+                  resizer=`resize2fs /dev/vg_${NAME}/lv_${NAME}`
+    # THIS is redundant??
+    ##              mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
+                  # TODO : Shouldn't detach if previous actions didn't suceed!!
+                  $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
+                  volume_status=""
+                  while [ "x"$volume_status != "xavailable" ]; do
+                    log "Waiting for detached volume to become available..."
+                    sleep 2
+                    $AWS_EC2 describe-volumes --volume-ids $LAST_VOLUME > /etc/ebs_to_shrink
+                    volume_status=`jq -r '.Volumes[].State' /etc/ebs_to_shrink`
+                  done
+                  log "Deleting Volume $LAST_VOLUME"
+                  $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
+                  # Update ec2_instance_info to have the currrently attached volumes up-to-date.
+                  $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
+                  log "LVM shrinking completed. Re-mounting LVM & restarting exchange services."
+                  sudo mount $MOUNT_POINT
+                  sudo supervisorctl start all
+                  send_msg "LVM shrinking completed. New drive: \n `df $MOUNT_POINT`"
+                  log "---SHRINKING VOLUME END----"
+                fi
             else
               send_msg "Unable to unmount. Aborting shrinking on $hostname"
               exit 1
