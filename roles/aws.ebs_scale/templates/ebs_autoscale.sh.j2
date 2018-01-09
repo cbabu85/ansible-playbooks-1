@@ -139,7 +139,7 @@ ord() {
 
 
 check_if_mounted(){
-    log ${FUNCNAME[0]}
+    log "Function: ${FUNCNAME[0]}"
     if grep -qs "${MOUNT_POINT}" /proc/mounts; then
         log "${MOUNT_POINT} is mounted. All good."
     else
@@ -158,7 +158,7 @@ add_to_fstab(){
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
 
     if $(grep -q "$fstab_entry" $fstab); then
-         log "Entry in fstab exists. Just made sure it's there."
+         log "Entry in fstab exists. Just made sure it is there."
     else
         log "Entry in fstab does not exists. Adding for persistence."
         sudo cp $fstab /etc/fstab.bak
@@ -232,7 +232,7 @@ add_disk() {
     log "$pvcreation"
     add_to_fstab
     send_msg "EBS Scale /dev/xvd${DISK_LETTER} on server $HOSTNAME" \
-             "EBS scale extended LVM drive by $DISK_SIZE\n `df -h |grep $MOUNT_POINT`"
+             "EBS scale extended LVM drive by $DISK_SIZE"
 }
 
 last_disk() {
@@ -261,6 +261,8 @@ extend_lv() {
     sudo vgextend vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvextend -l +100%FREE /dev/vg_$NAME/lv_$NAME
     sudo resize2fs /dev/vg_$NAME/lv_$NAME
+    TOTAL_NEW_SIZE=`df | grep $MOUNT_POINT | awk '{print $2}'`
+    send_msg "New LVM size: $TOTAL_NEW_SIZE \n `df -h $MOUNT_POINT`"
 }
 
 INSTANCE_ID=`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`
@@ -325,11 +327,14 @@ if [[ $more_space_needed -eq 1 ]]; then
     if [[ $max_limit_reached -eq 1 ]]; then
         log "Space needed but maximum disk limit reached"
         send_msg "Space needed but maximum disk limit reached. Please advise. \n
-                    df -h |grep $MOUNT_POINT"
+                    df -h $MOUNT_POINT"
     else
         add_disk || exit 1
         extend_lv || exit 1
     fi
+else
+  diskusage=`df |grep $MOUNT_POINT|awk '{print $5}'`
+  log "Scale up: No additional disks needed. Disk usage at $diskusage within bounds of $SPACE_UP%."
 fi
 
 check_nsq_inflight(){
@@ -341,7 +346,7 @@ check_nsq_inflight(){
        nsq_result="standby"
      else
        log "Nobody is flying. Good to go. Shutting down services"
-       send_msg "Shutting down exchange services. About to shrink volume on $HOSTNAME \n `df -h |grep $MOUNT_POINT`"
+       send_msg "Shutting down exchange services. About to shrink volume on $HOSTNAME \n `df -h $MOUNT_POINT`"
        nsq_result="takeoff"
      fi
 }
@@ -416,4 +421,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             log "Can't shrink right now, trying again later"
         fi
     fi
+else
+  diskusage=`df |grep $MOUNT_POINT|awk '{print $5}'`
+  log "Scale down: No shrinking needed. Disk usage at $diskusage within the bounds of $SPACE_DOWN%."
 fi
