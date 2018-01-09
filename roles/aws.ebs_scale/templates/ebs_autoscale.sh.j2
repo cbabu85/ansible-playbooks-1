@@ -224,7 +224,8 @@ add_disk() {
     done
     $AWS_EC2 modify-instance-attribute --instance-id $INSTANCE_ID --block-device-mappings "[{\"DeviceName\": \"/dev/sd${DISK_LETTER}\",\"Ebs\":{\"DeleteOnTermination\":true}}]" || return 1
 
-    sudo pvcreate /dev/xvd${DISK_LETTER} || return 1 #/dev/sdX is attached as /dev/xvdX
+    pvcreation=`sudo pvcreate /dev/xvd${DISK_LETTER} || return 1` #/dev/sdX is attached as /dev/xvdX
+    log "$pvcreation"
     add_to_fstab
     send_msg "EBS Scale /dev/xvd${DISK_LETTER} on server $HOSTNAME" \
              "EBS scale extended LVM drive by $DISK_SIZE\n `df -h |grep $MOUNT_POINT`"
@@ -329,7 +330,8 @@ fi
 
 check_nsq_inflight(){
     # If NSQ is not used it will default to empty and will default to the else clause below.
-     airtraffic=`curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
+    # Added timeout to fail fast if no NSQ is used. It'll default to else clause.
+     airtraffic=`timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
      if [ "$airtraffic" -gt "0" ]; then
        log "Seeing some air traffic: $airtraffic Please stand by. "
        nsq_result="standby"
