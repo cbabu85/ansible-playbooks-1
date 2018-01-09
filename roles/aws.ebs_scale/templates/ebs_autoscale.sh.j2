@@ -39,12 +39,12 @@
 #
 #
 #Print all the things.
-set -x
+#set -x
 
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-NAME="{{vg_name}}"
+NAME="{{vg_name}}_lvm"
 
 # Where to mount it
 MOUNT_POINT="{{vg_mount_point}}"
@@ -79,7 +79,14 @@ AWS_EC2="/usr/local/bin/aws ec2"
 # e.g. demo-services.aptrust.org:4151
 NSQ_ADDRESS="{{nsq_address}}"
 
+# Notification type 'slack' or 'email'
 NOTIFICATION_TYPE='slack'
+
+# Slack settings
+EBS_SLACK_WEBHOOK="{{ebs_slack_webhook}}"
+EBS_SLACK_CHANNEL="{{ebs_slack_channel}}"
+EBS_SLACK_USERNAME=${EBS_SLACK_USERNAME:-$(hostname | cut --delimiter=. --fields=1)}
+EBS_SLACK_ICON_EMOJI=${EBS_SLACK_ICON_EMOJI:-:slack:}
 
 function send_msg {
     if [[ $NOTIFICATION_TYPE == 'slack' ]];then
@@ -89,17 +96,14 @@ function send_msg {
     fi
   }
 
+
 function log {
     echo "[$(date --rfc-3339=seconds)]: $*"
 }
 
 send_slack() {
-    EBS_SLACK_WEBHOOK="{{ebs_slack_webhook}}"
-    EBS_SLACK_CHANNEL="{{ebs_slack_channel}}"
-    EBS_SLACK_USERNAME=${EBS_SLACK_USERNAME:-$(hostname | cut --delimiter=. --fields=1)}
-    EBS_SLACK_ICON_EMOJI=${EBS_SLACK_ICON_EMOJI:-:slack:}
-		EBS_SLACK_MESSAGE=$*
 
+    EBS_SLACK_MESSAGE=$*
 		curl --silent --data-urlencode \
 			"$(printf 'payload={"text": "%s", "channel": "%s", "username": "%s",
             "as_user": "true", "link_names": "true", "icon_emoji": "%s" }' \
