@@ -299,11 +299,12 @@ EOF
         add_disk || exit 1
         extend_lv || exit 1
     done
-    check_if_mounted || exit 1
 fi
 
+# First check if mounted. If it's not all following functions error out.
+check_if_mounted
+
 # Checking if we need to do something
-# TODO: Add a conditional that checks if mount point exists,if it does not we need to mount it.
 free_space=`df | grep $MOUNT_POINT | awk '{print $4}'`
 
 # Calc threshold values
