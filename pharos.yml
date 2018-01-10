@@ -44,6 +44,12 @@
                 # SSL Chain if Nginx, SSL cert if Apache2
                 ssl_certificate    {{ssl_cert_path}};
                 ssl_certificate_key {{ ssl_key_path }};
+
+                location ^~ /assets/ {
+                     gzip_static on;
+                     expires max;
+                     add_header Cache-Control public;
+                  }
         nginx_client_max_body_size: 0
 
         # RBenv
