@@ -197,9 +197,10 @@ next_disk() {
 
 add_disk() {
     log "${FUNCNAME[0]}"
-
+    log "---EXPANDING LVM START----"
     last_disk
     next_disk $LAST_DISK_LETTER || return 1
+    log "PRE CREATE VOLUME DISK LETTER. WHERE I MOVED THE FUNCTIONS TO: $DISK_LETTER"
 
     $AWS_EC2 create-volume \
       --volume-type gp2 \
@@ -262,6 +263,7 @@ extend_lv() {
     sudo resize2fs /dev/vg_$NAME/lv_$NAME
     TOTAL_NEW_SIZE=`df | grep $MOUNT_POINT | awk '{print $2}'`
     send_msg "New LVM size: $TOTAL_NEW_SIZE \n `df -h $MOUNT_POINT`"
+    log "---EXPANDING LVM END----"
 }
 
 INSTANCE_ID=`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`
@@ -307,13 +309,26 @@ check_if_mounted
 # Checking if we need to do something
 free_space=`df | grep $MOUNT_POINT | awk '{print $4}'`
 
+# Get LVM free size to calc threshold values correctly
+LVM_SIZE=`sudo vgs --units g --nosuffix |grep $NAME |awk '{print $6}'`
+
 # Calc threshold values
-min_free_space=`echo "($SPACE_UP/100*$DISK_SIZE)*1000000" | bc -l`
+min_free_space=`echo "($SPACE_UP/100*$LVM_SIZE)*1000000" | bc -l`
+# Needs 1.x (that's why +100) times a disk of free space. This may be doubled with min_disk_needed
 max_free_space=`echo "(($SPACE_DOWN+100)/100*$DISK_SIZE)*1000000" | bc -l`
+#max_free_space=`echo "(($SPACE_DOWN)/100*$LVM_SIZE)*1000000" | bc -l`
 
 # Check if more space or less space is needed
 more_space_needed=`echo $free_space'<'$min_free_space | bc -l`
 less_space_needed=`echo $free_space'>'$max_free_space | bc -l`
+
+# DEBUG
+log "lvm_size: $LVM_SIZE"
+log "free_space: $free_space"
+log "min_free_space: $min_free_space"
+log "max_free_space: $max_free_space"
+log "more_space_needed: $more_space_needed"
+log "less_space_needed: $less_space_needed"
 
 # Amount of mounted disks
 actual_disks=`sudo lvdisplay /dev/vg_${NAME}/lv_${NAME}|grep Segments|awk '{print $2}'`
@@ -329,12 +344,13 @@ if [[ $more_space_needed -eq 1 ]]; then
         send_msg "Space needed but maximum disk limit reached. Please advise. \n
                     df -h $MOUNT_POINT"
     else
+        log "More disk space needed."
         add_disk || exit 1
         extend_lv || exit 1
     fi
 else
   diskusage=`df |grep $MOUNT_POINT|awk '{print $5}'`
-  log "Scale up: No additional disks needed. Disk usage at $diskusage within bounds of $SPACE_UP%."
+  log "Scale up: No additional disks needed. Disk usage at $diskusage within limit of $((100-$SPACE_UP))%."
 fi
 
 check_nsq_inflight(){
@@ -345,8 +361,7 @@ check_nsq_inflight(){
        log "Seeing some air traffic: $airtraffic Please stand by. "
        nsq_result="standby"
      else
-       log "Nobody is flying. Good to go. Shutting down services"
-       send_msg "Shutting down exchange services. About to shrink volume on $HOSTNAME \n `df -h $MOUNT_POINT`"
+       log "Nobody is flying. Good to go."
        nsq_result="takeoff"
      fi
 }
@@ -361,7 +376,7 @@ if [[ $less_space_needed -eq 1 ]]; then
     else
         log "---SHRINKING VOLUME START----"
         TOTAL_SPACE=`df | grep $MOUNT_POINT | awk '{print $2}'`
-        # TODO: Make sure the size is matching the EBS volume
+        # In case the DISK_SIZE has changed since creating the LVM.
         LAST_DISK_SIZE=`sudo pvs --units g|tail -n1| awk '{print $5}'| sed 's/.$//'`
         NEW_SIZE=`echo "($TOTAL_SPACE-($LAST_DISK_SIZE*1000000*1.1))/1024" | bc`
         LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
@@ -369,7 +384,8 @@ if [[ $less_space_needed -eq 1 ]]; then
         # Shrinking will commence once no worker is processing items.
         check_nsq_inflight
         if [ $nsq_result == "takeoff" ];then
-            log  "Nothing in flight. Stopping exchange services"
+            send_msg "Shutting down exchange services. \n `df -h $MOUNT_POINT`"
+            log "Shutting down exchange services. \n `df -h $MOUNT_POINT`"
             sudo supervisorctl stop all
             # Set dummy value to run through loop at least once
             openfiles=100
@@ -381,7 +397,6 @@ if [[ $less_space_needed -eq 1 ]]; then
             done
             umount $MOUNT_POINT
             if [ $? -eq 0 ]; then
-              # Note: THis may be redundant but surely there was a reason for this ?!
               LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
               log "The LAST_VOLUME is $LAST_VOLUME"
               e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
@@ -419,7 +434,7 @@ if [[ $less_space_needed -eq 1 ]]; then
                   log "LVM shrinking completed. Re-mounting LVM & restarting exchange services."
                   sudo mount $MOUNT_POINT
                   sudo supervisorctl start all
-                  send_msg "LVM shrinking completed. New drive: \n `df $MOUNT_POINT`"
+                  send_msg "LVM shrinking completed. New drive: \n `df -h $MOUNT_POINT`"
                   log "---SHRINKING VOLUME END----"
                 fi
             else
@@ -433,5 +448,5 @@ if [[ $less_space_needed -eq 1 ]]; then
     fi
 else
   diskusage=`df |grep $MOUNT_POINT|awk '{print $5}'`
-  log "Scale down: No shrinking needed. Disk usage at $diskusage within the bounds of $SPACE_DOWN%."
+  log "Scale down: No shrinking needed. Disk usage at $diskusage within the limit of $((100-$SPACE_DOWN))% or minimum disks reached."
 fi
