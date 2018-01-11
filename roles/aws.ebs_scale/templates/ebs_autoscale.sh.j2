@@ -410,13 +410,8 @@ if [[ $less_space_needed -eq 1 ]]; then
                   log $lvreduction
                   reduct=`vgreduce -a vg_${NAME}`
                   log $reduct
-                  # TODO: This extend might be redundant?!?
-                  lvextend -l +100%FREE /dev/vg_${NAME}/lv_${NAME}
-                  # TODO: Second e2fsck too redundant?
-                  e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
-                  resizer=`resize2fs /dev/vg_${NAME}/lv_${NAME}`
-    # THIS is redundant??
-    ##              mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT
+                  lvextend -r -l +100%FREE /dev/vg_${NAME}/lv_${NAME} || exit 1
+                  mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT || exit 1
                   # TODO : Shouldn't detach if previous actions didn't suceed!!
                   $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
                   volume_status=""
