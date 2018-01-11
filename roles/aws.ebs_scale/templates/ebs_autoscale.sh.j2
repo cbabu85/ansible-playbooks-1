@@ -405,10 +405,9 @@ if [[ $less_space_needed -eq 1 ]]; then
 #              resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
               # TODO: DISK SIZE MAY NEED TO BE VERIFIED BEFORE SINCE IT SHOULD BE ABLE TO CHANGE FROM THE START VALUE
               #lvreduce -f -r -L -${LAST_DISK_SIZE}.1G vg_${NAME}/lv_${NAME} || exit 1
-              lvreduction=`lvreduce -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME}` || exit 1
-              log $lvreduction
-              #send_msg $lvreduction
+              lvreduction=`lvreduce -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME} || exit 1`
               if [ $? -eq 0 ]; then
+                  log $lvreduction
                   reduct=`vgreduce -a vg_${NAME}`
                   log $reduct
                   # TODO: This extend might be redundant?!?
