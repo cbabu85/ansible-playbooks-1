@@ -392,7 +392,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             sudo supervisorctl stop all
             # Set dummy value to run through loop at least once
             openfiles=100
-            while [ $openfiles -gt 0 ]; do
+            while [ "$openfiles" -gt "0" ]; do
               log "Waiting until no open files are present"
               sleep 3
               openfiles=`sudo lsof | grep $MOUNT_POINT |wc -l`
@@ -400,14 +400,8 @@ if [[ $less_space_needed -eq 1 ]]; then
             done
             umount $MOUNT_POINT
             if [ $? -eq 0 ]; then
-              LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
-              log "The LAST_VOLUME is $LAST_VOLUME"
+              log "Unmount of VG successful. LAST_VOLUME is $LAST_VOLUME and will be removed"
               e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
-              #NOTE: This may be redundant as lvreduce already resizes..::
-              # WHY does resize2fs need NEW_SIZE
-#              resize2fs /dev/vg_${NAME}/lv_${NAME} ${NEW_SIZE}M
-              # TODO: DISK SIZE MAY NEED TO BE VERIFIED BEFORE SINCE IT SHOULD BE ABLE TO CHANGE FROM THE START VALUE
-              #lvreduce -f -r -L -${LAST_DISK_SIZE}.1G vg_${NAME}/lv_${NAME} || exit 1
               lvreduction=`lvreduce -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME} || exit 1`
               if [ $? -eq 0 ]; then
                   log $lvreduction
@@ -415,7 +409,6 @@ if [[ $less_space_needed -eq 1 ]]; then
                   log $reduct
                   lvextend -r -l +100%FREE /dev/vg_${NAME}/lv_${NAME} || exit 1
                   mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT || exit 1
-                  # TODO : Shouldn't detach if previous actions didn't suceed!!
                   $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
                   volume_status=""
                   while [ "x"$volume_status != "xavailable" ]; do
@@ -429,11 +422,12 @@ if [[ $less_space_needed -eq 1 ]]; then
                   # Update ec2_instance_info to have the currrently attached volumes up-to-date.
                   $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
                   log "LVM shrinking completed. Re-mounting LVM & restarting exchange services."
-                  sudo mount $MOUNT_POINT
+              # Note: already mounted on line 414
+              #    sudo mount $MOUNT_POINT
                   sudo supervisorctl start all
                   send_msg "LVM shrinking completed. New drive: \n `df -h $MOUNT_POINT`"
                   log "---SHRINKING VOLUME END----"
-                fi
+              fi
             else
               send_msg "Unable to unmount. Aborting shrinking on $hostname"
               sudo supervisorctl start all
