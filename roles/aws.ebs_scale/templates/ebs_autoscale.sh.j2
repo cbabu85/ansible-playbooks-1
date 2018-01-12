@@ -154,7 +154,7 @@ add_to_fstab(){
     fstab=/etc/fstab
     # Workaround to get the device name since Ubuntu thinks its funny to double
     # dash the vg.
-    MOUNT_DEVICE=`grep $MOUNT_POINT /proc/mounts | awk '{print $1}'`
+    MOUNT_DEVICE=$(grep $MOUNT_POINT /proc/mounts | awk '{print $1}')
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
 
     if $(grep -q "$fstab_entry" $fstab); then
@@ -181,7 +181,7 @@ next_disk() {
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
     else
-        num=`ord $1`
+      num=$(ord $1)
 # TODO: Allow for second-level disk letters, https://www.pivotaltracker.com/story/show/154039718
         if [ $num -ge 122 ];then
             # Too lazy to handle /dev/sdaa, 24 disks (24TB) should be enough, no?
@@ -191,7 +191,7 @@ next_disk() {
             return 1
         fi
         let num=$num+1
-        DISK_LETTER=`chr $num`
+        DISK_LETTER=$(chr $num)
     fi
 }
 
@@ -207,13 +207,13 @@ add_disk() {
       --size $DISK_SIZE \
       --availability-zone $AV_ZONE \
       --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=ebsscale_${NAME}_disk_${DISK_LETTER}}]" > /etc/ebs_volume_info
-    volume_id=`jq -r '.VolumeId' /etc/ebs_volume_info`
+    volume_id=$(jq -r '.VolumeId' /etc/ebs_volume_info)
 
     volume_status=""
     while [ "x"$volume_status != "xavailable" ]; do
         sleep 1
         $AWS_EC2 describe-volumes --volume-ids $volume_id > /etc/ebs_volume_info
-        volume_status=`jq -r '.Volumes[].State' /etc/ebs_volume_info`
+        volume_status=$(jq -r '.Volumes[].State' /etc/ebs_volume_info)
     done
 
     log "Attaching disk letter: $DISK_LETTER"
@@ -224,11 +224,11 @@ add_disk() {
         sleep 1
         $AWS_EC2 describe-volumes --volume-ids $volume_id > /etc/ebs_volume_info
         $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
-        attached=`jq --arg drive "/dev/sd${DISK_LETTER}" -r '.Reservations[].Instances[].BlockDeviceMappings[] | {name: .DeviceName, status: .Ebs.Status}|select(.name==$drive)|.status' /etc/ec2_instance_info`
+        attached=$(jq --arg drive "/dev/sd${DISK_LETTER}" -r '.Reservations[].Instances[].BlockDeviceMappings[] | {name: .DeviceName, status: .Ebs.Status}|select(.name==$drive)|.status' /etc/ec2_instance_info)
     done
     $AWS_EC2 modify-instance-attribute --instance-id $INSTANCE_ID --block-device-mappings "[{\"DeviceName\": \"/dev/sd${DISK_LETTER}\",\"Ebs\":{\"DeleteOnTermination\":true}}]" || return 1
 
-    pvcreation=`sudo pvcreate /dev/xvd${DISK_LETTER} || return 1` #/dev/sdX is attached as /dev/xvdX
+    pvcreation=$(sudo pvcreate /dev/xvd${DISK_LETTER} || return 1) #/dev/sdX is attached as /dev/xvdX
     log "$pvcreation"
     add_to_fstab
     send_msg "EBS Scale /dev/xvd${DISK_LETTER} on server $HOSTNAME" \
@@ -238,8 +238,8 @@ add_disk() {
 last_disk() {
     log "Function: ${FUNCNAME[0]}"
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
-    root_device=`jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info`
-    LAST_DISK_LETTER=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /etc/ec2_instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/'`
+    root_device=$(jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info)
+    LAST_DISK_LETTER=$(jq -r '.Reservations[].Instances[].BlockDeviceMappings[].DeviceName' /etc/ec2_instance_info | grep -v $root_device | sort | tail -n1 | sed -e 's/^.*\([a-z]\)$/\1/')
 }
 
 initialize_lv() {
@@ -261,18 +261,18 @@ extend_lv() {
     sudo vgextend vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvextend -l +100%FREE /dev/vg_$NAME/lv_$NAME
     sudo resize2fs /dev/vg_$NAME/lv_$NAME
-    TOTAL_NEW_SIZE=`df | grep $MOUNT_POINT | awk '{print $2}'`
-    send_msg "New LVM size: $TOTAL_NEW_SIZE \n `df -h $MOUNT_POINT`"
+    TOTAL_NEW_SIZE=$(df | grep $MOUNT_POINT | awk '{print $2}')
+    send_msg "New LVM size: $TOTAL_NEW_SIZE \n $(df -h $MOUNT_POINT)"
     log "---EXPANDING LVM END----"
 }
 
-INSTANCE_ID=`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`
-AV_ZONE=`wget -q -O - http://169.254.169.254/latest/meta-data/placement/availability-zone`
-REGION="`echo \"$AV_ZONE\" | sed -e 's:\([0-9][0-9]*\)[a-z]*\$:\\1:'`"
+INSTANCE_ID=$(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)
+AV_ZONE=$(wget -q -O - http://169.254.169.254/latest/meta-data/placement/availability-zone)
+REGION="$(echo \"$AV_ZONE\" | sed -e 's:\([0-9][0-9]*\)[a-z]*\$:\\1:')"
 
 # Create base VG if not existing
 if [[ ! -d "/dev/vg_$NAME/lv_$NAME" && ! -L "/dev/vg_$NAME/lv_$NAME" ]]; then
-    if [ ! `which unzip` ];then
+    if [ ! $(which unzip) ];then
         apt-get -y update
         apt-get -y install unzip lvm2 jq
     fi
@@ -307,20 +307,20 @@ fi
 check_if_mounted
 
 # Checking if we need to do something
-free_space=`df | grep $MOUNT_POINT | awk '{print $4}'`
+free_space=$(df | grep $MOUNT_POINT | awk '{print $4}')
 
 # Get LVM free size to calc threshold values correctly
-LVM_SIZE=`sudo vgs --units g --nosuffix |grep $NAME |awk '{print $6}'`
+LVM_SIZE=$(sudo vgs --units g --nosuffix |grep $NAME |awk '{print $6}')
 
 # Calc threshold values
-min_free_space=`echo "($SPACE_UP/100*$LVM_SIZE)*1000000" | bc -l`
+min_free_space=$(echo "($SPACE_UP/100*$LVM_SIZE)*1000000" | bc -l)
 # Needs 1.x (that's why +100) times a disk of free space. This may be doubled with min_disk_needed
-max_free_space=`echo "(($SPACE_DOWN+100)/100*$DISK_SIZE)*1000000" | bc -l`
+max_free_space=$(echo "(($SPACE_DOWN+100)/100*$DISK_SIZE)*1000000" | bc -l)
 #max_free_space=`echo "(($SPACE_DOWN)/100*$LVM_SIZE)*1000000" | bc -l`
 
 # Check if more space or less space is needed
-more_space_needed=`echo $free_space'<'$min_free_space | bc -l`
-less_space_needed=`echo $free_space'>'$max_free_space | bc -l`
+more_space_needed=$(echo $free_space'<'$min_free_space | bc -l)
+less_space_needed=$(echo $free_space'>'$max_free_space | bc -l)
 
 # DEBUG
 log "lvm_size: $LVM_SIZE"
@@ -331,11 +331,11 @@ log "more_space_needed: $more_space_needed"
 log "less_space_needed: $less_space_needed"
 
 # Amount of mounted disks
-actual_disks=`sudo lvdisplay /dev/vg_${NAME}/lv_${NAME}|grep Segments|awk '{print $2}'`
+actual_disks=$(sudo lvdisplay /dev/vg_${NAME}/lv_${NAME}|grep Segments|awk '{print $2}')
 
 # Check if we are inside disk limit bounds
-max_limit_reached=`echo $actual_disks'>='$MAX_DISKS | bc -l`
-min_limit_reached=`echo $actual_disks'<='$MIN_DISKS | bc -l`
+max_limit_reached=$(echo $actual_disks'>='$MAX_DISKS | bc -l)
+min_limit_reached=$(echo $actual_disks'<='$MIN_DISKS | bc -l)
 
 # When more space needed, add and extend as long we are insinde the disk amount limit
 if [[ $more_space_needed -eq 1 ]]; then
@@ -349,14 +349,14 @@ if [[ $more_space_needed -eq 1 ]]; then
         extend_lv || exit 1
     fi
 else
-  diskusage=`df |grep $MOUNT_POINT|awk '{print $5}'`
+  diskusage=$(df |grep $MOUNT_POINT|awk '{print $5}')
   log "Scale up: No additional disks needed. Disk usage at $diskusage within limit of $((100-$SPACE_UP))%."
 fi
 
 check_nsq_inflight(){
     # If NSQ is not used it will default to empty and will default to the else clause below.
     # Added timeout to fail fast if no NSQ is used. It'll default to else clause.
-     airtraffic=`timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n"`
+    airtraffic=$(timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n")
      if [ "$airtraffic" -gt "0" ]; then
        log "Seeing some air traffic: $airtraffic Please stand by. "
        nsq_result="standby"
@@ -395,7 +395,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             while [ "$openfiles" -gt "0" ]; do
               log "Waiting until no open files are present"
               sleep 3
-              openfiles=`sudo lsof | grep $MOUNT_POINT |wc -l`
+              openfiles=$(sudo lsof | grep -c $MOUNT_POINT)
               log "Open files= $openfiles"
             done
             umount $MOUNT_POINT
