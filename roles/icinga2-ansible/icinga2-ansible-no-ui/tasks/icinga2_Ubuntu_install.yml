@@ -36,7 +36,8 @@
   with_items:
     - check_aws_rds.py
     - check_reboot_required.sh
-  tags: ['rdsplugin']
+    - check_supervisord.py
+  tags: ['rdsplugin', 'addplugins']
 
 - name: Install boto library
   pip: name=boto state=present
