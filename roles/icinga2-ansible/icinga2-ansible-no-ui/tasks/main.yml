@@ -23,3 +23,9 @@
 
 - include: slack_notifications.yml
   when: icinga2_slack
+  tags: icinga2_slack
+
+- include: slack_notifications-git.yml
+  when: icinga2_slack_git
+  tags: icinga2_slack
+
