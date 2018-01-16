@@ -2,6 +2,7 @@
 
 iam_policy_name: "EBS_AutoScaling"
 ebs_autoscale_script_dest: "/usr/local/bin/ebs_autoscale.sh"
+ebs_logfile: "/var/log/ebs_autoscale.log"
 
 #Cronjob
 ebs_cron_minute: '*/15'

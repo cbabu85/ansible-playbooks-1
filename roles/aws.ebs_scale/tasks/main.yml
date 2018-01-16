@@ -65,7 +65,7 @@
 
 - name: Touch logfile
   file:
-    dest: "/var/log/ebs_autoscale.log"
+    dest: "{{ebs_logfile}}"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
     mode: 0644
@@ -83,6 +83,16 @@
     job: "sudo {{ebs_autoscale_script_dest}} >> /var/log/ebs_autoscale.log 2>&1"
     state: present
     disabled: no
+
+- name: "Add logrotation for {{ebs_logfile}}"
+  template:
+      src: logrotation.yml.j2
+      dest: "/etc/logrotate.d/ebs_autoscale"
+      owner: "root"
+      group: "{{deploy_group}}"
+      mode: 0644
+  tags: ebs_logrotation
+
 
 - name: Execute initial EBS_Autoscale if it hasn't run yet
   become_user: "{{system_default_user}}"
