@@ -405,7 +405,6 @@ if [[ $less_space_needed -eq 1 ]]; then
                   log $lvreduction
                   reduct=`vgreduce -a vg_${NAME}`
                   log $reduct
-                  # DOES THIS ADD THE REMOVED DRIVE BACK TO IT SINCE ITS EXTENDS TO 100% FREE ???
                   lvextend -r -l +100%FREE /dev/vg_${NAME}/lv_${NAME} || exit 1
                   mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT || exit 1
                   # TODO Add check if LV has been removed, if not exit 1
