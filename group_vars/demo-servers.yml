@@ -240,7 +240,7 @@ ex_dpn: {
 
 ex_dpn_restclient: {
   comment: "Settings for our local DPN REST API server. Load LocalAuthToken from environment!",
-  localserviceurl: "https://dpn-demo.aptrust.org/",
+  localserviceurl: "https://dpn-demo2.aptrust.org/",
   localapiroot: "api-v2",
   localauthtoken: ""
 }
