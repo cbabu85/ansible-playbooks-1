@@ -3,6 +3,9 @@
   set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
   tags: [always]
 
+- include: dpn.yml
+  when: orgtype == 'dpn'
+
 # Install required packages
 - name: Install required packages
   become: yes
