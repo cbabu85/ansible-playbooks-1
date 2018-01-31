@@ -53,27 +53,11 @@
     recurse: yes
     state: directory
   with_nested:
-    - ['apt', 'dpn']
+    - ['apt']
     - ['data','logs','restore','replication']
   tags: exchange_ebs
+  when: orgtype == 'apt'
 
-# Create symlink outbound directories for each DPN node user on the system.
-- name: Create and symlink outbound directories to EBS staging dir
-  become: yes
-  file:
-    src: "{{mount_dir}}/{{orgtype}}/staging"
-    dest: "/home/{{item}}/outbound"
-    owner: "{{item}}"
-    group: "{{deploy_group}}"
-    mode: 0775
-    state: link
-  with_items:
-    - dpn.hathi
-    - dpn.chron
-    - dpn.sdr
-    - dpn.tdr
-  tags: outboundsymlink
-  when: orgtype == 'dpn'
 
 # TODO: Refactor this as it will clone the repo on every run and overwrite the
 #      config files everytime. Consider moving config files in ~/go/bin/config
@@ -120,12 +104,6 @@
   when: orgtype == 'apt'
   tags: lsfiles
 
-- name: Set dpn exchange services fact to configure supervisor
-  set_fact:
-      exchangeservices: "{{ex_dpn_services}}"
-  when: orgtype == 'dpn'
-  tags: lsfiles
-
 - name: Set nsq services fact to configure supervisor
   set_fact:
       nsqservices: ['nsqadmin','nsqlookupd','nsqd']
@@ -150,25 +128,6 @@
     - { name: 'nsq_supervisor.conf.j2', dest: 'nsq.conf'}
   tags: listfiles
 
-- name: Add DPN cronjobs
-  cron: name="{{item.name}}"
-        user="{{system_default_user}}"
-        minute="{{item.minute | default('*/1')}}"
-        hour="{{item.hour | default('*/1')}}"
-        job=". $HOME/.profile; {{goapp_bin_path}}/{{item.name}}
-             -config={{goapp_cfg_path}}/{{GO_ENV}}.json
-             {{item.params | default ()}}
-             >> {{goapp_log_path}}/cron_{{item.name}}.log 2>&1"
-        state=present
-        disabled=no
-  with_items:
-        - { name: dpn_sync, hour: "*/2", minute: "5"}
-        - { name: dpn_queue, hour: "*/1", minute: "10", params: "-hours=24"}
-        - { name: dpn_cleanup, hour: "*/4", minute: "20"}
-  when: orgtype == 'dpn'
-  tags: dpn_cronjobs
-
-
 - name: Add APTrust cronjobs
   cron: name="{{item.key}}"
         user="{{system_default_user}}"
@@ -189,11 +148,6 @@
         - 'nsqservices:'
         - 'exchange:'
   when: orgtype == 'apt'
-
-- set_fact:
-      supervisor_apps:
-        - 'exchange:'
-  when: orgtype == 'dpn'
 
 # When state = present, the module will call supervisorctl reread then
 # supervisorctl add if the program/group does not exist
