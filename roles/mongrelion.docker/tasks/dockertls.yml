@@ -1,0 +1,20 @@
+---
+
+- name: Update docker.service
+  lineinfile:
+    path: /lib/systemd/system/docker.service
+    regexp: '^ExecStart\=\/usr\/bin\/dockerd'
+    line: ExecStart=/usr/bin/dockerd -H fd:// -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2376 --tlsverify --tlscacert=/etc/docker/ssl/ca.pem --tlscert=/etc/docker/ssl/cert.pem --tlskey=/etc/docker/ssl/key.pem
+    backup: yes
+  register: dockerserviceupdate
+  tags: dockerservice, docker_tls
+
+- name: Reload dockerd
+  systemd:
+    name: docker.service
+    state: restarted
+    daemon_reload: yes
+  when: dockerserviceupdate|changed
+  tags: dockerservice, docker_tls
+
+
