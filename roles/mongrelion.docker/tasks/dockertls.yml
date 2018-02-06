@@ -1,20 +1,17 @@
 ---
 
-- name: Update docker.service
-  lineinfile:
-    path: /lib/systemd/system/docker.service
-    regexp: '^ExecStart\=\/usr\/bin\/dockerd'
-    line: ExecStart=/usr/bin/dockerd -H fd:// -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2376 --tlsverify --tlscacert=/etc/docker/ssl/ca.pem --tlscert=/etc/docker/ssl/cert.pem --tlskey=/etc/docker/ssl/key.pem
-    backup: yes
-  register: dockerserviceupdate
-  tags: dockerservice, docker_tls
+- name: "Create Overrides directory for Docker"
+  file:
+    path: /etc/systemd/system/docker.service.d/
+    state: directory
 
-- name: Reload dockerd
+- name: "Push the Docker daemon config to Server"
+  template:
+    src: daemon_startup_options.conf
+    dest: /etc/systemd/system/docker.service.d/daemon_startup_options.conf
+
+- name: "Restart Docker Daemon service"
   systemd:
-    name: docker.service
+    name: docker
     state: restarted
     daemon_reload: yes
-  when: dockerserviceupdate|changed
-  tags: dockerservice, docker_tls
-
-
