@@ -58,6 +58,3 @@
       supervisor_apps:
         - 'exchange:'
   when: orgtype == 'dpn'
-
-
-
