@@ -1,0 +1,27 @@
+-   hosts:
+        - tmp-ebs-test2
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+        playbook_name: 'mongrelion.docker'
+
+        # NGINX
+        # Setup reverse proxy
+
+        certbot_standalone: false
+        certbot_nginx: true
+
+        # Docker TLS
+        docker_local_cacert: "{{ssl_chain}}"
+        docker_local_tlscert: "{{ssl_cert}}"
+        docker_local_tlskey: "{{ssl_key}}"
+
+
+    roles:
+      - {role: common, tags: common}
+      - {role: ssl, tags: ssl}
+        #      - {role: 030.certbot, tags: certbot, letsencrypt}
+        #  - {role: cd3ef.nginx, tags: nginx}
+      - {role: mongrelion.docker, tags: docker}
+        #      - {role: thomasjpfan.docker, tags: docker}
+
