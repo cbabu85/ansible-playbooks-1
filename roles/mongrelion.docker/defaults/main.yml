@@ -13,6 +13,12 @@ default_docker_config:
   #tlsverify: true
 
 docker_tls: true
+docker_port: 2376
+certificates_dir: /etc/docker/ssl
+docker_ssl_path: /etc/docker/ssl
+client_ssl_path: ~/.docker/ssl
+
+
 docker_version: "17.12"
 setup_script_url: "https://releases.rancher.com/install-docker/{{ docker_version }}.sh"
 
