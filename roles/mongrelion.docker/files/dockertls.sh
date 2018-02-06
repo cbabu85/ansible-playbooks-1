@@ -2,6 +2,7 @@
 
 DOCKER_SSL_PATH=/etc/docker/ssl
 CLIENT_SSL_PATH=~/.docker/ssl
+PUBLIC_IP=`curl ipinfo.io/ip`
 
 echo ""
 echo "Securing Docker with TLS certificates"
@@ -51,6 +52,7 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1 = $HOSTNAME
 IP.1  = 127.0.0.1
+IP.2  = $PUBLIC_IP
 EOT"
 
 
