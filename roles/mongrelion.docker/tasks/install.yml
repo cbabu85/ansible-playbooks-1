@@ -18,7 +18,10 @@
 
 # TODO: Make this into Ansible tasks instead.
 - name: Copy TLS config script
-  script: dockertls.sh
+  script: "create-docker-tls.sh {{ansible_hostname}}"
+  args:
+    creates: "/home/{{system_default_user}}/.docker/ca.pem"
+  become_user: "{{system_default_user}}"
   when: docker_tls
   tags: docker_tls
 
