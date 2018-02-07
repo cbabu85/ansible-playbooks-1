@@ -25,6 +25,38 @@
   when: docker_tls
   tags: docker_tls
 
-- include_tasks: dockertls.yml
+- name: Copy certs to /etc/docker/ssl
+  synchronize:
+    src: "/home/{{system_default_user}}/.docker"
+    dest: "/etc/docker/ssl"
+  delegate_to: "{{ inventory_hostname }}"
   when: docker_tls
+  tags: docker_tls
+
+- name: Get local users homedir
+  local_action: shell echo ~
+  become: false
+  changed_when: false
+  register: homedir
+  tags: docker_tls, homedir, filepull, localdir
+
+- name: make sure local .docker directory exists
+  file:
+    dest: "{{homedir.stdout}}/.docker/ssl"
+    state: directory
+    mode: 0775
+  delegate_to: 127.0.0.1
+  become: false
+  when: docker_tls
+  tags: docker_tls,localdir
+
+- name: Copy client certs to localhost
+  synchronize:
+    mode: pull
+    src: "/home/{{system_default_user}}/.docker/"
+    dest: "{{homedir.stdout}}/.docker/ssl/"
+    checksum: yes
+    times: yes
+  when: docker_tls
+  tags: docker_tls, filepull
 
