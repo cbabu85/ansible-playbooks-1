@@ -38,7 +38,7 @@
   become: false
   changed_when: false
   register: homedir
-  tags: docker_tls, homedir, filepull, localdir
+  tags: docker_tls, homedir, filepull, localdir, profileupdate
 
 - name: make sure local .docker directory exists
   file:
@@ -59,4 +59,28 @@
     times: yes
   when: docker_tls
   tags: docker_tls, filepull
+
+- name: Ensure control host is using remote docker host
+  blockinfile:
+    path: "{{homedir.stdout}}/{{item}}"
+    block: |
+      export DOCKER_HOST=tcp://docker.aptrust.org:2376
+      export DOCKER_TLS_VERIFY=1
+      export DOCKER_CERT_PATH=~/.docker/ssl
+  delegate_to: 127.0.0.1
+  with_items:
+    - .profile
+    - .bash_profile
+  become: false
+  register: profile_update
+  tags: docker_tls, profileupdate
+
+- name: Souce .profile if changed
+  command: source "{{homedir.stdout}}/{{item}}"
+  become: false
+  with_items:
+    - .profile
+    - .bash_profile
+  when: profile_update|changed
+  tags: docker_tls, profileupdate
 
