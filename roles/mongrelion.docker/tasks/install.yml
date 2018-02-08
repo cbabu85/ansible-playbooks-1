@@ -18,7 +18,7 @@
 
 # TODO: Make this into Ansible tasks instead.
 - name: Copy TLS config script
-  script: "create-docker-tls.sh {{ansible_hostname}}"
+  script: "create-docker-tls.sh {{ansible_hostname}}.aptrust.org"
   args:
     creates: "/home/{{system_default_user}}/.docker/ca.pem"
   become_user: "{{system_default_user}}"
@@ -65,7 +65,8 @@
     path: "{{homedir.stdout}}/{{item}}"
     block: |
       export DOCKER_HOST=tcp://docker.aptrust.org:2376
-      export DOCKER_TLS_VERIFY=1
+      # Ignore for now so we don't get unknown ca authority error.
+      #export DOCKER_TLS_VERIFY=1
       export DOCKER_CERT_PATH=~/.docker/ssl
   delegate_to: 127.0.0.1
   with_items:

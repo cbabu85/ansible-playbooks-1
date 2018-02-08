@@ -4,14 +4,14 @@
 #
 # For example:
 #    ./create-docker-tls.sh myhost.docker.com
-# 
-# The script will also create a profile.d (if it exists) entry 
+#
+# The script will also create a profile.d (if it exists) entry
 # which configures your docker client to use TLS
 #
-# We will also overwrite /etc/sysconfig/docker (again, if it exists) to configure the daemon.  
+# We will also overwrite /etc/sysconfig/docker (again, if it exists) to configure the daemon.
 # A backup will be created at /etc/sysconfig/docker.unixTimestamp
 #
-# MIT License applies to this script.  I don't accept any responsibility for 
+# MIT License applies to this script.  I don't accept any responsibility for
 # damage you may cause using it.
 #
 
@@ -101,10 +101,10 @@ openssl x509 \
 
 if [ -d "/etc/profile.d" ]; then
   echo " => Creating profile.d/docker"
-  sudo sh -c "echo '#!/bin/bash 
+  sudo sh -c "echo '#!/bin/bash
 export DOCKER_CERT_PATH=/home/$USER/.docker
 export DOCKER_HOST=tcp://$DOCKER_HOST:2376
-export DOCKER_TLS_VERIFY=1' > /etc/profile.d/docker.sh"
+# export DOCKER_TLS_VERIFY=1' > /etc/profile.d/docker.sh"
   sudo chmod +x /etc/profile.d/docker.sh
   source /etc/profile.d/docker.sh
 else
@@ -126,7 +126,7 @@ OPTIONS=\"$OPTIONS\"
 else
   echo " => WARNING: No /etc/sysconfig/docker file found on your system."
   echo " =>   You will need to configure your docker daemon with the following options:"
-  echo " =>   $OPTIONS" 
+  echo " =>   $OPTIONS"
 fi
 
 export DOCKER_HOST=tcp://DOCKER_HOST:2376
