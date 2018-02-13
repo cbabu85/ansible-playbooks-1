@@ -114,7 +114,7 @@ else
   echo " =>   DOCKER_TLS_VERIFY=1"
 fi
 
-OPTIONS="--tlsverify --tlscacert=$HOME/.docker/ca.pem --tlscert=$HOME/.docker/server-cert.pem --tlskey=$HOME/.docker/server-key.pem -H=0.0.0.0:2376"
+OPTIONS="--tlsverify --tlscacert=$HOME/.docker/ca.pem --tlscert=$HOME/.docker/server-cert.pem --tlskey=$HOME/.docker/server-key.pem -H=0.0.0.0:2376 -H unix:///var/run/docker.sock"
 if [ -f "/etc/sysconfig/docker" ]; then
   echo " => Configuring /etc/sysconfig/docker"
   BACKUP="/etc/sysconfig/docker.$(date +"%s")"
