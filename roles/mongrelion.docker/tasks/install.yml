@@ -27,7 +27,7 @@
 
 - name: Copy certs to /etc/docker/ssl
   synchronize:
-    src: "/home/{{system_default_user}}/.docker"
+    src: "/home/{{system_default_user}}/.docker/"
     dest: "/etc/docker/ssl"
   delegate_to: "{{ inventory_hostname }}"
   when: docker_tls
