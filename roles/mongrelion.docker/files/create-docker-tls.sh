@@ -16,7 +16,7 @@
 #
 
 set -e
-STR=2048
+STR=4096
 if [ "$#" -gt 0 ]; then
   DOCKER_HOST="$1"
 else
