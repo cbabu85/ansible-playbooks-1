@@ -129,6 +129,6 @@ else
   echo " =>   $OPTIONS"
 fi
 
-export DOCKER_HOST=tcp://DOCKER_HOST:2376
+export DOCKER_HOST=tcp://$DOCKER_HOST:2376
 export DOCKER_TLS_VERIFY=1
 echo " => Done! You just need to restart docker for the changes to take effect"
