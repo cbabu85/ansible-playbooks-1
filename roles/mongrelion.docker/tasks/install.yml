@@ -76,9 +76,10 @@
   register: profile_update
   tags: docker_tls, profileupdate
 
-- name: Souce .profile if changed
+- name: Source .profile if changed
   command: source "{{homedir.stdout}}/{{item}}"
   become: false
+  delegate_to: 127.0.0.1
   with_items:
     - .profile
     - .bash_profile
