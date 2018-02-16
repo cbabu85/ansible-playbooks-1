@@ -78,7 +78,7 @@
   cron:
     name: "EBS Autoscaling"
     user: "{{system_default_user}}"
-    minute: "{{ebs_cron_minute | default('30')}}"
+    minute: "{{ebs_cron_minute | default('15')}}"
     hour: "{{ebs_cron_hour | default('*')}}"
     job: "sudo {{ebs_autoscale_script_dest}} >> /var/log/ebs_autoscale.log 2>&1"
     state: present
