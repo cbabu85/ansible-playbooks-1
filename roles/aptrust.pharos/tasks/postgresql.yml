@@ -2,6 +2,16 @@
 # Creates local postgres database
 #
 
+- name: Install postgresql
+  apt: name="{{item}}" update_cache=yes
+  with_items:
+    - postgresql
+    - postgresql-contrib
+    - libpq-dev
+
+- name: Startup PGSQL
+  service: name=postgresql state=started
+
 - name: PHAROS | Create Postgres Pharos DB user
   postgresql_user: name="{{pharos_db_user}}"
                    password="{{pharos_db_pwd}}"
