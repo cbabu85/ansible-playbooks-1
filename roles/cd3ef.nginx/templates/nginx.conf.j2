@@ -112,13 +112,6 @@ http {
 	include /etc/nginx/conf.d/*.conf;
 	include /etc/nginx/sites-enabled/*;
 
- location = /analytics.js {
-        # Proxy to google-analytics.com
-        proxy_pass https://www.google-analytics.com;
-
-        # Custom expires time
-        expires 1y;
-    }
 }
 
 

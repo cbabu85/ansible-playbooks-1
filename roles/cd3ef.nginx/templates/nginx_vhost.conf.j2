@@ -5,6 +5,13 @@ server {
     listen {{ vhost.listen }};
 
     client_max_body_size {{nginx_client_max_body_size}};
+    location = /analytics.js {
+        # Proxy to google-analytics.com
+        proxy_pass https://www.google-analytics.com;
+
+        # Custom expires time
+        expires 1y;
+    }
 {% if vhost.server_name is defined %}
     server_name {{ vhost.server_name }};
     {% endif %}
