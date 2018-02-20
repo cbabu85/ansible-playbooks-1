@@ -35,8 +35,7 @@
       mode: 0644
     when: ansible_os_family == "Debian" and nginx_present|failed and install_passenger
     notify: nginx reload
-    tags:
-      - nginx
+    tags: nginx
 
   - name: Verify Passenger install
     become: true
