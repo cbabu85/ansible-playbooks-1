@@ -22,9 +22,7 @@
 
   - name: Install Phusion Passenger
     become: yes
-    apt: state=present update_cache=yes pkg="{{item}}"
-    with_items:
-     - passenger
+    apt: state=present update_cache=yes pkg="passenger"
     tags: passenger
 
   - name: Nginx-Passenger | Set Passenger config file
