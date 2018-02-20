@@ -40,11 +40,6 @@
                 passenger_app_env {{ RAILS_ENV }};
                 passenger_friendly_error_pages off;
 
-                ssl    on;
-                # SSL Chain if Nginx, SSL cert if Apache2
-                ssl_certificate    {{ssl_cert_path}};
-                ssl_certificate_key {{ ssl_key_path }};
-
                 location ^~ /assets/ {
                      gzip_static on;
                      expires max;
@@ -74,21 +69,12 @@
         pg_pass: "{{pharos_db_pwd}}"
         pg_backup_dir: "/mnt/nfs/backups/psql_backup/{{ansible_hostname}}/"
 
-        # Central logs on efs mount
-        # Note: Role doesn't allow for multiple logdirs at the moment.
-        # Requires refactoring.
-        centrallogs:
-            # - { name: nginx, logdir: /var/log/nginx, servicename: nginx}
-            # - { name: unattended-upgrades, logdir: /var/log/unattended-upgradescopy }
-          - {name: pharos, logdir: "/var/www/{{ansible_fqdn}}/pharos/shared/log", servicename: nginx}
-
     roles:
       - {role: common, tags: common}
       - {role: zzet.rbenv, tags: rbenv}
       - {role: cd3ef.nginx, tags: [nginx, passenger, nginx-passenger]}
       - {role: carlosbuenosvinos.ansistrano-deploy, tags: [deploy, pharos]}
       - {role: aptrust.pharos, tags: [pharos, deploy]}
-      - {role: 030.certbot, tags: certbot}
       - {role: psql_backup, tags: [psql_backup]}
     tasks:
 
