@@ -36,6 +36,12 @@ server {
     {{ vhost.extra_parameters }}
     {% endif %}
 
+{% if letsencrypt_ssl == true %}
+    ssl on;
+    ssl_certificate  /etc/letsencrypt/live/{{ansible_fqdn}}/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/{{ansible_fqdn}}/privkey.pem;
+    {% endif %}
+
 {% if vhost.location is defined %}
     {% for loc in vhost.location %}
     location {{ loc.name }} {
