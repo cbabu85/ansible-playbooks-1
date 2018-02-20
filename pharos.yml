@@ -59,8 +59,6 @@
 
         rbenv_users:
             - "{{system_default_user}}"
-#            - adiamond
-#            - cd3ef
         rbenv_group: 'deploy'
 
         # psql_backup
