@@ -2,14 +2,11 @@
 - name: install build depends
   yum: name={{ item }} state=present
   with_items:
-    - gcc
-    - openssl-devel
-    - libyaml-devel
-    - readline-devel
-    - zlib-devel
-    - libffi-devel
-    - git
+  - "{{ rbenv_yum_packages }}"
   become: true
-  tags:
-    - rbenv
 
+- name: install extra build depends
+  yum: name={{ item }} state=present
+  with_items:
+  - "{{ rbenv_extra_depends }}"
+  become: true
