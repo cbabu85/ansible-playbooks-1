@@ -40,7 +40,7 @@
 
   - name: Verify Passenger install
     become: true
-    shell: "/usr/bin/passenger-config validate-install"
+    shell: "sudo /usr/bin/passenger-config validate-install"
     register: passenger_verification
     changed_when: "passenger_verification.rc == 1"
     when: install_passenger
