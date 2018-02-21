@@ -200,6 +200,7 @@ ex_fixityworker: {
     }
 
 ex_receivingbuckets: [
+        'aptrust.receiving.test.chd.virginia.edu',
         'aptrust.receiving.test.columbia.edu',
         'aptrust.receiving.test.georgetown.edu',
         'aptrust.receiving.test.indiana.edu',
