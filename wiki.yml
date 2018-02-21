@@ -20,6 +20,12 @@
       # Local MySQL Db
       mysql_root_db_pass: foobar       # The root DB password
 
+      # TODO: Need customization to suppory mysql
+      # psql_backup
+      # pg_hostname: "{{ mediawiki_db.name }}"
+      # pg_username: "{{mediawiki_db.user }}"
+      # pg_pass: "{{mediawiki_db.password}}"
+
       # NGINX Webserver
       install_php: true
       nginx_vhosts:
@@ -82,7 +88,8 @@
       - {role: common, tags: common}
       - {role: cd3ef.nginx, tags: nginx}
       - {role: wtanaka.mysql, tags: ['mysql','mediawiki'], when: mediawiki_local_db == true}
-
+        # TODO need mysql backup role
+        # - {role: psql_backup, tags: [psql_backup]}
       - {role: tersmitten.composer, tags: composer, when: ansible_distribution_release == 'xenial'}
       - {role: AsianChris.npm, tags: npm}
       - {role: ansible-mediawiki, tags: mediawiki}
