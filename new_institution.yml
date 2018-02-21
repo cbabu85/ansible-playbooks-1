@@ -55,3 +55,21 @@
       with_items:
         - "{{inst_id}}.edu.users"
         - "test.{{inst_id}}.edu.users"
+      register: new_groups
+      tags: iamgroups
+
+    - debug: msg="{{item.group_name}}"
+      with_items:
+        -  "{{ new_groups.results }}"
+      tags: iamgroups
+
+    - name: Add users to created groups
+      iam:
+        iam_type: user
+        name: "{{item.1}}"
+        state: present
+        groups: "{{ item.0.group_name }}"
+      with_together:
+        -  "{{ new_groups.results }}"
+        -  "{{ inst_users }}"
+      tags: iamgroups
