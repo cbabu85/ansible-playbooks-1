@@ -12,8 +12,12 @@
   become: no
 
   vars:
-    inst_id: chd.virginia
-    inst_type: chd.virginia
+    inst_id: cd3ef.test
+    inst_type: subscriber
+    inst_users:
+      - david.bowie
+      - tom.petty
+      - bruce.springsteen
 
   tasks:
     - name: Create S3 buckets
