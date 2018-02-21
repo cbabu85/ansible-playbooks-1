@@ -1,0 +1,39 @@
+---
+# This is used to ramp up a new institution and not require manual GUI interaction
+
+
+# 1. Create S3 buckets
+# 2. Create IAM Group
+# 3. Create IAM Users
+- name: Setting up AWS buckets and groups
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  become: no
+
+  vars:
+    inst_id: chd.virginia
+    inst_type: chd.virginia
+
+  tasks:
+    - name: Create S3 buckets
+      s3_bucket:
+        name: "aptrust.{{ item }}.{{inst_id}}.edu"
+        state: present
+        tags:
+          institution: "{{inst_id}}"
+          institution_type: "{{inst_type}}"
+      with_items:
+          - receiving
+          - restore
+          - receiving.test
+          - restore.test
+
+    - name: Create IAM Group
+      iam:
+        iam_type: group
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "{{inst_id}}.edu.users"
+        - "test.{{inst_id}}.edu.users"
