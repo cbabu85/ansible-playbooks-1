@@ -162,7 +162,7 @@ add_to_fstab(){
     else
         log "Entry in fstab does not exists. Adding for persistence."
         sudo cp $fstab /etc/fstab.bak
-        sudo echo $fstab_entry >> /etc/fstab
+        sudo bash -c "echo $fstab_entry >> /etc/fstab"
         if sudo mount -fav; then
           log "Checked fstab, looks good."
         else
