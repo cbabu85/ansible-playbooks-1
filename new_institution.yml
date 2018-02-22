@@ -36,17 +36,17 @@
       register: new_buckets
       tags: new_buckets
 
-    - name: Enable S3 logging
-      s3_logging:
-         name: "{{ item.name }}"
-         target_bucket: aptrust.s3.logs
-         target_prefix: "{{item.name}}"
-         state: present
-         region: us-east1
-         validate_certs: no
-      with_items:
-        - "{{new_buckets.results}}"
-      tags: new_buckets
+      #    - name: Enable S3 logging
+      #s3_logging:
+      #   name: "{{ item.name }}"
+      #   target_bucket: "aptrust.s3.logs"
+      #   target_prefix: "{{item.name}}"
+      #   state: present
+      #   region: us-east1
+      #   validate_certs: no
+      #with_items:
+      # - "{{new_buckets.results}}"
+      #tags: new_buckets
 
     - name: Create IAM Group
       iam:
