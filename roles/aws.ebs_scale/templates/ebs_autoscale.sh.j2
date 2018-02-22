@@ -90,11 +90,11 @@ EBS_SLACK_ICON_EMOJI=${EBS_SLACK_ICON_EMOJI:-:slack:}
 
 function send_msg {
     if [[ $NOTIFICATION_TYPE == 'slack' ]];then
-      send_slack $*
+      send_slack $@
     else
-      send_email $*
+      send_email $@
     fi
-  }
+}
 
 
 function log {
