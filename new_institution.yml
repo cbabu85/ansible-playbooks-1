@@ -27,6 +27,7 @@
         tags:
           institution: "{{inst_id}}"
           institution_type: "{{inst_type}}"
+          institution_member: "{{inst_member}}"
       with_items:
           - receiving
           - restore
