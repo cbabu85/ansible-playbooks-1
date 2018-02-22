@@ -74,3 +74,16 @@
         -  "{{ new_groups.results }}"
         -  "{{ inst_users }}"
       tags: iamgroups
+
+# TODO: This needs some logic somewhere to support test and prod namespaces.
+# group_name have .users suffix that could be trimmed with regex.
+#    - name: Assign IAM policy to user groups
+#      iam_policy:
+#        iam_type: group
+#        iam_name: "{{ item.0.group_name }}"
+#        policy_name: "{{inst_id}}.edu-s3policy"
+#        state: present
+#        policy_document: s3-test-policy.json.j2
+#      with_together:
+#        - "{{ new_groups.results }}"
+#        - test
