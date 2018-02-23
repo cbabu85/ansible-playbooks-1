@@ -1,9 +1,8 @@
-# Syntaxhighlight must be an updated version
-#
+---
 
 - name: Get latest SyntaxHighlight version
-  get_curl:
-    url: https://extdist.wmflabs.org/dist/extensions/SyntaxHighlight_GeSHi-master-756dcfd.tar.gz
+  get_url:
+    url: "https://extdist.wmflabs.org/dist/extensions/SyntaxHighlight_GeSHi-master-756dcfd.tar.gz"
     dest: "{{mediawiki_path}}/extensions/SyntaxHighlight_GeSHi-master-756dcfd.tar.gz"
 
 
@@ -19,7 +18,7 @@
     mode: a+xr
 
 - name: Composer install deps
-  compose:
+  composer:
     command: install
     no_dev: false
     working_dir: "{{mediawiki_path}}/extensions/SyntaxHighlight_GeSHi"
