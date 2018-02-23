@@ -357,7 +357,7 @@ check_nsq_inflight(){
     # Added timeout to fail fast if no NSQ is used. It'll default to else clause.
     airtraffic=$(timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n")
     # Check for Rsync jobs on when script is run on DPN node.
-    rsyncing= $( ps axu |pgrep rsync | wc -l)
+    rsyncing=$(ps axu |pgrep rsync | wc -l)
 
      if [[ "$airtraffic" -gt "0" || "$rsyncing" -gt "0" ]]; then
        log "Seeing some air traffic: $airtraffic Please stand by. "
