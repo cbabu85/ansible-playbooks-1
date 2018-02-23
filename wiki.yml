@@ -34,11 +34,11 @@
             root: "{{ mediawiki_path }}"
             access_log: "/var/log/nginx/{{ansible_fqdn}}_access.log"
             error_log: "/var/log/nginx/{{ansible_fqdn}}_error.log"
-            extra_parameters: |
-                ssl    on;
-                # SSL Chain if Nginx, SSL cert if Apache2
-                ssl_certificate    {{ssl_cert_path}};
-                ssl_certificate_key {{ ssl_key_path }};
+            #extra_parameters: |
+            #    ssl    on;
+            #    # SSL Chain if Nginx, SSL cert if Apache2
+            #    ssl_certificate    {{ssl_cert_path}};
+            #    ssl_certificate_key {{ ssl_key_path }};
             nginx_client_max_body_size: 0
             location:
               - name: "/favicon.ico"
