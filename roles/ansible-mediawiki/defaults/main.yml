@@ -81,3 +81,4 @@ mediawiki_extensions:
 
 mediawiki_ext_composer:
   - { package: 'SemanticFormsSelect', url: "mediawiki/semantic-forms-select:~2.1.1"}
+  - { package: 'SemanticGlossary', url: "mediawiki/semantic-glossary:~2.0"}
