@@ -312,7 +312,7 @@ free_space=$(df | grep $MOUNT_POINT | awk '{print $4}')
 LVM_SIZE=$(sudo vgs --units g --nosuffix |grep $NAME |awk '{print $6}')
 
 # Calc threshold values
-min_free_space=$(echo "($SPACE_UP/100*$LVM_SIZE)*1000000" | bc -l)
+min_free_space=$(echo "($SPACE_UP/100*$DISK_SIZE)*1000000" | bc -l)
 # Needs 1.x (that's why +100) times a disk of free space. This may be doubled with min_disk_needed
 max_free_space=$(echo "(($SPACE_DOWN+100)/100*$DISK_SIZE)*1000000" | bc -l)
 #max_free_space=`echo "(($SPACE_DOWN)/100*$LVM_SIZE)*1000000" | bc -l`
