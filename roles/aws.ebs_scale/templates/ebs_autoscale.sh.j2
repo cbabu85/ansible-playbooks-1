@@ -360,7 +360,7 @@ check_nsq_inflight(){
     rsyncing=$(ps axu |pgrep rsync | wc -l)
 
      if [[ "$airtraffic" -gt "0" || "$rsyncing" -gt "0" ]]; then
-       log "Seeing some air traffic: $airtraffic Please stand by. "
+       log "Seeing some air traffic: $airtraffic and/or rsyncs $rsyncing. Please stand by. "
        nsq_result="standby"
      else
        log "Nobody is flying. Good to go."
