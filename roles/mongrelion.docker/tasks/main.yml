@@ -7,9 +7,10 @@
   register: which_dockerd
   changed_when: False
   ignore_errors: yes
+  tags: always
 
 - include: "install.yml"
-  when: upgrade_docker or (which_dockerd | failed)
+  when: upgrade_docker or (which_dockerd.rc != 0)
 
 - name: ensure config folder is present
   file:
