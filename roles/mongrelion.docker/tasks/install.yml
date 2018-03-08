@@ -14,13 +14,13 @@
 # TODO: Make this into Ansible tasks instead.
 # TODO: Use official docker repos not rancher.
 - name: Execute docker setup script
-  shell: "/tmp/docker-setup.sh"
+  shell: "./tmp/docker-setup.sh"
 
 # TODO: Make this into Ansible tasks instead.
 - name: Copy TLS config script
   script: "create-docker-tls.sh {{ansible_hostname}}.aptrust.org"
   args:
-    creates: "/home/{{system_default_user}}/.docker/ca.pem"
+    creates: "/home/{{system_default_user}}/.docker/ssl/ca.pem"
   become_user: "{{system_default_user}}"
   when: docker_tls
   tags: docker_tls

@@ -32,8 +32,8 @@ fi
 echo " => Using Hostname: $DOCKER_HOST  You MUST connect to docker using this host!"
 
 echo " => Ensuring config directory exists..."
-mkdir -p "$HOME/.docker"
-cd $HOME/.docker
+mkdir -p "$HOME/.docker/ssl"
+cd $HOME/.docker/ssl
 
 echo " => Verifying ca.srl"
 if [ ! -f "ca.src" ]; then
@@ -102,7 +102,7 @@ openssl x509 \
 if [ -d "/etc/profile.d" ]; then
   echo " => Creating profile.d/docker"
   sudo sh -c "echo '#!/bin/bash
-export DOCKER_CERT_PATH=/home/$USER/.docker
+export DOCKER_CERT_PATH=/home/$USER/.docker/ssl
 export DOCKER_HOST=tcp://$DOCKER_HOST:2376
 # export DOCKER_TLS_VERIFY=1' > /etc/profile.d/docker.sh"
   sudo chmod +x /etc/profile.d/docker.sh
@@ -114,7 +114,7 @@ else
   echo " =>   DOCKER_TLS_VERIFY=1"
 fi
 
-OPTIONS="--tlsverify --tlscacert=$HOME/.docker/ca.pem --tlscert=$HOME/.docker/server-cert.pem --tlskey=$HOME/.docker/server-key.pem -H=0.0.0.0:2376 -H unix:///var/run/docker.sock"
+OPTIONS="--tlsverify --tlscacert=$HOME/.docker/ssl/ca.pem --tlscert=$HOME/.docker/ssl/server-cert.pem --tlskey=$HOME/.docker/ssl/server-key.pem -H=0.0.0.0:2376 -H unix:///var/run/docker.sock"
 if [ -f "/etc/sysconfig/docker" ]; then
   echo " => Configuring /etc/sysconfig/docker"
   BACKUP="/etc/sysconfig/docker.$(date +"%s")"
