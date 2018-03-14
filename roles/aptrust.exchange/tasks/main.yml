@@ -110,11 +110,15 @@
   tags: lsfiles
 
 - name: Update Exchange config file
+  become_user: "{{system_default_user}}"
+  become: true
   template: src=exchange.json.j2
             dest="/{{goapp_cfg_path}}/{{GO_ENV}}.json"
   tags: buildgo, exchangetemplate
 
 - name: Update NSQ config file
+  become_user: "{{system_default_user}}"
+  become: true
   template: src=nsq.config.j2
             dest="{{goapp_cfg_path}}/nsq/{{GO_ENV}}.config"
   tags: buildgo, nsq_supervisor
