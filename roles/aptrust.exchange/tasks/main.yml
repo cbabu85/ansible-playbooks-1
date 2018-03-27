@@ -3,7 +3,7 @@
   set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
   tags: [always]
 
-- include: dpn.yml
+- import_tasks: dpn.yml
   when: orgtype == 'dpn'
 
 - import_tasks: docker.yml
