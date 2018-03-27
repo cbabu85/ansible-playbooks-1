@@ -65,7 +65,7 @@ ebs_slack_channel: "#ops"
 ##
 # Ruby Variables
 ##
-ruby_version: 2.1.5
+ruby_version: 2.3.1
 
 # RBenv
 # This is set as a fact in the role.
