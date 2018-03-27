@@ -24,8 +24,13 @@
         pharos_app_root: "{{ ansistrano_deploy_to }}/current"
         pharos_environment: "{{ruby_env}}"
 
-        pharos_local_db: true
-        pharos_setup: true
+        pharos_local_db: false
+        pharos_setup: false
+
+        #        pharos_db:
+        #pharos_db_user:
+        #pharos_db_pwd:
+        #pharos_url:
 
         # Certbot ssl
         certbot_standalone: false
