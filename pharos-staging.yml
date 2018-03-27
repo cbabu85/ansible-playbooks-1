@@ -10,7 +10,7 @@
         ansistrano_deploy_to: "/var/www/{{ansible_fqdn}}/{{playbook_name}}"
         ansistrano_deploy_via: "git"
         ansistrano_git_repo: "git@github.com:APTrust/pharos.git"
-        ansistrano_git_branch: "develop"
+        ansistrano_git_branch: "feature/cleanup"
         # Note: key_path rewritten to support ssh key as variable not file.
         ansistrano_git_identity_key_path: "{{aptdeploy_sshkey_private}}"
         ansistrano_shared_paths: ["log"]
