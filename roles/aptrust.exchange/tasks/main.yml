@@ -6,6 +6,9 @@
 - include: dpn.yml
   when: orgtype == 'dpn'
 
+- import_tasks: docker.yml
+  when: ex_docker == true
+
 # Install required packages
 - name: Install required packages
   become: yes
