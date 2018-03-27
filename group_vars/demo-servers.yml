@@ -223,6 +223,7 @@ ex_receivingbuckets: [
         'aptrust.receiving.test.unc.edu',
         'aptrust.receiving.test.virginia.edu',
         'aptrust.receiving.test.vt.edu',
+        'aptrust.receiving.test.vwu.edu'
     ]
 
 ex_dpn: {
