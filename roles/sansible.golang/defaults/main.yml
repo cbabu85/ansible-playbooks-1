@@ -11,3 +11,6 @@ golang_validate_certs: yes
   # If specified GO path and directories will be setup for this user and group
 golang_workspace_user: ~
 
+# If you want to upgrade the Golang version, set this to true.
+golang_update: false
+golang_install_dir: /usr/local
