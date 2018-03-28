@@ -49,7 +49,7 @@
   with_items:
         - { name: dpn_sync, hour: "*/2", minute: "5"}
         - { name: dpn_queue, hour: "*/1", minute: "10", params: "-hours=24"}
-          #      - { name: dpn_cleanup, hour: "*/4", minute: "20"}
+        - { name: dpn_cleanup, hour: "*/4", minute: "20"}
         - { name: dpn_pharos_sync, hour: "*/1", minute: "25"}
   when: orgtype == 'dpn'
   tags: dpn_cronjobs
