@@ -96,7 +96,7 @@
   environment: "{{go_env}}"
   become_user: "{{system_default_user}}"
   become: true
-  when: checkout.changed
+  when: checkout.changed or buildgo|bool == true
   register: go_build_result
   failed_when: "'no buildable Go source files' not in go_build_result.stderr"
   # Note: even if status is sucessful this will be a changed task.?
