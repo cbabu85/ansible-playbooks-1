@@ -98,7 +98,9 @@
   become: true
   when: checkout.changed or buildgo|bool == true
   register: go_build_result
-  failed_when: "'no buildable Go source files' not in go_build_result.stderr"
+  failed_when: "'no non-test Go files' not in go_build_result.stderr"
+  #  Note: This failed_when only applies to older Go <1.10  versions.
+  #  failed_when: "'no buildable Go source files' not in go_build_result.stderr"
   # Note: even if status is sucessful this will be a changed task.?
   changed_when: "'no buildable Go source files' not in go_build_result.stderr"
   tags: buildgo,goinstall
