@@ -9,6 +9,8 @@
 
         # Golang
         golang_workspace_user: "{{system_default_user}}"
+        golang_tarball: go1.10.linux-amd64.tar.gz
+        golang_tarball_checksum: b5a64335f1490277b585832d1f6c7f8c6c11206cba5cd3f771dcb87b98ad1a33
 
         # Supervisor
         supervisor_user: "{{system_default_user}}"
