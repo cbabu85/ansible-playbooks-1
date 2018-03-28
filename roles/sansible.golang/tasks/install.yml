@@ -1,5 +1,9 @@
 ---
 
+- name: Remove the old go version
+  file: path={{golang_install_dir}}/go state=absent
+  when: golang_update == true
+
 - name: Download the Golang tarball
   become: yes
   get_url:
@@ -13,7 +17,7 @@
   become: yes
   unarchive:
     copy: no
-    dest: /usr/local
+    dest: "{{golang_install_dir}}"
     src: "/usr/local/src/{{ golang_tarball }}"
 
 - name: Create Golang code folders for workspace user
