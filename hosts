@@ -21,7 +21,6 @@ apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.
 # APTrust 2.0 world
 # All new servers have '2' suffix in their hostname except demo, since it's a new 'namespace'
 [demo-servers]
-tmp-ebs-test2 ansible_ssh_user=ubuntu hostname_name=docker.aptrust.org hostname_fqdn=ec2-34-231-222-220.compute-1.amazonaws.com host_eip=34.231.222.220 instance_id=i-0c986eb59c16ae67a
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
