@@ -53,6 +53,12 @@ Example Playbook
       - {role: retr0h.nsq, tags: nsq}
       - {role: aptrust.exchange, tags: exchange}
 
+Example calls
+--------------
+
+ansible-playbook exchange.yml -l apt-prod-services -t buildgo --diff
+- This will only 1) Force clone the exchange repo, 2) Go get dependencies 3) build the apps binaries without affecting running applications
+
 License
 -------
 
