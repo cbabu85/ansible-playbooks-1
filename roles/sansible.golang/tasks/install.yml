@@ -2,7 +2,7 @@
 
 - name: Remove the old go version
   file: path={{golang_install_dir}}/go state=absent
-  when: golang_update == true
+  when: golang_update|bool == true
 
 - name: Download the Golang tarball
   become: yes
