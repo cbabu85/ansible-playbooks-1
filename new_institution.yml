@@ -1,10 +1,28 @@
 ---
 # This is used to ramp up a new institution and not require manual GUI interaction
-
-
+# It will do the following tasks:
 # 1. Create S3 buckets
 # 2. Create IAM Group
 # 3. Create IAM Users
+# 4. Setup an IAM policy to manage access to S3 buckets
+# 4. Apply the IAM inline policy to the groups (test/prod)
+
+# inst_id: The ID the institution goes by. Usually organized by domain names,
+#          e.g. UVa -> virginia.edu
+#
+# Sub accounts: Sub accounts can be schools/departments within institutions,
+#               at UVa the Law Library would be a sub-account and hence go by
+#               viul.virginia.edu and have their own IAM groups, users and buckets.
+# Subscriber accounts: Are managed the same way as sub accounts.
+#
+# TODO: Create a nested dict that includes all member inst, subscribers and sub
+# accounts and their users. Can be used to ensure consistent state as well as
+# consistent tagging. Needs to be encrypted in vault.
+    # Example dict to iterate over
+    # { inst_idv: 'viul' , inst_member: virginia, inst_type: 'subaccount', inst_users: ('loren.moulds','humpty dumpty')}
+#
+# TODO: Move play into role to allow for IAM template.
+
 - name: Setting up AWS buckets and groups
   hosts: localhost
   connection: local
@@ -12,12 +30,13 @@
   become: no
 
   vars:
-    inst_id: cd3ef.test
-    inst_type: subscriber
+    inst_id: viul.virginia
+    # Member institution, may be the same as inst_id if it's a member institution
+    inst_member: uva
+    # member, subscriber, or subaccount
+    inst_type: subaccount
     inst_users:
-      - david.bowie
-      - tom.petty
-      - bruce.springsteen
+      - loren.moulds
 
   tasks:
     - name: Create S3 buckets
