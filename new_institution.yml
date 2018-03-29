@@ -55,6 +55,7 @@
       register: new_buckets
       tags: new_buckets
 
+      # Bug: https://github.com/boto/boto/issues/2836
       #    - name: Enable S3 logging
       #s3_logging:
       #   name: "{{ item.name }}"
