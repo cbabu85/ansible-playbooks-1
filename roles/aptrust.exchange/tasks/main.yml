@@ -159,6 +159,7 @@
         - 'nsqservices:'
         - 'exchange:'
   when: orgtype == 'apt'
+  tags: restartapps
 
 # When state = present, the module will call supervisorctl reread then
 # supervisorctl add if the program/group does not exist
@@ -178,12 +179,16 @@
     - nsqadmin
     - nsqlookupd
 
+- set_fact: restartapps=true
+  tags: restartapps
+
 # When state = restarted, the module will call supervisorctl update then
 # call supervisorctl restart.
 - name: Update and restart supervisor processes
   supervisorctl: name="{{item}}" state=restarted
-  when: supervisor_config_files.changed or go_build_result.changed or checkout.changed
+  when: restartapps is defined or supervisor_config_files.changed or go_build_result.changed or checkout.changed
   with_items: "{{supervisor_apps}}"
+  tags: restartapps
 
 # Note: exchange is the program group used in supervisor config.
 - name: Ensure Exchange services are running
