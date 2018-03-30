@@ -1,4 +1,9 @@
 ---
+
+# Set facts for EBS resource tagging
+-  set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
+-  set_fact: environment="{% if 'prod' in ansible_hostname%}prod{%else%}demo{%endif%}"
+
 - name: Setup EBS_AutoScaling IAM Role
   iam:
     iam_type: role
