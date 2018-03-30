@@ -18,6 +18,8 @@ vg_filesystem: ext4
 orgtype: 'apt'
 environment: 'dev'
 
+# Volume type
+volume_type: 'gp2'
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
