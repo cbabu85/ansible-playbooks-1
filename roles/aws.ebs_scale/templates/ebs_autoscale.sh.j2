@@ -46,6 +46,19 @@
 # LV = lv_$NAME
 NAME="{{vg_name}}_lvm"
 
+# Orgtype
+# Describes the orgtype (APT,DPN) for resource tags
+ORGTYPE="{{orgtype|default('apt')}}"
+
+# Environment
+# Describes the environment (prod,demo,dev,test)
+ENVIRONMENT="{{environment|default('demo')}}"
+
+# Volume Type
+# Choose between Provisioned IOPS SSD (io1), General Purpose SSD (gp2),
+# Throughput Optimized HDD (st1), Cold HDD (sc1)
+VOLUME_TYPE="{{volume_type|default('gp2')}}"
+
 # Where to mount it
 MOUNT_POINT="{{vg_mount_point}}"
 
@@ -65,7 +78,6 @@ SPACE_DOWN="{{vg_space_down}}"
 # No disk above /dev/sdz will be created
 
 START_DISK_LETTER='{{vg_start_disk_letter}}'
-
 # Minimum number of disks to keep
 MIN_DISKS="{{vg_min_disks}}"
 
@@ -205,7 +217,10 @@ add_disk() {
       --volume-type gp2 \
       --size $DISK_SIZE \
       --availability-zone $AV_ZONE \
-      --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=ebsscale_${NAME}_disk_${DISK_LETTER}}]" > /etc/ebs_volume_info
+      --tag-specifications "ResourceType=volume,
+                            Tags=[{Key=Name,Value=ebsscale_${NAME}_disk_${DISK_LETTER}},
+                            {Key=orgtype,Value=${ORGTYPE}},
+                            {Key=environment,Value=${ENVIRONMENT}}]" > /etc/ebs_volume_info
     volume_id=$(jq -r '.VolumeId' /etc/ebs_volume_info)
 
     volume_status=""
