@@ -214,7 +214,7 @@ add_disk() {
     next_disk $LAST_DISK_LETTER || return 1
 
     $AWS_EC2 create-volume \
-      --volume-type gp2 \
+      --volume-type ${VOLUME_TYPE} \
       --size $DISK_SIZE \
       --availability-zone $AV_ZONE \
       --tag-specifications "ResourceType=volume,
