@@ -14,6 +14,9 @@ vg_filesystem: ext4
 # ALSO SETUP UBUNTU AWS CREDENTIALS TO USE FOR EBS OPS# Write readme about whats needed.
 # PHASE 2: define EBS shrinking process and find a safe trigger. probably during downtime window once a week?
 
+# Vars for resource tagging on AWS
+orgtype: 'apt'
+environment: 'dev'
 
 # Base name for VG and LV.
 # VG = vg_$NAME
