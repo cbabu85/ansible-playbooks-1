@@ -52,7 +52,7 @@ ORGTYPE="{{orgtype|default('apt')}}"
 
 # Environment
 # Describes the environment (prod,demo,dev,test)
-ENVIRONMENT="{{environment|default('demo')}}"
+ENVIRONMENT="{{envtype|default('demo')}}"
 
 # Volume Type
 # Choose between Provisioned IOPS SSD (io1), General Purpose SSD (gp2),
@@ -65,7 +65,6 @@ MOUNT_POINT="{{vg_mount_point}}"
 # Size of each disk in GB
 # Maximum EBS size is 1024GB
 DISK_SIZE="{{vg_disk_size}}"
-
 # %age of free space (relative to disk size) before adding a new disk
 SPACE_UP="{{vg_space_up}}"
 
@@ -391,7 +390,6 @@ if [[ $less_space_needed -eq 1 ]]; then
     if [[ $min_limit_reached -eq 1 ]]; then
         log "Too much space but minimum disk limit reached"
     else
-        log "---SHRINKING VOLUME START----"
         # In case the DISK_SIZE has changed since creating the LVM.
         LAST_DISK_SIZE=`sudo pvs --units g|tail -n1| awk '{print $5}'| sed 's/.$//'`
         root_device_name=`jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info`
@@ -402,6 +400,7 @@ if [[ $less_space_needed -eq 1 ]]; then
         check_nsq_inflight
         log "NSQ_RESULT: $nsq_result"
         if [ $nsq_result == "takeoff" ];then
+            log "---SHRINKING VOLUME START----"
             send_msg "Worker queues empty. Shutting down exchange services. \n \
                         `df -h $MOUNT_POINT` Shrinking by $LAST_DISK_SIZE GB"
             log "Shutting down exchange services. \n `df -h $MOUNT_POINT`"

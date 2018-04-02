@@ -16,7 +16,7 @@ vg_filesystem: ext4
 
 # Vars for resource tagging on AWS
 orgtype: 'apt'
-environment: 'dev'
+envtype: 'dev'
 
 # Volume type
 volume_type: 'gp2'
