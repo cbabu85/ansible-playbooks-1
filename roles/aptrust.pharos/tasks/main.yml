@@ -1,7 +1,7 @@
 ---
 # This installs Pharos from github.com/APTrust/pharos
 # Deployment is handled by Ansistrano. https://github.com/ansistrano/deploy
-# Variable defaults are generelly set for a development/demo environment.
+# Variable defaults are set for a development/demo environment.
 
   - name: install required packages
     become: yes
@@ -138,8 +138,8 @@
         creates: "{{pharos_app_root}}/log/.schema_loaded"
     become: true
     become_user: "{{ system_default_user }}"
-    when: "('production' or 'demo') not in '{{RAILS_ENV}}'"
-    tags: dbmigrate
+    when: not RAILS_ENV | search ("production|demo")
+    tags: dbmigrate,schema
 
   - name: Migrate DB Schema
     shell: chdir="{{pharos_app_root}}" bundle exec rake db:migrate RAILS_ENV="{{RAILS_ENV}}"
@@ -153,7 +153,7 @@
     shell: chdir="{{pharos_app_root}}" bundle exec rake pharos:setup RAILS_ENV="{{RAILS_ENV}}"
     become: true
     become_user: "{{ system_default_user }}"
-    when: "{{pharos_setup}} == true"
+    when: pharos_setup
 
   - name: Assets precompile
     shell: chdir="{{pharos_app_root}}" bundle exec rake assets:precompile RAILS_ENV="{{RAILS_ENV}}"
