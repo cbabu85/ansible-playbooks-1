@@ -119,3 +119,22 @@
       tags: add_rds_hosts
 
 # TODO: Add NFS checks
+    - name: Monitor drive partitions differently
+      blockinfile:
+        dest: "/etc/icinga2/zones.d/master/hosts.conf"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{item}}"
+        block: |
+          vars.disks["root disk"] = {
+              disk_partitions = "/"
+              disk_partitions_excluded = "/mnt/lvm"
+          }
+          vars.disks["LVM-Volume"] = {
+              disk_partitions = "/mnt/lvm"
+              disk_wfree = "5%"
+              disk_cfree = "1%"
+          }
+        with_items:
+          - apt-prod-services
+          - apt-demo-services
+          - dpn-demo2
+          - dpn-prod2
