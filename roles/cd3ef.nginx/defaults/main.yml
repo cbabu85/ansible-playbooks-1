@@ -49,6 +49,7 @@ nginx_upstreams: []
 passenger_standalone: false
 install_passenger: false
 install_php: false
+install_reverse_proxy: false
 
 php_trusty_packages:
   - php5-common
