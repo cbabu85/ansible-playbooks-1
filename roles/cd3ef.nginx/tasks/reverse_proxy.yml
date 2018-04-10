@@ -7,6 +7,7 @@
   with_items: "{{ nginx_reverse_proxy_proxies }}"
   notify:
     - restart nginx
+  tags: reverse_proxy
 
 
 #nginx_vhost_path: "/etc/nginx/sites-enabled"

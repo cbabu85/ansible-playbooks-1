@@ -47,6 +47,10 @@
     when: install_php
     tags: php
 
+  - include: reverse_proxy.yml
+    when: install_reverse_proxy
+    tags: reverse_proxy
+
   - name: Nginx | Create sites available/enabled directories
     file: path={{item}} state=directory mode=0755 group={{nginx_group}}
     with_items:
