@@ -300,7 +300,7 @@ ex_dpn_dpnpackageworker: {
 
 ex_dpn_dpnvalidationworker: {
     networkconnections: "8",
-    workers: "1",
+    workers: "4",
     nsqtopic: "dpn_validation_topic",
     nsqchannel: "dpn_validation_channel",
     maxattempts: "3",
