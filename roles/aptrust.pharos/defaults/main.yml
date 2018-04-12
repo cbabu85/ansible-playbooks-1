@@ -13,6 +13,7 @@ pharos_url: "https://pharos.aptrust.org"
 
 # AWS RDS
 # Note: sec_group and subnet have to be setup prior deployment
+pharos_rds_instance_name: "pharos-{{RAILS_ENV}}"
 pharos_rds_instance_type: "db.t2.medium"
 pharos_db_size: '16'
 pharos_vpc_sec_group: "sg-18a4ac62"
