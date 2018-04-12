@@ -53,12 +53,12 @@
   - name: Create DB on RDS
     rds:
         command: create
-        instance_name: "pharos-{{RAILS_ENV}}"
+        instance_name: "{{ pharos_rds_instance_name }}"
         instance_type: "{{ pharos_rds_instance_type | default('db.t2.small') }}"
         size: "{{pharos_db_size | default('16') }}"
         username: "{{pharos_db_user}}"
         password: "{{pharos_db_pwd}}"
-        db_name: "pharos_{{RAILS_ENV}}"
+        db_name: "{{pharos_db_name}}"
         db_engine: postgres
         multi_zone: "{{pharos_rds_multi_az | default('no')}}"
         region: "{{pharos_rds_region | default('us-east-1')}}"
@@ -77,13 +77,15 @@
         maint_window: 'Tue:10:30-Tue:11:00'
         tags:
             Environment: "{{RAILS_ENV}}"
-    tags: createrds
+    tags: createrds, dd
     register: rds_facts
     when: pharos_local_db == False
 
+# Note: Can be overridden with command line variable ... -e pharos_db_host=something.db.com
   - name: Set RDS db_host fact
     set_fact: pharos_db_host="{{rds_facts.instance.endpoint}}"
     when: pharos_local_db == False
+    tags: dd
 
   - name: Set local db_host fact
     set_fact: pharos_db_host="localhost"
@@ -98,9 +100,11 @@
   - name: Get Git Hash Fact
     shell: tail -n1 "{{pharos_app_root}}/REVISION" | cut -c1-5
     register: pharos_timestamp
+    tags: appenv
 
   - name: Set Release fact
     set_fact: PHAROS_RELEASE="{{pharos_timestamp.stdout}}"
+    tags: appenv
 
   - name: Define application environment configuration
     template:
@@ -111,6 +115,7 @@
         mode: 0644
     vars:
         PHAROS_RELEASE: "{{PHAROS_RELEASE}}"
+    tags: appenv
 
   - name: Set PHAROS API system user credentials as ENV
     no_log: true
@@ -125,6 +130,12 @@
       - { name: "PHAROS_API_KEY", value: "{{pharos_system_user_key}}"}
     tags: pharos_api_env
 
+    #  - name: Temporarily rename pharos_db string to prod for migration test
+    # replace:
+    #   path: "{{pharos_app_root}}/config/database.yml"
+    #   regexp: "  database: pharos_demo$"
+    #   replace: "  database: pharos_production"
+    # tags: repldb
 
 # Only loads DB schema at first deploy. Skipped when .schema_loaded exists
 # Note: Careful! This assumes pharos has been deployed with this role before.
@@ -180,7 +191,7 @@
   - name: Setup log rotation
     template:
         src: logrotation.yml.j2
-        dest: "/etc/logrotate.d/pharos_{{APP_ENV}}"
+        dest: "/etc/logrotate.d/pharos_{{RAILS_ENV}}"
         owner: "root"
         group: "{{deploy_group}}"
         mode: 0644
