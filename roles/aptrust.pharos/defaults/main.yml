@@ -2,7 +2,7 @@
 pharos_app_root: "/var/www/{{ansible_fqdn}}/pharos"
 RAILS_ENV: 'development'
 
-pharos_db: "pharos_{{RAILS_ENV}}"
+pharos_db_name: "pharos_{{RAILS_ENV}}"
 
 pharos_db_user: "pharos_admin"
 pharos_db_pwd: "s3cr3tp455w0rd"
