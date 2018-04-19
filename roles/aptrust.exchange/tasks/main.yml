@@ -33,8 +33,8 @@
     regexp="{{item.name}}=.*"
     line="export {{item.name}}={{item.value}}"
   with_items:
-    - { name: "AWS_ACCESS_KEY_ID", value: "{{aws_go_user}}"}
-    - { name: "AWS_SECRET_ACCESS_KEY", value: "{{aws_go_pwd}}"}
+    - { name: "AWS_ACCESS_KEY_ID", value: "{{aws_go_user|default ('')}}"}
+    - { name: "AWS_SECRET_ACCESS_KEY", value: "{{aws_go_pwd| default ('')}}"}
     - { name: "GOPATH", value: "{{go_env.GOPATH}}"}
     - { name: "EXCHANGE_HOME", value: "{{goapp_src_path}}"}
     - { name: "PHAROS_API_USER", value: "{{pharos_api_user}}"}
