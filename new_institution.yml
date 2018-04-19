@@ -30,13 +30,14 @@
   become: no
 
   vars:
-    inst_id: viul.virginia
+    inst_id: test
     # Member institution, may be the same as inst_id if it's a member institution
-    inst_member: uva
+    inst_member: test
     # member, subscriber, or subaccount
-    inst_type: subaccount
+    inst_type: member
     inst_users:
-      - loren.moulds
+      - dart.demo
+      #      - christian.dahlhausen.test
 
   tasks:
     - name: Create S3 buckets
@@ -79,7 +80,7 @@
       register: new_groups
       tags: iamgroups
 
-    - debug: msg="{{item.group_name}}"
+    - debug: msg="{{item.group_name}}, {{inst_users}}"
       with_items:
         -  "{{ new_groups.results }}"
       tags: iamgroups
@@ -90,7 +91,7 @@
         name: "{{item.1}}"
         state: present
         groups: "{{ item.0.group_name }}"
-      with_together:
+      with_nested:
         -  "{{ new_groups.results }}"
         -  "{{ inst_users }}"
       tags: iamgroups
