@@ -48,6 +48,11 @@ All variables default to local development values. For deployment on demo
 or production systems these will have to be overwritten using group_vars
 or host_vars.
 
+If deploying a staging server as a one-off with RDS facts and a copy of a
+production database for example. config can be overridden by passing
+extra vars `-e pharos_rds_instance_name=pharos-staging` and
+ `-e pharos_db_name=pharos_production` while RAILS_ENV is set to staging or demo.
+
 Dependencies
 ------------
 
