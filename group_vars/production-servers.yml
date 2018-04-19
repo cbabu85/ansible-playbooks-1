@@ -225,6 +225,8 @@ ex_receivingbuckets: [
     'aptrust.receiving.vwu.edu'
     ]
 
+## FOR CHANGES ON DPN NODES THIS NEEDS TO BE CHANGED
+#   IN dpn-demo-servers.yml and dpn-prod-servers.yml
 ex_dpn: {
     localnode: "aptrust",
     logdirectory: "/mnt/lvm/dpn/logs",
