@@ -209,8 +209,11 @@
     tags: pharos_notify_cron
 
   - name: Setup Cron job for email notification helper script
-    cron: name="pharos notify"
+    cron: name="pharos snapshot notification"
           user="{{system_default_user}}"
+          minute='1'
+          hour='0'
+          day='1'
           month='*'
           job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py -o snapshot
              >> {{pharos_app_root}}/log/cron_pharos_notify.log 2>&1"
