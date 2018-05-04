@@ -210,6 +210,7 @@ add_to_fstab(){
                 Reverting to previous version."
           sudo cp /etc/fstab.bak $fstab
           send_msg "fstab entry has error on $HOSTNAME"
+          rm $PIDFILE
           exit 1
         fi
     fi
@@ -446,13 +447,13 @@ if [[ $less_space_needed -eq 1 ]]; then
             if [ $? -eq 0 ]; then
               log "Unmount of VG successful. LAST_VOLUME is $LAST_VOLUME and will be removed"
               time e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
-              lvreduction=`time lvreduce -A -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME} || exit 1`
+              lvreduction=`time lvreduce -A y -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME} || rm $PIDFILE && exit 1`
               if [ $? -eq 0 ]; then
                   log $lvreduction
                   reduct=`vgreduce -a vg_${NAME}`
                   log $reduct
-                  lvextend -r -l +100%FREE /dev/vg_${NAME}/lv_${NAME} || exit 1
-                  mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT || exit 1
+                  lvextend -r -l +100%FREE /dev/vg_${NAME}/lv_${NAME} || rm $PIDFILE && exit 1
+                  mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT || rm $PIDFILE && exit 1
                   # TODO Add check if LV has been removed, if not exit 1
                   $AWS_EC2 detach-volume --instance-id $INSTANCE_ID --volume-id $LAST_VOLUME
                   volume_status=""
@@ -472,17 +473,22 @@ if [[ $less_space_needed -eq 1 ]]; then
                   sudo supervisorctl start all
                   send_msg "LVM shrinking completed. New drive: \n `df -h $MOUNT_POINT`"
                   log "---SHRINKING VOLUME END----"
+                  rm $PIDFILE
               fi
             else
               send_msg "Unable to unmount. Aborting shrinking on $hostname"
               sudo supervisorctl start all
+              rm $PIDFILE
               exit 1
             fi
         else
             log "Can't shrink right now, trying again later"
+            rm $PIDFILE
         fi
     fi
 else
   diskusage=`df |grep $MOUNT_POINT|awk '{print $5}' | sed 's/%//'`
   log "Scale down: No shrinking needed. Free LVM space $((100-$diskusage))% within the limit of $((100+$SPACE_DOWN))% individual disk or minimum disks reached."
 fi
+
+
