@@ -1,5 +1,19 @@
 ---
 
+# Get local git ref for script versioning
+- name: Get git hash
+  become: false
+  command: git log --pretty=format:"%h" -n 1
+  delegate_to: localhost
+  register: githash
+  tags: gitts
+
+- set_fact: githash=githash.stdout
+  tags: gitts
+
+- debug: var={{githash}}
+  tags: gitts
+
 # Set facts for EBS resource tagging
 -  set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
 -  set_fact: environment="{% if 'prod' in ansible_hostname%}prod{%else%}demo{%endif%}"
