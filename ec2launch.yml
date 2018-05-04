@@ -158,7 +158,6 @@
       count: 1
 
       # LVM settings
-      vg_disk_size: 10
       lvm_filesystem: ext4
 
       # AWS.cli
