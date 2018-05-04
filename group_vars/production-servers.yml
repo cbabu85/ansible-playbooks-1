@@ -8,6 +8,10 @@ RAILS_ENV: 'production'
 
 ruby_version: '2.3.1'
 
+# AWS Tags
+orgtype: 'APT'
+envtype: "{{APP_ENV}}"
+
 # Pharos
 pharos_local_db: False
 pharos_db_host: "{{ vault_pharos_prod_db_host }}"
