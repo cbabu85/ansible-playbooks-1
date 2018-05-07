@@ -117,6 +117,13 @@ ex_customrestorebucket: "aptrust.restore.test"
 ex_restoretotestbuckets: "true"
 ex_maxdayssincefixitycheck: 90
 
+ex_glacier_region_VA: "us-east-1"
+ex_glacier_region_OH: "us-east-2"
+ex_glacier_region_OR: "us-west-2"
+ex_glacier_bucket_VA: "aptrust.test.preservation.glacier.va"
+ex_glacier_bucket_OH: "aptrust.test.preservation.glacier.oh"
+ex_glacier_bucket_OR: "aptrust.test.preservation.glacier.or"
+
 ex_fetchworker: {
         networkconnections: "8",
         workers: "4",
