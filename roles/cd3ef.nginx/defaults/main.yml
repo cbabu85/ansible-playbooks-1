@@ -100,3 +100,6 @@ content_security_policy: true
 
 # Dependency condition for certbot role. Look in meta/main.yml
 letsencrypt_ssl: true
+
+# Reverse Proxy
+nginx_reverse_proxy_config_directory: /etc/nginx/conf.d
