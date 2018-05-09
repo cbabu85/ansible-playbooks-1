@@ -20,7 +20,6 @@
     apt: name=apache2 state=absent
     when: ansible_os_family == "Debian" and apache2_present
 
-
   - name: Generate 2048bit DHE param
     shell: nohup openssl dhparam -out dhparam.pem 2048 &
     args:
