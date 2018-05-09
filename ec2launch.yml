@@ -189,12 +189,3 @@
           aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
           aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
         register: ec2vol
-
-# TODO:
-# x mount ebs drive
-# x mkfs ext4 on drive, add conditional if needed
-# x Create LVM, VG,LVolume
-# x Add ebs scale script.
-# - Add ebs scale script cron job?
-#
-
