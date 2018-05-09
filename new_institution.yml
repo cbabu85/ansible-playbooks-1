@@ -23,6 +23,30 @@
 #
 # TODO: Move play into role to allow for IAM template.
 
+# TODO: Template data structure for all institutions. Should go in group vars.
+#  can ideally be used to rebuild all buckets and inst users. Will ensure
+#  consistent state of APTrust infrastructure.
+# It's probably easiest to define it as a nested dict, as follows
+# Institution:
+# - inst_id: virginia
+#   - inst_name: University of Virginia
+#   - inst_member: virginia
+#   - inst_type: member
+#   - inst_users:
+#      - joe.schmo
+#      - betty.sue
+#      - christian.dahlhausen
+#   - inst_admin:
+#      - christian.dahlhausen
+#
+# Note: Each institution could 'live' in a separate encrypted group var file like
+# group_vars/institutions/virginia.edu.yml
+# group_vars/institutions/vt.edu.yml
+#
+# TODO: Think of more sensible AWS tags.
+# TODO: Needs testing with test institution to ensure nothing is removed or it
+# does not throw errors.
+
 - name: Setting up AWS buckets and groups
   hosts: localhost
   connection: local
