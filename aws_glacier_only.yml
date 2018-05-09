@@ -3,6 +3,7 @@
 # TODO: Think more about datastructure and how to incorporate all buckets.
 # Would require another field used as a condition for applying lifecycle rules
 # (not all buckets require Glacier archiving.
+# aws s3 ls |awk '{print $3}' >> ansible-playbooks/aws_glacier_only.yml
 ---
   - name: Instantiating an EC2 Instance
     hosts: localhost
@@ -33,7 +34,7 @@
       - name: Create S3 buckets
         s3_bucket:
           name: "{{item.name}}"
-          region: "{{item.region}}"
+          region: "{{item.region| default('us-east-1')}}"
           state: present
           tags:
             orgtype: "{{orgtype}}"
