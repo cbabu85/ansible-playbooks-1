@@ -114,6 +114,7 @@
 - name: Set nsq services fact to configure supervisor
   set_fact:
       nsqservices: ['nsqadmin','nsqlookupd','nsqd']
+  when: orgtype == 'apt'
   tags: lsfiles
 
 - name: Update Exchange config file
