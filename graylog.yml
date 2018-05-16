@@ -1,0 +1,45 @@
+# TODOs
+# - Download Docker image
+# - Setup graylog-docker-role
+# - create /srv/ops/graylog for persistent data. Maybe move to LVM and deploy
+#   EBS_Scale
+# - setup nginx reverse proxy to graylog.
+
+-   hosts:
+      - tmp-ebs-test2
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+        playbook_name: 'graylog'
+
+        # NGINX Webserver
+        install_passenger: false
+        content_security_policy: false
+        install_reverse_proxy: true
+
+        nginx_reverse_proxy_proxies:
+          - config_name: graylog
+            backend_name: graylog-backend
+            backends:
+              - localhost:9000
+              #              - localhost:1880 weight=2
+                #              - localhost:1881
+            domains:
+              - logs.aptrust.org
+              - graylog.aptrust.org
+
+    roles:
+      #  - {role: common, tags: common}
+      - {role: cd3ef.nginx, tags: nginx}
+      - {role: franklinkim.docker-compose, tags: docker-compose}
+      - {role: mongrelion.docker, tags: docker}
+
+    tasks:
+      #  docker_service to use docker compose files
+      #
+    - docker_service:
+        project_src: roles/docker.graylog/templates/docker-compose.yml
+      register: output
+
+    - debug:
+        var: output
