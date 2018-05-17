@@ -10,12 +10,18 @@ upstream {{ item.backend_name }} {
 }
 
 server {
-    listen 80;
+    listen 443;
     server_name {{ item.domains|join(' ') }};
     location / {
         proxy_set_header   X-Real-IP $remote_addr;
         proxy_set_header   Host      $http_host;
         proxy_pass         http://{{ item.backend_name }};
     }
+{% if letsencrypt_ssl == true %}
+    ssl on;
+    ssl_certificate  /etc/letsencrypt/live/{{ansible_fqdn}}/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/{{ansible_fqdn}}/privkey.pem;
+    {% endif %}
+
 }
 
