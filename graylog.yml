@@ -51,8 +51,9 @@
       tags: dockserv
 
     - docker_service:
-        project_src: roles/docker.graylog/templates/docker-compose.yml
+        project_src: /srv/docker/graylog
       register: output
+      tags: dockserv
 
     - debug:
         var: output
