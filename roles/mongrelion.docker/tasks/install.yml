@@ -85,6 +85,6 @@
   with_items:
     - .profile
     - .bash_profile
-  when: profile_update|changed
+  when: profile_update is changed
   tags: docker_tls, profileupdate
 
