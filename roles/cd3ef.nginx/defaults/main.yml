@@ -46,6 +46,7 @@ nginx_upstreams: []
 #     "srv3.example.com"
 #   }
 
+# Default options
 passenger_standalone: false
 install_passenger: false
 install_php: false
@@ -102,4 +103,4 @@ content_security_policy: true
 letsencrypt_ssl: true
 
 # Reverse Proxy
-nginx_reverse_proxy_config_directory: /etc/nginx/conf.d
+nginx_reverse_proxy_config_directory: /etc/nginx/sites-enabled
