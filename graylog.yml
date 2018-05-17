@@ -36,7 +36,20 @@
 
     tasks:
       #  docker_service to use docker compose files
-      #
+
+    - file:
+        path: /srv/docker/graylog
+        owner: ubuntu
+        group: ubuntu
+        mode: 0755
+        state: directory
+      tags: makedir
+
+    - template:
+        src: roles/docker.graylog/templates/docker-compose.yml
+        dest: /srv/docker/graylog
+      tags: dockserv
+
     - docker_service:
         project_src: roles/docker.graylog/templates/docker-compose.yml
       register: output
