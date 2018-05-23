@@ -13,6 +13,11 @@ server {
     listen 443;
     server_name {{ item.domains|join(' ') }};
     location / {
+        {% if item.extra_params is defined %}
+            {% for thing in item.extra_params %}
+                {{ thing }}
+            {% endfor %}
+        {% endif %}
         proxy_set_header   X-Real-IP $remote_addr;
         proxy_set_header   Host      $http_host;
         proxy_pass         http://{{ item.backend_name }};
