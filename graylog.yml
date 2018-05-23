@@ -26,7 +26,12 @@
                 #              - localhost:1881
             domains:
               - logs.aptrust.org
-              - graylog.aptrust.org
+
+            extra_params:
+              - "proxy_set_header   X-Graylog-Server-URL https://logs.aptrust.org/api/;"
+        certbot_list_of_certs_to_create:
+          - logs.aptrust.org
+          - graylog.aptrust.org
 
     roles:
       #  - {role: common, tags: common}
