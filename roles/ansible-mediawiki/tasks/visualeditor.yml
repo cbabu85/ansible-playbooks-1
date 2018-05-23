@@ -62,3 +62,4 @@
   service:
     name: node-parsoid
     state: started
+    enabled: yes
