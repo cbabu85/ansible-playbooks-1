@@ -46,7 +46,6 @@ nginx_upstreams: []
 #     "srv3.example.com"
 #   }
 
-# Default options
 passenger_standalone: false
 install_passenger: false
 install_php: false
