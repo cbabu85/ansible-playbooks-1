@@ -98,7 +98,22 @@
 
   - include: vhost.yml
 
+  # Note: To get multiple domain settings reliably for certbot.
+  - name: get all domains
+    shell: find /etc/nginx/sites-enabled -type f -name "*.conf" -print0 | xargs -0 egrep '^(\s|\t)*server_name' | sed -r 's/(.*server_name\s*|;)//g'
+    register: domainsies
+    tags: domainsies
+
+  - set_fact: certbot_list_of_certs_to_create="{{domainsies.stdout_lines}}"
+    tags: domainsies
+
   - name: Ensure SSL setup by certbot
     become: true
-    shell: "certbot --nginx -d {{ansible_fqdn}} -m admin@aptrust.org --agree-tos --noninteractive"
-    tags: ensurecertbot
+    #shell: "certbot --nginx -d {{ansible_fqdn}} -m admin@aptrust.org --agree-tos --noninteractive"
+    shell: "certbot --nginx -d {{item}} -m admin@aptrust.org --agree-tos --noninteractive"
+    # Note: In order to work for multiple domains on the same vhost, multiple -d options need to be used.
+    # a string of "-d name.domaina.com name.domainb.com" does not work with certbot. jinja2 doesnt seem to work here though.
+    #shell: certbot --nginx {% for x in {{ item.split(' ') }} %} -d {{ x }} {% endfor %} -m admin@aptrust.org --agree-tos --noninteractive
+    with_items:
+      - "{{certbot_list_of_certs_to_create }}"
+    tags: ensurecertbot, domainsies
