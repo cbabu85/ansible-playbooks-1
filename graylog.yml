@@ -1,9 +1,19 @@
 # TODOs
-# - Download Docker image
-# - Setup graylog-docker-role
+# X Download Docker image
+# X Setup graylog-docker-role
 # - create /srv/ops/graylog for persistent data. Maybe move to LVM and deploy
-#   EBS_Scale
-# - setup nginx reverse proxy to graylog.
+# --- plugin directly.
+#   EBS_Scale?
+# X setup nginx reverse proxy to graylog.
+# - All other nodes:
+# -- Automatate setup nginx logformat and log to syslog
+# -- Automate setup syslog forwarder to Graylog
+# -- Automate setup pharos gelf gem and forward to logs (needs production ready setup)
+# - Verify files are still being written
+# -- nginx: can take two log statements and log simultaneously
+# - What about logretention?
+# - nsq: https://marketplace.graylog.org/addons/775319b1-4737-42af-ae05-f8089727e7b8
+# - nicetohave: https://marketplace.graylog.org/addons/962af1ae-dee3-400a-9207-7af2188fca49
 
 -   hosts:
       - tmp-ebs-test2
