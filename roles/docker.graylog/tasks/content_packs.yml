@@ -1,5 +1,5 @@
- - name: Check for content pack
-	register: bundle
+- name: Check for content pack
+ 	register: bundle
 	uri:
 		url: "http://localhost:12900/system/bundles/{{ bundle_id }}"
 		user: admin
