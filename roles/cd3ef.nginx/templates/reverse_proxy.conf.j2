@@ -22,5 +22,12 @@ server {
         proxy_set_header   Host      $http_host;
         proxy_pass         http://{{ item.backend_name }};
     }
+    access_log {{ vhost.access_log | default({{item_domains}} + '_access.log')}};
+    error_log {{ vhost.error_log | default({{item.domains}} + '_error.log')}} error;
+
+{% if vhost.error_page is defined %}
+    error_page {{ vhost.error_page }};
+    {% endif %}
+
 }
 
