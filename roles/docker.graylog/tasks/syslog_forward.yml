@@ -1,0 +1,11 @@
+---
+ - name: Configure syslog forwarding
+      copy:
+        content: |
+          *.* @localhost:514;RSYSLOG_SyslogProtocol23Format
+        dest: /etc/rsyslog.d/30-graylog.conf
+        mode: 0644
+        owner: root
+        group: root
+      notify:
+        - restart rsyslog

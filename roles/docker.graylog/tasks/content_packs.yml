@@ -1,0 +1,32 @@
+ - name: Check for content pack
+	register: bundle
+	uri:
+		url: "http://localhost:12900/system/bundles/{{ bundle_id }}"
+		user: admin
+		password: "{{ graylog_admin_pass }}"
+		return_content: no
+		status_code: 200,404
+
+- name: Upload content pack
+	register: upload
+	uri:
+		url: http://localhost:12900/system/bundles
+		method: POST
+		HEADER_Content-Type: "application/json"
+		body: "{{ lookup('template', 'content-pack.json') }}"
+		user: admin
+		password: "{{ graylog_admin_pass }}"
+		status_code: 201
+	when: bundle.status == 404
+	changed_when: yes
+
+- name: Apply content pack
+	register: apply
+	uri:
+		url: "http://localhost:12900/system/bundles/{{ bundle_id }}/apply"
+		method: POST
+		user: admin
+		password: "{{ graylog_admin_pass }}"
+		status_code: 204
+	when: bundle.status == 404
+	changed_when: yes
