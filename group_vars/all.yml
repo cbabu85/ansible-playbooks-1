@@ -269,6 +269,16 @@ nfs_directories:
         - "dpn-prod2.aptrust.org"
         - "dpn-demo2.aptrust.org"
         - "apt-prod-web.aptrust.org"
+   - path: "logs"
+     source:
+        - "apt-demo-repo2.aptrust.org"
+        - "apt-demo-services.aptrust.org"
+        - "apt-prod-repo2.aptrust.org"
+        - "apt-prod-services.aptrust.org"
+        - "dpn-prod2.aptrust.org"
+        - "dpn-demo2.aptrust.org"
+        - "apt-prod-web.aptrust.org"
+     options: '(rw,async)'
 
 # Certbot LetsEncrypt
 certbot_create_certs: true

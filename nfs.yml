@@ -6,8 +6,8 @@
 
         # NFS Client
         nfs_client_imports:
-          #          - local: "{{nfs_mount_dir}}/logs"
-          #   remote: "{{nfs_export_dir}}/logs"
+          - local: "{{nfs_mount_dir}}/logs"
+            remote: "{{nfs_export_dir}}/logs"
           - local: "{{nfs_mount_dir}}/backups"
             remote: "{{nfs_export_dir}}/backups"
 
