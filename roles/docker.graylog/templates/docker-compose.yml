@@ -3,9 +3,13 @@ services:
   # MongoDB: https://hub.docker.com/_/mongo/
   mongodb:
     image: mongo:3
+    volumes:
+      - mongo_data:/data/db
   # Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/docker.html
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
     environment:
       - http.host=0.0.0.0
       - transport.host=localhost
@@ -21,6 +25,8 @@ services:
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
     image: graylog/graylog:2.4.4-1
+    volumes:
+      - graylog_data:/usr/share/graylog/data
     environment:
       # CHANGE ME!
       - GRAYLOG_PASSWORD_SECRET={{graylog_root_password}}
@@ -44,3 +50,14 @@ services:
       - 12201:12201
       # GELF UDP
       - 12201:12201/udp
+      # Nginx access log
+      - 12301:12301/udp
+      # Nginx error log
+      - 12302:12302/udp
+volumes:
+  mongo_data:
+    driver: local
+  es_data:
+    driver: local
+  graylog_data:
+    driver: local
