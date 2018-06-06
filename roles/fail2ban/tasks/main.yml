@@ -16,7 +16,7 @@
   register: apachestatus
 
 - name: Set fact
-  set_fact: apache_installed=True
+  set_fact: apache_installed = True
   when: apachestatus.rc == 0
 
 - name: Check if Nginx is installed.
