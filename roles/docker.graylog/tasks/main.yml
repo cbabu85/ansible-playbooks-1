@@ -10,3 +10,29 @@
 		name: httplib2
 		state: latest
 
+- name: Create graylog directory for volume mounts
+  file:
+    path: "{{graylog_docker_dir}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0755
+    state: directory
+  tags: makedir
+
+- name: Copy docker-compose template
+  template:
+    src: docker-compose.yml
+    dest: "{{graylog_docker_dir}}"
+  tags: dockserv
+
+# TODO: Create and symlink data dirs from docker default /var/lib/docker/volumes/ to graylog_docker_dir
+
+- name: Start docker containers from compose
+  docker_service:
+    project_src: /srv/docker/graylog
+  tags: dockserv
+
+
+
+
+
