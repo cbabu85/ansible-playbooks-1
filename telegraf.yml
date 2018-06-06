@@ -1,0 +1,31 @@
+---
+  - hosts: all
+    user: "{{ system_default_user }}"
+    become: yes
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+      playbook_name: allservers
+      fail2ban_config_ignoreip: "{{ hostvars|fetchlistfromdict(groups.all)|map(attribute='host_eip')|join (' ')}}"
+      fail2ban_config_destemail: ops@aptrust.org
+      fail2ban_config_maxretry: 1
+
+      telegraf_agent_output:
+        - type: influxdb
+          config:
+            - urls = ["http://ops.aptrust.org:8086"]
+            - database = "icinga2"
+            - precision = "s"
+
+
+# Workaround for using Ubuntu 16.04LTS which doesn't come with Python 2.x
+# Alternatively add `ansible_python_interpreter: /usr/bin/python3` to group_vars/all.yml
+    pre_tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      register: output
+      changed_when: output.stdout != ""
+    - setup: # aka gather_facts
+    roles:
+      - {role: dj-wasabi.telegraf, tags: telegraf}
+
