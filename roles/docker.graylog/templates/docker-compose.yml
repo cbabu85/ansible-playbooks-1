@@ -33,6 +33,7 @@ services:
       # Password: admin
       - GRAYLOG_ROOT_PASSWORD_SHA2={{graylog_root_password |password_hash('sha256'}}
       - GRAYLOG_WEB_ENDPOINT_URI={{graylog_web_endpoint_uri}}
+      - GRAYLOG_CONTENT_PACKS_LOADER_ENABLED=true
     links:
       - mongodb:mongo
       - elasticsearch
