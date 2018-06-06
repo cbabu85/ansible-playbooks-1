@@ -70,6 +70,7 @@
         state: present
         tags:
           institution: "{{inst_id}}"
+          institution_name: "{{inst_name}}"
           institution_type: "{{inst_type}}"
           institution_member: "{{inst_member}}"
       with_items:
