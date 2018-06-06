@@ -1,14 +1,15 @@
 # TODOs
 # X Download Docker image
 # X Setup graylog-docker-role
-# - create /srv/ops/graylog for persistent data. Maybe move to LVM and deploy
+# - create /srv/docker/graylog for persistent data. Maybe move to LVM and deploy
 # --- plugin directly.
-#   EBS_Scale?
 # X setup nginx reverse proxy to graylog.
 # - All other nodes:
 # -- Automatate setup nginx logformat and log to syslog
 # -- Automate setup syslog forwarder to Graylog
+# --- Need to open ports for private subnets
 # -- Automate setup pharos gelf gem and forward to logs (needs production ready setup)
+# --- Need to open ports for private subnets
 # - Verify files are still being written
 # -- nginx: can take two log statements and log simultaneously
 # - What about logretention?
@@ -29,19 +30,18 @@
 
         nginx_reverse_proxy_proxies:
           - config_name: graylog
-            backend_name: graylog-backend
+            backend_name: graylog-web-backend
             backends:
               - localhost:9000
-              #              - localhost:1880 weight=2
-                #              - localhost:1881
+            # Currently only one supported due to certbot limit. Can't extract
+            # multiple domains and pass into multiple '-d' params.
             domains:
               - logs.aptrust.org
-
             extra_params:
-              - "proxy_set_header   X-Graylog-Server-URL https://logs.aptrust.org/api/;"
-        certbot_list_of_certs_to_create:
-          - logs.aptrust.org
-          - graylog.aptrust.org
+              - "proxy_set_header X-Graylog-Server-URL https://$server_name/api/;"
+              - "proxy_set_header X-Forwarded-Host $host;"
+              - "proxy_set_header X-Forwarded-Server $host;"
+              - "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
 
     roles:
       #  - {role: common, tags: common}
