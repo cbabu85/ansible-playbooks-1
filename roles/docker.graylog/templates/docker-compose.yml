@@ -31,7 +31,7 @@ services:
       # CHANGE ME!
       - GRAYLOG_PASSWORD_SECRET={{graylog_root_password}}
       # Password: admin
-      - GRAYLOG_ROOT_PASSWORD_SHA2={{graylog_root_password_sha2}}
+      - GRAYLOG_ROOT_PASSWORD_SHA2={{graylog_root_password |password_hash('sha256'}}
       - GRAYLOG_WEB_ENDPOINT_URI={{graylog_web_endpoint_uri}}
     links:
       - mongodb:mongo
