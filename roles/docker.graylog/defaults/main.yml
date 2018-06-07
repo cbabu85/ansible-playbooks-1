@@ -1,6 +1,9 @@
 ---
 
+graylog_admin: 'admin'
 graylog_admin_pass: 'admin'
+graylog_root_password: "{{ graylog_admin_pass }}"
+
 graylog_dns: 'logs.example.org'
 graylog_data_dir: "/srv/docker/graylog/graylog_data"
 graylog_mongo_db_data: "/srv/docker/graylog/mongo_data
