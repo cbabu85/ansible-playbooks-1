@@ -15,3 +15,16 @@ graylog_data_config_dir: "/srv/docker/graylog/graylog_data/config"
 graylog_mongo_db_data: "/srv/docker/graylog/mongo_data"
 graylog_es_data: "/srv/docker/graylog/es_data"
 
+content_packs:
+  - name: nginx
+    url: "https://raw.githubusercontent.com/petestorey26/graylog-content-pack-nginx-json/master/content_pack.json"
+  - name: Rails
+    url: "https://raw.githubusercontent.com/graylog-labs/graylog-contentpack-rails/master/content_pack.json"
+
+graylog_plugins:
+  - graylog-plugin-nsq-1.0.0.jar
+  - graylog-plugin-slack-3.1.0.jar
+
+graylog_content_packs:
+  - rails_content_pack.json
+  - nginx_content_pack.json
