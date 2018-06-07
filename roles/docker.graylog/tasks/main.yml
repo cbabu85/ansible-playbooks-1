@@ -19,11 +19,59 @@
     state: directory
   tags: makedir
 
+- name: Create graylog config directory for volume mounts
+  file:
+    path: "{{graylog_data_config_dir}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0755
+    state: directory
+  tags: makedir
+
+- name: Get Config files for Graylog
+  get_url:
+    url: "{{ item }}"
+    dest: "{{graylog_data_config_dir}}"
+  with_items:
+    - "https://raw.githubusercontent.com/Graylog2/graylog-docker/2.4/config/graylog.conf"
+    - "https://raw.githubusercontent.com/Graylog2/graylog-docker/2.4/config/log4j2.xml"
+
+- name: Copy Graylog plugin jars
+  copy:
+    src: "{{item}}"
+    dest: "{{graylog_docker_dir}}/{{item}}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{graylog_plugins}}"
+  tags: dockcopy
+
+- name: Copy Graylog Content Packs
+  copy:
+    src: "{{item}}"
+    dest: "{{graylog_docker_dir}}/{{item}}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{graylog_content_packs}}"
+  tags: dockcopy
+
+  # Create ES data dir and set uid guid to 1000 to avoid accessdenied
+  # https://www.elastic.co/guide/en/elasticsearch/reference/5.5/docker.html#_b_bind_mounted_configuratio
+- name: Create graylog es_data directory for volume mounts
+  file:
+    path: "{{graylog_es_data}}"
+    owner: 1000
+    group: 1000
+    mode: 0755
+    state: directory
+  tags: makedir
+
 - name: Copy docker-compose template
   template:
     src: docker-compose.yml
     dest: "{{graylog_docker_dir}}"
-  tags: dockserv
+  tags: dockcopy
 
 # TODO: Create and symlink data dirs from docker default /var/lib/docker/volumes/ to graylog_docker_dir
 
@@ -32,7 +80,4 @@
     project_src: /srv/docker/graylog
   tags: dockserv
 
-
-
-
-
+  #- include: content_packs.yml
