@@ -5,7 +5,13 @@ graylog_admin_pass: 'admin'
 graylog_root_password: "{{ graylog_admin_pass }}"
 
 graylog_dns: 'logs.example.org'
+
+# Directory to keep docker-compose.yml and mount
+# container volumes to.
+graylog_docker_dir: "/srv/docker/graylog"
+
 graylog_data_dir: "/srv/docker/graylog/graylog_data"
-graylog_mongo_db_data: "/srv/docker/graylog/mongo_data
+graylog_data_config_dir: "/srv/docker/graylog/graylog_data/config"
+graylog_mongo_db_data: "/srv/docker/graylog/mongo_data"
 graylog_es_data: "/srv/docker/graylog/es_data"
 
