@@ -59,6 +59,8 @@ services:
       - 12201:12201
       # GELF UDP
       - 12201:12201/udp
+      # RAILS GELF UDP
+      - 12219:12219/udp
       # Nginx access log
       - 12301:12301/udp
       # Nginx error log
