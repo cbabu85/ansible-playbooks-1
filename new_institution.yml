@@ -54,13 +54,16 @@
   become: no
 
   vars:
-    inst_id: test
+    # ID without .edu
+    inst_id: nd
+    inst_name: 'University of Notre Dame'
     # Member institution, may be the same as inst_id if it's a member institution
-    inst_member: test
+    inst_member: nd
     # member, subscriber, or subaccount
     inst_type: member
     inst_users:
-      - dart.demo
+      - alexander.papson
+      - patrick.rader
       #      - christian.dahlhausen.test
 
   tasks:
