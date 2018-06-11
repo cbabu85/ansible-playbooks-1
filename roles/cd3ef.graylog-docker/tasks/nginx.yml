@@ -22,21 +22,34 @@
                        '"http_referrer": "$http_referer", '
                        '"http_user_agent": "$http_user_agent" }';
     backup: yes
+    insertbefore: "access_log "
+    validate: "nginx -T -c %s"
 
 
 - name: Get vhost config filenames
   find:
     paths: "/etc/nginx/sites-enabled"
-    patterns: '*.conf'
+    patterns: "*.conf"
   register: vhost_files
+  tags: vhostls
 
 - name: For vhost add log-to-graylog settings
   blockinfile:
-    dest: "/etc/nginx/{{ item.path | basename }}"
+    dest: "{{ item.path }}"
     content: |
          access_log syslog={{graylog_dns}}:12301 graylog2_json;
          error_log syslog={{graylog_dns}}:12302 error;
-    insertafter: "^error_log "
-    backup: yes
-  with_items: vhost_files
+    insertafter: "error_log "
+  with_items: "{{ vhost_files.files }}"
+
+- name: Check that nginx vhost config is correct
+  command: nginx -t
+  become: true
+  register: nginx_config_check
+
+- name: Reload NGINX config
+  service:
+    name: nginx
+    state: reloaded
+  when: nginx_config_check
 
