@@ -80,4 +80,7 @@
     project_src: /srv/docker/graylog
   tags: dockserv
 
-  #- include: content_packs.yml
+#- include: content_packs.yml
+
+- include: nginx.yml
+  when: graylog_nginx
