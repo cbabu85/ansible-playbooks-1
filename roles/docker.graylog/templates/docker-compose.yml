@@ -42,6 +42,7 @@ services:
       - GRAYLOG_ROOT_PASSWORD_SHA2={{graylog_root_password_sha2}}
       - GRAYLOG_WEB_ENDPOINT_URI={{graylog_web_endpoint_uri}}
       - GRAYLOG_CONTENT_PACKS_LOADER_ENABLED=true
+      - GRAYLOG_CONTENT_PACKS_AUTO_LOAD=grok-patterns.json,rails_content_pack.json,nginx_content_pack.json
     links:
       - mongodb:mongo
       - elasticsearch
