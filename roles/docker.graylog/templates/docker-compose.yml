@@ -17,12 +17,12 @@ services:
       - network.host=0.0.0.0
       # Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/security-settings.html#general-security-settings
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms{{graylog_es_xm}}m -Xmx{{graylog_es_xm}}m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    mem_limit: 1g
+    mem_limit: {{graylog_mem_limit}}m
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
     image: graylog/graylog:2.4.5-1

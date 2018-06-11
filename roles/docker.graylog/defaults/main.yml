@@ -28,3 +28,10 @@ graylog_plugins:
 graylog_content_packs:
   - rails_content_pack.json
   - nginx_content_pack.json
+
+# Elasticsearch container limits. 'xm' used here for xmx and xms
+# #
+# Java heap mem limit in m(egabyte)
+graylog_es_xm: 512
+# Container mem_limit, should be twice the xmx/xms limit.
+graylog_mem_limit: "{{ (graylog_es_xm * 2) }}"
