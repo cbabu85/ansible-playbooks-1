@@ -29,6 +29,9 @@ graylog_content_packs:
   - rails_content_pack.json
   - nginx_content_pack.json
 
+# Sets up nginx log forwarding
+graylog_nginx: true
+
 # Elasticsearch container limits. 'xm' used here for xmx and xms
 # #
 # Java heap mem limit in m(egabyte)
