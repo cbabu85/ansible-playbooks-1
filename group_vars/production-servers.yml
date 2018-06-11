@@ -6,7 +6,7 @@ APP_ENV: 'production'
 GO_ENV: 'production'
 RAILS_ENV: 'production'
 
-ruby_version: '2.3.1'
+ruby_version: '2.4.2'
 
 # AWS Tags
 orgtype: 'APT'

@@ -18,7 +18,7 @@ fedora_db_user: "{{vault_fedora_user}}"
 fedora_db_pwd: "{{vault_fedora_dev_pwd}}"
 var_fedora_pid_namespace: 'aptrust'
 
-ruby_version: 2.3.1
+ruby_version: 2.4.2
 
 # Pharos
 pharos_local_db: False
