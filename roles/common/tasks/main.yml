@@ -236,18 +236,6 @@
   failed_when: >
         is_postfix.rc != 0 and ('already exists' not in is_postfix.stderr)
 
-##
-# Add monitoring script for disk space usage.
-# Workaround in lieu of monitoring application.
-#
-- name: Check out common ops_scripts
-  tags: configuration
-  become_user: "{{system_default_user}}"
-  git: repo=https://github.com/aptrust/ops_scripts.git
-       dest=/srv/ops_scripts
-       accept_hostkey=yes
-
-
 # https://github.com/ansible/ansible-modules-core/issues/4064
 - name: Ansible bug workaround
   file: path=/etc/apt/sources.list.d recurse=yes mode=0755
