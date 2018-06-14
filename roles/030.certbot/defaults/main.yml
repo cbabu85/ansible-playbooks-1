@@ -13,6 +13,6 @@ certbot_list_of_certs_to_create:
   - "{{ ansible_fqdn }}"
 
 certbot_standalone: false
-certbot_nginx: true
-certbot_apache: false
+#certbot_nginx: true
+#certbot_apache: false
 

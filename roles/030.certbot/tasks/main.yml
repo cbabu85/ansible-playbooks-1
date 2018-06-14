@@ -1,3 +1,23 @@
+- name: Check if nginx is installed
+  stat: path=/etc/init.d/nginx
+  register: certbot_nginx
+  changed_when: False
+  tags: nginxcheck
+
+- set_fact: certbot_nginx="{{ certbot_nginx.stat.exists }}"
+  tags: nginxcheck
+
+- name: Check if apache is installed
+  stat: path=/etc/init.d/apache2
+  register: certbot_apache
+  changed_when: False
+  tags: apachecheck
+
+- set_fact: certbot_apache="{{ certbot_apache.stat.exists }}"
+  tags: apachecheck
+
+- debug: msg=" n {{certbot_nginx}} a {{certbot_apache}}"
+
 - include: Debian.yml
   when: ansible_os_family == 'Debian'
 

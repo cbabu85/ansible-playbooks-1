@@ -13,6 +13,16 @@
     state: latest
   with_items:
     - certbot
-    - python-certbot-nginx
-    - python-certbot-apache
     - openssl
+
+- name: certbot nginx installed
+  apt:
+    name: python-certbot-nginx
+    state: latest
+  when: certbot_nginx
+
+- name: certbot Apache installed
+  apt:
+    name: python-certbot-apache
+    state: latest
+  when: certbot_apache

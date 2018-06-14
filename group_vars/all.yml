@@ -284,7 +284,6 @@ nfs_directories:
 certbot_create_certs: true
 certbot_mail_address: admin@aptrust.org
 certbot_renew_certs: true
-certbot_nginx: true
 certbot_standalone: false
 
 #PSQL_backup
