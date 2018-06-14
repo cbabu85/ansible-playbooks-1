@@ -269,6 +269,9 @@ add_disk() {
     done
     $AWS_EC2 modify-instance-attribute --instance-id $INSTANCE_ID --block-device-mappings "[{\"DeviceName\": \"/dev/sd${DISK_LETTER}\",\"Ebs\":{\"DeleteOnTermination\":true}}]" || return 1
 
+    # https://www.logicworks.com/blog/2018/03/manage-aws-ebs-volumes-c5-m5-puppet-chef-ansible/
+    stat /dev/xvd${DISK_LETTER} || (log "Device does not exist." && exit 1)
+
     pvcreation=$(sudo pvcreate /dev/xvd${DISK_LETTER} || return 1) #/dev/sdX is attached as /dev/xvdX
     log "$pvcreation"
     add_to_fstab
