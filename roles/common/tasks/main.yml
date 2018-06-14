@@ -202,7 +202,7 @@
     fstype: nfs
     opts: nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
     state: mounted
-  when: (ansible_bios_version != 'VirtualBox' and use_efs == True)
+  when: use_efs
   tags: nfsmount
 
 ## Making sure github.com is a known_host
