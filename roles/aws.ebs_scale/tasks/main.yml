@@ -71,6 +71,35 @@
     - jq
     - bc
 
+# Install ebsnvme-id script and udev rules to symlink nvme block devices to
+# regular /dev/xvdX names. This applies to all Linux version's above Kernel 4.2
+# and to AWS c5 instances
+# https://www.logicworks.com/blog/2018/03/manage-aws-ebs-volumes-c5-m5-puppet-chef-ansible/
+- name: Copy ebsnvme-id script
+  copy:
+    src: ebsnvme-id.py
+    dest: /sbin
+    owner: root
+    group: root
+    mode: 0774
+  tags: nvmfix
+
+# Add udev rule to create symlinks from nvme devices to xvdX
+- name: Copy udev rule
+  copy:
+    src: 70-ec2-nvme-devices.rules
+    dest: /etc/udev/rules.d
+    owner: root
+    group: root
+    mode: 0774
+  tags: nvmfix
+
+- name: Reload udev rules
+  become: true
+  shell: /bin/bash -lc "udevadm control --reload-rules && udevadm trigger"
+  tags: nvmfix
+
+
 # TODO: Consider using root as owner and executor or limit sudo to the lvm commands
 #       currently system_default_user has pwdless sudo privileges which is not ideal.
 - name: Copy EBS_Scale script
