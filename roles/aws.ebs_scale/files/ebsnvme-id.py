@@ -141,7 +141,7 @@ class ebs_nvme_device:
 
         return dev
 
-    def get_oldblock_device(self, stripped=True):
+    def get_oldblock_device(self, stripped=False):
         dev = self.id_ctrl.vs.bdev
 
         if dev.startswith('sd'):
