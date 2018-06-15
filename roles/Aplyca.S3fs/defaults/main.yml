@@ -1,5 +1,6 @@
 ---
+s3fs_source: "https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.83.tar.gz"
+s3fs_add_to_fstab: True
 s3fs:
-  source: "https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.83.tar.gz"
-  buckets: []
-  add_to_fstab: True
+ buckets: []
+
