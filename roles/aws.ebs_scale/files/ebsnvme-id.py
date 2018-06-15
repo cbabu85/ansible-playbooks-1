@@ -144,8 +144,10 @@ class ebs_nvme_device:
     def get_oldblock_device(self, stripped=False):
         dev = self.id_ctrl.vs.bdev
 
-        if dev.startswith('sd'):
-        	dev = 'xv' + dev[1:]
+       if dev.startswith('sd'):
+                dev = 'xv' + dev[1:]
+       if dev.startswith("/dev/"):
+                dev = 'xv' + dev[6:]
 
         return dev
 
