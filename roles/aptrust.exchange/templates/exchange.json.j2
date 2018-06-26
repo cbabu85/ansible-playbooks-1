@@ -130,7 +130,18 @@
             "WriteTimeout": "{{ex_fixityworker.writetimeout}}",
             "MessageTimeout": "{{ex_fixityworker.messagetimeout}}"
 	},
-
+	"GlacierRestoreWorker": {
+            "NetworkConnections": {{ex_glacierrestoreworker.networkconnections}},
+            "Workers": {{ex_glacierrestoreworker.workers}},
+            "NsqTopic": "{{ex_glacierrestoreworker.nsqtopic}}",
+            "NsqChannel": "{{ex_glacierrestoreworker.nsqchannel}}",
+            "MaxAttempts": {{ex_glacierrestoreworker.maxattempts}},
+            "MaxInFlight": {{ex_glacierrestoreworker.maxinflight}},
+            "HeartbeatInterval": "{{ex_glacierrestoreworker.heartbeatinterval}}",
+            "ReadTimeout": "{{ex_glacierrestoreworker.readtimeout}}",
+            "WriteTimeout": "{{ex_glacierrestoreworker.writetimeout}}",
+            "MessageTimeout": "{{ex_glacierrestoreworker.messagetimeout}}"
+	},
 	"ReceivingBuckets": [
       {% for item in ex_receivingbuckets -%}
       {% if not loop.last %}

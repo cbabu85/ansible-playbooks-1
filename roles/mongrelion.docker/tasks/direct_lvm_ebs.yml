@@ -1,0 +1,12 @@
+---
+# This provisions an EBS drive and creates an LVM to use as default Docker data
+# dir. As per recommendation of Docker documentation: https://docs.docker.com/storage/storagedriver/device-mapper-driver/#configure-docker-with-the-devicemapper-storage-driver
+#
+
+
+# TODO: Get instance ID
+# TODO: Create EBS volume
+# TODO: Attach EBS volume to Instance, create filesystem.
+# TODO: Create LVM
+# Note: consider different device names with c5 instances and stuff
+# TODO: Add EBS to LVM

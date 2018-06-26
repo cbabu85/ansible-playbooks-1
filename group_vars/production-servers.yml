@@ -214,6 +214,19 @@ ex_fixityworker: {
     messagetimeout: "180m"
   }
 
+ex_glacierrestoreworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_glacier_restore_topic",
+    nsqchannel: "apt_glacier_restore_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "30m"
+  }
+
 ex_receivingbuckets: [
     'aptrust.receiving.chd.virginia.edu',
     'aptrust.receiving.columbia.edu',
