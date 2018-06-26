@@ -72,7 +72,7 @@
       clone=yes
       update=yes
       force=yes
-      version=master
+      version="{{ ex_git_branch | default(master)}}"
   become_user: "{{system_default_user}}"
   become: true
   register: gitclone
