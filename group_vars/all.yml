@@ -132,6 +132,9 @@ kec6en_sshkey: "{{ vault_kec6en_sshkey }}"
 aptdeploy_pwd: "{{ vault_aptdeploy_pwd }}"
 aptdeploy_sshkey: "{{ vault_aptdeploy_sshkey }}"
 aptdeploy_sshkey_private: "{{ vault_aptdeploy_sshkey_private }}"
+aptdeploy_aws_access_key_id: "{{ vault_aptdeploy_aws_access_key_id }}"
+aptdeploy_aws_secret_access_key: "{{ vault_aptdeploy_aws_access_key_id }}"
+
 
 ###
 # SSL Certificates
@@ -288,6 +291,10 @@ certbot_standalone: false
 
 #PSQL_backup
 pg_backup_dir: "/mnt/nfs/backups/psql_backup/{{ansible_hostname}}/"
+
+# Docker
+docker_data_dir: "/srv/docker"
+dokcer_data_mount: "/mnt/docker"
 
 # Graylog
 graylog_dns: "logs.aptrust.org"
