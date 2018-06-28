@@ -3,10 +3,58 @@
 # dir. As per recommendation of Docker documentation: https://docs.docker.com/storage/storagedriver/device-mapper-driver/#configure-docker-with-the-devicemapper-storage-driver
 #
 
+- name: Installing lvm2
+  apt: name=lvm2 state=present
 
-# TODO: Get instance ID
-# TODO: Create EBS volume
-# TODO: Attach EBS volume to Instance, create filesystem.
-# TODO: Create LVM
+- name: Get Instance ID
+  ec2_metadata_facts:
+
+- debug: msg="{{ansible_ec2_instance_id}}"
+
+- name: Create EBS volume and attach to instance
+  ec2_vol:
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID')}}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY')}}"
+    region: "{{ansible_ec2_placement_region}}"
+    name: "{{ansible_hostname}}_Docker_data"
+    instance: "{{ansible_ec2_instance_id}}"
+    encrypted: true
+    volume_type: gp2
+    volume_size: "{{docker_lvm_init_size}}"
+    tags:
+      environment: "{{APP_ENV}}"
+      orgtype: "{{orgtype}}"
+  register: ebs_facts
+
+- debug: var=ebs_facts
+
+- debug: msg="{{ ebs_facts.device |replace('s','xv')}}"
+  tags: regx
+
 # Note: consider different device names with c5 instances and stuff
-# TODO: Add EBS to LVM
+- name: Symlink device for easier handling
+  file:
+    state: link
+    src: "{{ebs_facts.device|replace('s','xv')}}"
+    dest: "/dev/docker_data1"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0755
+
+- name: Create LVM
+  lvg: vg=vg_docker_data  pvs=/dev/docker_data1 state=present
+
+- name: creating new LVM logical volume
+  lvol: vg=vg_docker_data lv=lv_docker_data1 size={{ docker_lvm_init_size }}
+
+- name: Create filesystem on docker_data drive
+  filesystem:
+    fstype: ext4
+    dev: /dev/vg_docker_data/lv_docker_data1
+
+- name: mounting new filesystem
+  mount:
+   name: /mnt/docker_data
+   src: /dev/vg_docker_data/lv_docker_data1
+   fstype: ext4
+   state: mounted
