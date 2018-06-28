@@ -13,16 +13,20 @@ default_docker_config:
   #tlsverify: true
 # Sets up LVM for direct-lvm
 docker_production: false
+docker_lvm_init_size: 500
+docker_direct_lvm: /dev/docker_data
+production_docker_config:
+  storage-driver: devicemapper
+  storage-opts: |
+   [ dm.directlvm_device="{{docker_direct_lvm}}" ]
+
+  log-level: info
+
 docker_tls: true
 docker_port: 2376
 certificates_dir: /etc/docker/ssl
 docker_ssl_path: /etc/docker/ssl
 client_ssl_path: ~/.docker/ssl
-
-# APTrust: Data dir for Volumes and Daemon data. Docker default below.
-docker_data_dir: "/var/lib/docker"
-# APTrust: Mount for Docker data directory
-docker_mount_dir: "/mnt/docker"
 
 
 docker_version: "18.03.1"
