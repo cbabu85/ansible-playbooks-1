@@ -8,10 +8,10 @@
   register: githash
   tags: gitts, copyebsscript
 
-- set_fact: githash=githash.stdout
+- set_fact: githash={{ githash.stdout }}
   tags: gitts, copyebsscript
 
-- debug: var={{githash}}
+- debug: msg="{{ githash}}"
   tags: gitts
 
 # Set facts for EBS resource tagging
