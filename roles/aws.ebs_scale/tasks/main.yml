@@ -6,10 +6,10 @@
   command: git log --pretty=format:"%h" -n 1
   delegate_to: localhost
   register: githash
-  tags: gitts
+  tags: gitts, copyebsscript
 
 - set_fact: githash=githash.stdout
-  tags: gitts
+  tags: gitts, copyebsscript
 
 - debug: var={{githash}}
   tags: gitts
@@ -99,12 +99,16 @@
   shell: /bin/bash -lc "udevadm control --reload-rules && udevadm trigger"
   tags: nvmfix
 
+- set_fact: ebs_autoscale_script='ebs_autoscale.sh.j2'
+  when: ansible_distribution_release == 'xenial'
+  tags: copyebsscript
 
 # TODO: Consider using root as owner and executor or limit sudo to the lvm commands
 #       currently system_default_user has pwdless sudo privileges which is not ideal.
 - name: Copy EBS_Scale script
   template:
-    src: "ebs_autoscale.sh.j2"
+    #  src: "ebs_autoscale.sh.j2"
+    src: "{{ebs_autoscale_script}}"
     dest: "{{ebs_autoscale_script_dest}}"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"

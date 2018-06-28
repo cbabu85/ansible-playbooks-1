@@ -4,11 +4,14 @@ iam_policy_name: "EBS_AutoScaling"
 ebs_autoscale_script_dest: "/usr/local/bin/ebs_autoscale.sh"
 ebs_logfile: "/var/log/ebs_autoscale.log"
 
+lvm_for_docker: false
+
+ebs_autoscale_script: ebs_autoscale.sh.j2
+
 #Cronjob
 ebs_cron_minute: '*/10'
 ebs_cron_hour: '*'
 vg_filesystem: ext4
-
 
 #TODO: ADJUST VARS BELOW. CHECK FOR SANITY VALUES. RUN MANUAL EBS TESTS ON INSTANCE
 # ALSO SETUP UBUNTU AWS CREDENTIALS TO USE FOR EBS OPS# Write readme about whats needed.
