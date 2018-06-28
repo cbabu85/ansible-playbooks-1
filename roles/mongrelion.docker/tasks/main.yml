@@ -9,6 +9,9 @@
   ignore_errors: yes
   tags: always
 
+- include: direct_lvm_ebs.yml
+  tags: direct_lvm
+
 - include: "install.yml"
   when: upgrade_docker or (which_dockerd.rc != 0)
 
