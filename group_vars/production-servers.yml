@@ -219,12 +219,12 @@ ex_glacierrestoreworker: {
     workers: "4",
     nsqtopic: "apt_glacier_restore_topic",
     nsqchannel: "apt_glacier_restore_channel",
-    maxattempts: "3",
+    maxattempts: "12",
     maxinflight: "20",
     heartbeatinterval: "10s",
     readtimeout: "60s",
     writetimeout: "10s",
-    messagetimeout: "30m"
+    messagetimeout: "420m"
   }
 
 ex_receivingbuckets: [
@@ -410,6 +410,7 @@ ex_nsq_broadcast_address: "{{hostname_fqdn}}"
 ex_nsq_nsqlookupd_tcp_addresses: "127.0.0.1:4160"
 ex_nsq_msg_timeout: "4880m0s"
 ex_nsq_max_msg_timeout: "720m0s"
+ex_nsq_max_req_timeout: "180m"
 
 # Mediawiki / wiki
 wiki_server_name: 'wiki.aptrust.org'
