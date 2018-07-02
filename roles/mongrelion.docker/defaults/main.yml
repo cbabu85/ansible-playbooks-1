@@ -13,7 +13,7 @@ default_docker_config:
   #tlsverify: true
 # Sets up LVM for direct-lvm
 docker_production: false
-docker_lvm_init_size: 500
+docker_lvm_init_size: 500G
 docker_direct_lvm: /dev/docker_data
 production_docker_config:
   storage-driver: devicemapper
