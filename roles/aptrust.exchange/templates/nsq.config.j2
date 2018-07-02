@@ -51,3 +51,8 @@ max_msg_timeout="{{ex_nsq_max_msg_timeout}}"
 # Max number of items to send in a single batch to one worker.
 # Leave commented for now. Need to read up on documentation for this one.
 # max_rdy_count=200
+
+# https://github.com/judwhite/NsqSharp/wiki/NSQ-Requeue-and-Backoff
+# Glacier Restore requests need a long requeue delay
+# This is maximum requeue timeout, not request timeout.
+max_req_timeout="{{ex_nsq_max_req_timeout}}"
