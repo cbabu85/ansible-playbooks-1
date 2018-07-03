@@ -99,7 +99,7 @@
   shell: /bin/bash -lc "udevadm control --reload-rules && udevadm trigger"
   tags: nvmfix
 
-- set_fact: ebs_autoscale_script='ebs_autoscale.sh.j2'
+- set_fact: ebs_autoscale_script='ebs_autoscale.sh.xenial.j2'
   when: ansible_distribution_release == 'xenial'
   tags: copyebsscript
 
