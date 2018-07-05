@@ -4,14 +4,6 @@ localhost ansible_connection=local host_eip=127.0.0.1
 [personal]
 rtfaws ansible_user=ubuntu hostname_name=rtf-aws system_default_user=ubuntu host_eip=192.168.33.10
 
-[local-vagrant]
-fluctus ansible_port=2222 ansible_user=vagrant hostname_name=fluctus hostname_fqdn=fluctus.aptrust.local host_eip=192.168.33.10
-fedora ansible_port=2200 ansible_user=vagrant hostname_name=fedora hostname_fqdn=fedora.aptrust.local host_eip=192.168.33.11
-pharos ansible_user=vagrant hostname_name=pharos hostname_fqdn=pharos.aptrust.local host_eip=192.168.33.12
-wiki ansible_user=vagrant hostname_name=wiki hostname_fqdn=wiki.aptrust.local host_eip=192.168.33.14
-# dpn-vagrant ansible_user=vagrant hostname_name=dpn-vagrant hostname_fqdn=dpn.aptrust.local host_eip=192.168.33.13
-dpn-local-demo ansible_user=vagrant hostname_name=dpn-local-demo hostname_fqdn=dpn-demo.aptrust.local host_eip=192.168.33.13
-
 [monitoring_servers]
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 
@@ -31,7 +23,6 @@ docker2 hostname_name=docker2 hostname_fqdn=ec2-54-162-69-133.compute-1.amazonaw
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
 pharos ansible_user=vagrant hostname_name=pharos hostname_fqdn=pharos.aptrust.local host_eip=192.168.33.12
 apt-prod-repo2 hostname_name=apt-prod-repo22 hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Prod
-#apt-prod-repo22 hostname_name=apt-prod-repo22 hostname_fqdn=repo.aptrust.org host_eip=52.90.134.128 # Pharos Prod
 
 [pharos-staging]
 tmp-ebs-test2 ansible_ssh_user=ubuntu hostname_name=docker.aptrust.org hostname_fqdn=ec2-34-231-222-220.compute-1.amazonaws.com host_eip=34.231.222.220 instance_id=i-0c986eb59c16ae67a
@@ -45,7 +36,6 @@ apt-prod-web hostname_name=apt-prod-web hostname_fqdn=wiki.aptrust.org host_eip=
 [exchange-services]
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
-pharos ansible_user=vagrant hostname_name=pharos hostname_fqdn=pharos.aptrust.local host_eip=192.168.33.12
 dpn-demo2 hostname=dpn-demo2 hostname_fqdn=dpn-demo2.aptrust.org host_eip=34.195.115.140
 dpn-prod2 hostname=dpn-prod2.aptrust.org hostname_fqdn=dpn-prod2.aptrust.org host_eip=34.195.237.213
 dpn-prod3 hostname=dpn-prod3.aptrust.org hostname_fqdn=dpn-prod3.aptrust.org host_eip=34.206.100.82
