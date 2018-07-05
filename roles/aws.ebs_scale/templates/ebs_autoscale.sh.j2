@@ -181,6 +181,7 @@ check_if_mounted(){
     log "Function: ${FUNCNAME[0]}"
     if grep -qs "${MOUNT_POINT}" /proc/mounts; then
         log "${MOUNT_POINT} is mounted. All good."
+        add_to_fstab
     else
         log "${MOUNT_POINT} not mounted. Go panic."
         send_msg "${MOUNT_POINT} not mounted. Panic at the disco."
