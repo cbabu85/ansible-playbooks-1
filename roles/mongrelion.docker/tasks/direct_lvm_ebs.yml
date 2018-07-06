@@ -4,7 +4,10 @@
 #
 
 - name: Installing lvm2
-  apt: name=lvm2 state=present
+  apt: name="{{item}}" state=present
+  with_items:
+    - lvm2
+    - thin-provisioning-tools
 
 - name: Get Instance ID
   ec2_metadata_facts:
