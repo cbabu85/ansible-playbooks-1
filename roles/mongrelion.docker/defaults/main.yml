@@ -5,12 +5,13 @@ dockerpy: no
 vagrant: no
 upgrade_docker: false
 default_docker_config:
-  storage-driver: devicemapper
-  log-level: info
+  - storage-driver: devicemapper
+  - log-level: info
   #  tlscacert: "/etc/docker/ssl/ca.pem"
   #tlscert: "/etc/docker/ssl/cert.pem"
   #tlskey: "/etc/docker/ssl/key.pem"
   #tlsverify: true
+
 # Sets up LVM for direct-lvm
 docker_production: false
 docker_lvm_init_size: 500G
