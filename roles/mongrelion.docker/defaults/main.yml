@@ -14,7 +14,7 @@ default_docker_config:
 
 # Sets up LVM for direct-lvm
 docker_production: false
-docker_lvm_init_size: 500G
+docker_lvm_init_size: 100 # Volume size in GB
 docker_direct_lvm: /dev/docker_data
 production_docker_config:
   storage-driver: devicemapper
