@@ -1,32 +1,44 @@
-- name: Check for content pack
- 	register: bundle
-	uri:
-		url: "http://localhost:12900/system/bundles/{{ bundle_id }}"
-		user: admin
-		password: "{{ graylog_admin_pass }}"
-		return_content: no
-		status_code: 200,404
+#- name: Check for content pack
+# 	register: bundle
+#	uri:
+#		url: "http://localhost:12900/system/bundles/{{ bundle_id }}"
+#		user: admin
+#		password: "{{ graylog_root_password }}"
+#		return_content: no
+#		status_code: 200,404
 
 - name: Upload content pack
-	register: upload
-	uri:
-		url: http://localhost:12900/system/bundles
-		method: POST
-		HEADER_Content-Type: "application/json"
-		body: "{{ lookup('template', 'content-pack.json') }}"
-		user: admin
-		password: "{{ graylog_admin_pass }}"
-		status_code: 201
-	when: bundle.status == 404
-	changed_when: yes
+  register: upload
+  uri:
+    url: http://localhost:9000/api/system/bundles
+    method: POST
+    HEADER_Content-Type: "application/json"
+    body: "{{ lookup('file', 'rails_content_pack.json') }}"
+    user: admin
+    password: "{{ graylog_root_password }}"
+    status_code: 201
+#	when: bundle.status == 404
+#	changed_when: yes
 
 - name: Apply content pack
-	register: apply
-	uri:
-		url: "http://localhost:12900/system/bundles/{{ bundle_id }}/apply"
-		method: POST
-		user: admin
-		password: "{{ graylog_admin_pass }}"
-		status_code: 204
-	when: bundle.status == 404
-	changed_when: yes
+  register: apply
+  uri:
+    url: "{{(upload|from_json)['Location']}} + '/apply'"
+#		url: "http://localhost:9000/system/bundles/{{ bundle_id }}/apply"
+    method: POST
+    user: admin
+    password: "{{ graylog_root_password }}"
+    status_code: 204
+  when: bundle.status == 404
+  changed_when: yes
+
+#- name: create graylog global udp input for receiving logs
+#  uri:
+#    url: http://{{ ipv4_address }}:9000/api/system/inputs
+#    method: POST
+#    user: "{{ graylog_admin }}"
+#    password: "{{ graylog_admin_pass }}"
+#    body: '{"title":"xxx global input","type":"org.graylog2.inputs.gelf.udp.GELFUDPInput","configuration":{"bind_address":"0.0.0.0","port":12201,"recv_buffer_size":262144,"override_source":null,"decompress_size_limit":8388608},"global":true}'
+#    force_basic_auth: yes
+#    status_code: 201
+#    body_format: json
