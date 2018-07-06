@@ -42,20 +42,29 @@
     group: "{{system_default_user}}"
     mode: 0755
 
-- name: Create LVM
-  lvg: vg=vg_docker_data  pvs=/dev/docker_data1 state=present
+# Note: Below incomplete tasks to setup LVM directly.
+# Keeping this here for future reference.
+    # - name: Create LVM
+    # lvg: vg=docker_data  pvs=/dev/docker_data1 state=present
 
-- name: creating new LVM logical volume
-  lvol: vg=vg_docker_data lv=lv_docker_data1 size={{ docker_lvm_init_size }}
+  #- name: creating new LVM logical volume
+  # lvol: vg=docker_data size={{ docker_lvm_init_size }}
 
-- name: Create filesystem on docker_data drive
-  filesystem:
-    fstype: ext4
-    dev: /dev/vg_docker_data/lv_docker_data1
+  # - name: Create LVs thinpool
+  # lvol:
+  # vg: docker_data
+  #  lv: thinpool
+  #  size: 95%VG
+    #    thinpool: thinpool
+    #  opts: "--wipesignatures y"
 
-- name: mounting new filesystem
-  mount:
-   name: /mnt/docker_data
-   src: /dev/vg_docker_data/lv_docker_data1
-   fstype: ext4
-   state: mounted
+    # - name: Create LVs thinpool-meta
+    # lvol:
+    #vg: docker_data
+    # lv: thinpoolmeta
+    #size: 1%VG
+    ## thinpool: thinpoolmeta
+    #opts: "--wipesignatures y"
+
+    #- name: Convert to thin pool
+    #command: lvconvert -y --zero n -c 512K --thinpool docker_data/thinpool --poolmetadata docker_data/thinpoolmeta
