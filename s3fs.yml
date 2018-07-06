@@ -1,0 +1,26 @@
+---
+  - hosts: apt-demo-services
+    user: "{{ system_default_user }}"
+    become: yes
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+      s3fs:
+        buckets:
+          - mountpoint: /mnt/s3fs
+            bucket: aptrust-s3fs-demo-staging
+            accessKeyId: "{{aws_access_key_ubuntu}}"
+            secretAccessKey: "{{aws_secret_access_key_ubuntu}}"
+            options: "allow_other,max_stat_cache_size=100000,uid=33,gid=33,umask=002"
+
+# Workaround for using Ubuntu 16.04LTS which doesn't come with Python 2.x
+# Alternatively add `ansible_python_interpreter: /usr/bin/python3` to group_vars/all.yml
+    pre_tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      register: output
+      changed_when: output.stdout != ""
+    - setup: # aka gather_facts
+    roles:
+      - {role: Aplyca.S3fs, tags: s3fs}
+
