@@ -1,6 +1,9 @@
 vg_disk_size: 1
 
+APP_ENV: demo
+orgtype: "APT"
 #Pharos migrationtest
+RAILS_ENV: demo
 pharos_local_db: False
 pharos_db_host: pharos-migrationtest2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com
 pharos_db_user: "{{ vault_pharos_prod_db_user}}"
