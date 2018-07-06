@@ -29,12 +29,12 @@
 - name: apply default daemon config
   set_fact:
     docker_json: "{{ default_docker_config | combine(docker_config | default({})) }}"
-  when: docker_production is false
+  when: docker_production == false
 
 - name: apply production daemon config
   set_fact:
     docker_json: "{{ production_docker_config | combine(docker_config | default({})) }}"
-  when: docker_production is true
+  when: docker_production
 
 - name: configure docker clusterstore
   set_fact:
