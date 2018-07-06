@@ -12,8 +12,6 @@
 - name: Get Instance ID
   ec2_metadata_facts:
 
-- debug: msg="{{ansible_ec2_instance_id}}"
-
 - name: Create EBS volume and attach to instance
   ec2_vol:
     aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID')}}"
@@ -39,7 +37,7 @@
   file:
     state: link
     src: "{{ebs_facts.device|replace('s','xv')}}"
-    dest: "/dev/docker_data1"
+    dest: "/dev/docker_data"
     owner: "{{system_default_user}}"
     group: "{{system_default_user}}"
     mode: 0755
