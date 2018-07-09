@@ -15,10 +15,24 @@
 - include: "install.yml"
   when: upgrade_docker or (which_dockerd.rc != 0)
 
-- name: ensure config folder is present
+- name: ensure config and data folder are present
   file:
-    path: /etc/docker
+    path: "{{item}}"
     state: directory
+  with_items:
+    - /etc/docker
+    - "{{docker_data_dir}}"
+    - "{{docker_data_mount}}"
+
+- name: Symlink Docker Data Directory
+  file:
+    state: link
+    dest: "{{docker_data_dir}}"
+    src: "{{docker_data_mount}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0755
+    force: yes
 
 - name: ensure docker-py module is installed
   pip:
