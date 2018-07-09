@@ -16,6 +16,11 @@ default_docker_config:
 docker_production: false
 docker_lvm_init_size: 100 # Volume size in GB
 docker_direct_lvm: /dev/docker_data
+# Directory to keep persistent data. e.g. an autoscaling EBS drive or external
+# ephermeral storage
+docker_data_dir: /srv/docker
+docker_data_mount: /mnt/lvm/docker
+
 production_docker_config:
   storage-driver: devicemapper
   storage-opts: |
