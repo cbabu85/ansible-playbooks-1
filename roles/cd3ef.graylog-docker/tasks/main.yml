@@ -73,7 +73,20 @@
     dest: "{{graylog_docker_dir}}"
   tags: dockcopy
 
-# TODO: Create and symlink data dirs from docker default /var/lib/docker/volumes/ to graylog_docker_dir
+# Note: In case of non-production setup. With default Docker installation.
+- name: Symlink docker volumes.
+  file:
+    state: link
+    src: "{{item.mountpoint}}"
+    dest: "/srv/docker/graylog/{{item.name}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0755
+  with_items:
+    - { name: "graylog_es_data", mountpoint: "/var/lib/docker/volumes/graylog_es_data" }
+    - { name: "graylog_graylog_data", mountpoint: "/var/lib/docker/volumes/graylog_es_data" }
+    - { name: "graylog_mongo_data", mountpoint: "/var/lib/docker/volumes/graylog_es_data" }
+  when: graylog_production == 'false'
 
 - name: Start docker containers from compose
   docker_service:
