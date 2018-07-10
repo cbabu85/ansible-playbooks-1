@@ -17,8 +17,6 @@ apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 apt-util hostname_name=apt-util hostname_fqdn=nfs.aptrust.org  host_eip=54.175.28.251 # NFS Server
-#docker2 hostname_name=docker2 hostname_fqdn=logs.aptrust.org host_eip=54.152.84.111 instance_id=i-0ef049a6ae46171a9
-docker2 hostname_name=docker2 hostname_fqdn=logs.aptrust.org host_eip=34.231.222.220 instance_id=i-0ef049a6ae46171a9
 
 [pharos-servers]
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
@@ -33,6 +31,7 @@ tmp-ebs-test2 ansible_ssh_user=ubuntu hostname_name=docker.aptrust.org hostname_
 apt-prod-repo2 hostname_name=apt-prod-repo22 hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Prod
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
 apt-prod-web hostname_name=apt-prod-web hostname_fqdn=wiki.aptrust.org host_eip=34.200.146.5 # Web and Wiki Instance
+docker2 hostname_name=docker2 hostname_fqdn=logs.aptrust.org host_eip=34.231.222.220 instance_id=i-0ef049a6ae46171a9
 
 [exchange-services]
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
