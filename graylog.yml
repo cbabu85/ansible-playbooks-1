@@ -74,60 +74,60 @@
               - proto: tcp
                 from_port: 514
                 to_port: 514
-                cidr_ip: 10.0.0.0/16
+                cidr_ip: "{{aws_demo_cidr}}"
                 rule_desc: "Syslog TCP Demo VPC"
               - proto: udp
                 from_port: 514
                 to_port: 514
-                cidr_ip: 10.0.0.0/16
+                cidr_ip: "{{aws_demo_cidr}}"
                 rule_desc: "Syslog UDP Demo VPC"
               - proto: udp
                 from_port: 514
                 to_port: 514
-                cidr_ip: 172.31.0.0/16
+                cidr_ip: "{{aws_prod_cidr}}"
                 rule_desc: "Syslog UDP Production VPC"
               - proto: tcp
                 from_port: 514
                 to_port: 514
-                cidr_ip: 172.31.0.0/16
+                cidr_ip: "{{aws_prod_cidr}}"
                 rule_desc: "Syslog UDP Production VPC"
               - proto: tcp
                 from_port: 12201
                 to_port: 12201
-                cidr_ip: 10.0.0.0/16
+                cidr_ip: "{{aws_demo_cidr}}"
                 rule_desc: "GELF TCP DEMO VPC"
               - proto: tcp
                 from_port: 12201
                 to_port: 12201
-                cidr_ip: 172.31.0.0/16
+                cidr_ip: "{{aws_prod_cidr}}"
                 rule_desc: "GELF TCP Production VPC"
               - proto: udp
                 from_port: 12201
                 to_port: 12201
-                cidr_ip: 10.0.0.0/16
+                cidr_ip: "{{aws_demo_cidr}}"
                 rule_desc: "GELF UDP DEMO VPC"
               - proto: udp
                 from_port: 12201
                 to_port: 12201
-                cidr_ip: 172.31.0.0/16
+                cidr_ip: "{{aws_prod_cidr}}"
                 rule_desc: "GELF UDP Production VPC"
               - proto: udp
                 from_port: 12219
                 to_port: 12219
-                cidr_ip: 10.0.0.0/16
+                cidr_ip: "{{aws_demo_cidr}}"
                 rule_desc: "RAILS UDP DEMO VPC"
               - proto: udp
                 from_port: 12219
                 to_port: 12219
-                cidr_ip: 172.31.0.0/16
+                cidr_ip: "{{aws_prod_cidr}}"
                 rule_desc: "RAILS UDP Production VPC"
               - proto: udp
                 ports: 12301-12302
-                cidr_ip: 10.0.0.0/16
+                cidr_ip: "{{aws_demo_cidr}}"
                 rule_desc: "NGINX UDP DEMO VPC"
               - proto: udp
                 ports: 12301-12302
-                cidr_ip: 172.31.0.0/16
+                cidr_ip: "{{aws_prod_cidr}}"
                 rule_desc: "NGINX UDP Production VPC"
             rules_egress:
               - proto: all
