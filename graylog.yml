@@ -40,10 +40,12 @@
               - "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
 
     roles:
-      #  - {role: common, tags: common}
+      - {role: common, tags: common}
+      - {role: aws.ebs_scale, tags: ebs_scale}
       - {role: cd3ef.nginx, tags: nginx}
       - {role: franklinkim.docker-compose, tags: docker-compose}
       - {role: mongrelion.docker, tags: docker}
+      - {role: cd3ef.graylog-docker, tags: graylog}
 
     tasks:
       #  docker_service to use docker compose files
