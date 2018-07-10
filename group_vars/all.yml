@@ -301,3 +301,6 @@ graylog_dns: "{{vault_graylog_dns}}"
 graylog_root_password_sha2: "{{vault_graylog_root_password_sha2}}"
 graylog_root_password: "{{vault_graylog_root_password}}"
 graylog_web_endpoint_uri: http://127.0.0.1:9000/api
+
+aws_prod_cidr: "{{vault_aws_prod_cidr}}"
+aws_demo_cidr: "{{vault_aws_demo_cidr}}"
