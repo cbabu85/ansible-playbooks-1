@@ -297,7 +297,7 @@ docker_data_dir: "/srv/docker"
 docker_data_mount: "/mnt/lvm/docker"
 
 # Graylog
-graylog_dns: "logs.aptrust.org"
+graylog_dns: "{{vault_graylog_dns}}"
 graylog_root_password_sha2: "{{vault_graylog_root_password_sha2}}"
 graylog_root_password: "{{vault_graylog_root_password}}"
 graylog_web_endpoint_uri: http://127.0.0.1:9000/api
