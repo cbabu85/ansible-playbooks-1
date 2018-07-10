@@ -47,26 +47,20 @@
       - {role: mongrelion.docker, tags: docker}
       - {role: cd3ef.graylog-docker, tags: graylog}
 
+    pre_tasks:
+      - name: Set systems UDP receive buffer higher
+        # Allow a 25MB UDP receive buffer
+        #        net.core.rmem_max = 26214400
+        shell: /bin/bash -lc "sysctl -w net.core.rmem_default=26214400"
+
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+      - name: Max_map_count for Elasticsearch production
+        become: true
+        shell: /bin/bash -ls "sysctl -w vm.max_map_count=262144"
     tasks:
-      #  docker_service to use docker compose files
-
-    - file:
-        path: /srv/docker/graylog
-        owner: ubuntu
-        group: ubuntu
-        mode: 0755
-        state: directory
-      tags: makedir
-
-    - template:
-        src: roles/docker.graylog/templates/docker-compose.yml
-        dest: /srv/docker/graylog
-      tags: dockserv
-
-    - docker_service:
-        project_src: /srv/docker/graylog
-      register: output
-      tags: dockserv
+      - name: Get ec2 metdata facts
+        ec2_metadata_facts:
+        tags: awss
 
     - debug:
         var: output
