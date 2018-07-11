@@ -31,6 +31,9 @@ graylog_content_packs:
 # Sets up nginx log forwarding
 graylog_nginx: true
 
+# Sets up nginx log forwarding
+graylog_syslog: true
+
 # Elasticsearch container limits. 'xm' used here for xmx and xms
 # #
 # Java heap mem limit in m(egabyte)
