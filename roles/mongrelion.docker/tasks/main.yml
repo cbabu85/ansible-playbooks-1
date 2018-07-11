@@ -11,6 +11,7 @@
 
 - include: direct_lvm_ebs.yml
   tags: direct_lvm
+  when: docker_production == 'true'
 
 - include: "install.yml"
   when: upgrade_docker or (which_dockerd.rc != 0)
