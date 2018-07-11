@@ -12,7 +12,7 @@
 # - look at dynamic inventory again...
 
   - hosts:
-      - tmp-ebs-test2
+      - all
       - docker2
     vars_files:
       - "group_vars/vault.yml"
