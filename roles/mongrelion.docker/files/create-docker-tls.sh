@@ -14,7 +14,6 @@
 # MIT License applies to this script.  I don't accept any responsibility for
 # damage you may cause using it.
 #
-
 set -e
 STR=4096
 if [ "$#" -gt 0 ]; then
@@ -23,7 +22,6 @@ else
   echo " => ERROR: You must specify the docker FQDN as the first arguement to this scripts! <="
   exit 1
 fi
-
 if [ "$USER" == "root" ]; then
   echo " => WARNING: You're running this script as root, therefore root will be configured to talk to docker"
   echo " => If you want to have other users query docker too, you'll need to symlink /root/.docker to /theuser/.docker"
@@ -33,7 +31,7 @@ echo " => Using Hostname: $DOCKER_HOST  You MUST connect to docker using this ho
 
 echo " => Ensuring config directory exists..."
 mkdir -p "$HOME/.docker/ssl"
-cd $HOME/.docker/ssl
+cd "$HOME/.docker/ssl"
 
 echo " => Verifying ca.srl"
 if [ ! -f "ca.src" ]; then
@@ -118,7 +116,7 @@ OPTIONS="--tlsverify --tlscacert=$HOME/.docker/ssl/ca.pem --tlscert=$HOME/.docke
 if [ -f "/etc/sysconfig/docker" ]; then
   echo " => Configuring /etc/sysconfig/docker"
   BACKUP="/etc/sysconfig/docker.$(date +"%s")"
-  sudo mv /etc/sysconfig/docker $BACKUP
+  sudo mv /etc/sysconfig/docker "$BACKUP"
   sudo sh -c "echo '# The following line was added by ./create-certs docker TLS configuration script
 OPTIONS=\"$OPTIONS\"
 # A backup of the old file is at $BACKUP.' >> /etc/sysconfig/docker"
