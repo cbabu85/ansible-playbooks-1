@@ -10,7 +10,7 @@
 - name: Upload content pack
   register: upload
   uri:
-    url: http://localhost:9000/api/system/bundles
+    url: "http://localhost:9000/api/system/bundles"
     method: POST
     HEADER_Content-Type: "application/json"
     body: "{{ lookup('file', 'rails_content_pack.json') }}"
