@@ -12,20 +12,22 @@ default_docker_config:
   #tlskey: "/etc/docker/ssl/key.pem"
   #tlsverify: true
 
-# Sets up LVM for direct-lvm
-docker_production: false
-docker_lvm_init_size: 100 # Volume size in GB
-docker_direct_lvm: /dev/docker_data
 # Directory to keep persistent data. e.g. an autoscaling EBS drive or external
 # ephermeral storage
 docker_data_dir: /srv/docker
 docker_data_mount: /mnt/lvm/docker
 
+# Sets up LVM for direct-lvm
+docker_production: false
+docker_lvm_init_size: 100 # Volume size in GB
+docker_direct_lvm: /dev/docker_data
+
 production_docker_config:
   storage-driver: devicemapper
   storage-opts: |
-   [ dm.directlvm_device="{{docker_direct_lvm}}" ]
-
+   [ dm.directlvm_device="{{docker_direct_lvm}}",
+     dm.directlvm_device_force=true
+   ]
   log-level: info
 
 docker_tls: true
