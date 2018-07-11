@@ -93,7 +93,13 @@
     project_src: /srv/docker/graylog
   tags: dockserv
 
-#- include: content_packs.yml
+  #- include: content_packs.yml
+  #tags: content_packss
 
 - include: nginx.yml
   when: graylog_nginx
+  tags: graylog_nginx
+
+- include: syslog_forward.yml
+  when: graylog_syslog
+  tags: graylog_syslog
