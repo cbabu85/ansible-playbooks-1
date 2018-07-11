@@ -44,7 +44,7 @@
     aws_secret_key: "{{ aws_secret_key }}"
 
 - name: Gimme non-alternative facts
-  ec2_facts:
+  ec2_metadata_facts:
 
 # Need to use aws cli since function doesn't exist yet in Ansible
 - name: Apply IAM policy to instance
