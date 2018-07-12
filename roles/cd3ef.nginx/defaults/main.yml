@@ -37,6 +37,9 @@ nginx_vhosts: []
 #   access_log: ""
 #   extra_parameters: "" # Can be used to add extra config blocks (multiline).
 
+nginx_error404: '404.html'
+nginx_error503: '503.html'
+
 nginx_upstreams: []
 # - name: myapp1
 #   strategy: "ip_hash" # "least_conn", etc.
