@@ -19,10 +19,14 @@ content_packs:
     url: "https://raw.githubusercontent.com/petestorey26/graylog-content-pack-nginx-json/master/content_pack.json"
   - name: Rails
     url: "https://raw.githubusercontent.com/graylog-labs/graylog-contentpack-rails/master/content_pack.json"
+  - name: HTTP Monitor
+    url: "https://raw.githubusercontent.com/graylog-labs/graylog-contentpack-rails/master/content_pack.jso://raw.githubusercontent.com/sivasamyk/graylog-contentpack-httpmonitor/master/content_pack.json"
+
 
 graylog_plugins:
   - graylog-plugin-nsq-1.0.0.jar
   - graylog-plugin-slack-3.1.0.jar
+  - graylog2-plugin-input-httpmonitor-1.0.5.jar
 
 graylog_content_packs:
   - rails_content_pack.json
