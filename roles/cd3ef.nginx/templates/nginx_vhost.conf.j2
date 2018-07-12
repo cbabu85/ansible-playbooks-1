@@ -25,6 +25,17 @@ server {
     error_page {{ vhost.error_page }};
     {% endif %}
 
+    error_page 404 /{{ nginx_error404 }};
+    location = /404.html {
+        root /var/www/html;
+        internal;
+        }
+    error_page 503 /{{ nginx_error503 }};
+    location = /503.html {
+        root /var/www/html;
+        internal;
+        }
+
     access_log {{ vhost.access_log | default(vhost.server_name + '_access.log')}};
     error_log {{ vhost.error_log | default(vhost.server_name + '_error.log')}} error;
 
