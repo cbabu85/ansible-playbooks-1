@@ -85,6 +85,20 @@
       - nginx
       - nginxconf
 
+  - name: Nginx | Copy error and maintenance pages
+    become: yes
+    copy:
+      src: "{{item}}"
+      dest: "/var/www/html"
+      owner: "{{nginx_user}}"
+      group: "{{nginx_group}}"
+      mode: 0644
+    with_items:
+      - 503.html
+      - maintenance.html
+      - 404.html
+    tags: errorpages
+
 # Note: Logrotation not releasing the file descriptor hence it continues to write to the rotated .1 files
 # More info here: https://bugs.launchpad.net/nginx/+bug/1450770
   - name: Fix logrotation bug #1450770
