@@ -1,6 +1,6 @@
 {
   "id" : null,
-  "name" : "HTTP Monitor",
+  "name" : "HTTP Monitor2",
   "description" : "Dashboards and Streams for HTTP Monitor Input Plugin",
   "category" : "HTTP Web",
   "inputs" : [ ],
@@ -12,12 +12,12 @@
     "outputs" : [ ],
     "stream_rules" : [ {
       "type" : "GREATER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "299",
       "inverted" : false
     }, {
       "type" : "SMALLER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "400",
       "inverted" : false
     } ]
@@ -29,7 +29,7 @@
     "outputs" : [ ],
     "stream_rules" : [ {
       "type" : "EXACT",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "998",
       "inverted" : false
     } ]
@@ -41,7 +41,7 @@
     "outputs" : [ ],
     "stream_rules" : [ {
       "type" : "EXACT",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "999",
       "inverted" : false
     } ]
@@ -53,12 +53,12 @@
     "outputs" : [ ],
     "stream_rules" : [ {
       "type" : "GREATER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "199",
       "inverted" : false
     }, {
       "type" : "SMALLER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "300",
       "inverted" : false
     } ]
@@ -70,12 +70,12 @@
     "outputs" : [ ],
     "stream_rules" : [ {
       "type" : "GREATER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "499",
       "inverted" : false
     }, {
       "type" : "SMALLER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "600",
       "inverted" : false
     } ]
@@ -87,12 +87,12 @@
     "outputs" : [ ],
     "stream_rules" : [ {
       "type" : "GREATER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "399",
       "inverted" : false
     }, {
       "type" : "SMALLER",
-      "field" : "http.monitor.status",
+      "field" : "http_monitor_status",
       "value" : "500",
       "inverted" : false
     } ]
@@ -109,7 +109,7 @@
           "type" : "relative",
           "range" : 86400
         },
-        "field" : "http.monitor.status",
+        "field" : "http_monitor_status",
         "show_pie_chart" : false,
         "query" : "",
         "show_data_table" : true
@@ -126,7 +126,7 @@
           "range" : 86400
         },
         "interval" : "hour",
-        "query" : "http.monitor.status:[200 TO 299]"
+        "query" : "http_monitor_status:[200 TO 299]"
       },
       "col" : 4,
       "row" : 4,
@@ -141,7 +141,7 @@
         },
         "lower_is_better" : false,
         "trend" : false,
-        "query" : "http.monitor.status:[200 TO 299]"
+        "query" : "http_monitor_status:[200 TO 299]"
       },
       "col" : 3,
       "row" : 2,
@@ -156,7 +156,7 @@
         },
         "lower_is_better" : false,
         "trend" : false,
-        "query" : "http.monitor.status:[300 TO 399]"
+        "query" : "http_monitor_status:[300 TO 399]"
       },
       "col" : 3,
       "row" : 1,
@@ -170,7 +170,7 @@
           "range" : 86400
         },
         "interval" : "hour",
-        "query" : "http.monitor.status:[300 TO 399]"
+        "query" : "http_monitor_status:[300 TO 399]"
       },
       "col" : 3,
       "row" : 4,
@@ -185,7 +185,7 @@
         },
         "lower_is_better" : false,
         "trend" : false,
-        "query" : "http.monitor.status:[400 TO 499]"
+        "query" : "http_monitor_status:[400 TO 499]"
       },
       "col" : 2,
       "row" : 1,
@@ -200,7 +200,7 @@
         },
         "lower_is_better" : false,
         "trend" : false,
-        "query" : "http.monitor.status:999"
+        "query" : "http_monitor_status:999"
       },
       "col" : 2,
       "row" : 2,
@@ -214,7 +214,7 @@
           "range" : 86400
         },
         "interval" : "hour",
-        "query" : "http.monitor.status:999"
+        "query" : "http_monitor_status:999"
       },
       "col" : 2,
       "row" : 5,
@@ -229,7 +229,7 @@
         },
         "lower_is_better" : false,
         "trend" : false,
-        "query" : "http.monitor.status:998"
+        "query" : "http_monitor_status:998"
       },
       "col" : 1,
       "row" : 2,
@@ -243,7 +243,7 @@
           "range" : 86400
         },
         "interval" : "hour",
-        "query" : "http.monitor.status:998"
+        "query" : "http_monitor_status:998"
       },
       "col" : 1,
       "row" : 5,
@@ -258,7 +258,7 @@
         },
         "lower_is_better" : false,
         "trend" : false,
-        "query" : "http.monitor.status:[500 TO 599]"
+        "query" : "http_monitor_status:[500 TO 599]"
       },
       "col" : 1,
       "row" : 1,
@@ -272,7 +272,7 @@
           "range" : 86400
         },
         "interval" : "hour",
-        "query" : "http.monitor.status:[500 TO 599]"
+        "query" : "http_monitor_status:[500 TO 599]"
       },
       "col" : 1,
       "row" : 4,
@@ -286,7 +286,7 @@
           "range" : 86400
         },
         "interval" : "hour",
-        "query" : "http.monitor.status:[400 TO 499]"
+        "query" : "http_monitor_status:[400 TO 499]"
       },
       "col" : 2,
       "row" : 4,
@@ -302,7 +302,7 @@
         },
         "renderer" : "line",
         "interpolation" : "linear",
-        "field" : "http.monitor.responseTime",
+        "field" : "http_monitor_responseTime",
         "query" : "*",
         "interval" : "hour"
       },
@@ -320,7 +320,7 @@
         },
         "renderer" : "line",
         "interpolation" : "linear",
-        "field" : "http.monitor.responseSize",
+        "field" : "http_monitor_responseSize",
         "query" : "*",
         "interval" : "hour"
       },
