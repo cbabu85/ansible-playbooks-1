@@ -13,30 +13,15 @@
       # async: 60
       # poll: 10
 
-      - name: Check if icinga2 is installed
-        shell: icinga2 -V > /dev/null
-        register: icinga_installed
-        tags: influxdb
+     - name: Copy sslexception file
+       copy:
+         src: 80ssl-exception
+         dest: /etc/apt/apt.conf.d
+         owner: "{{system_default_user}}"
+         group: "{{system_default_group}}"
+         mode: 0664
 
-      - name: Enable icinga2 influxdbwriter
-        shell: icinga2 feature enable {{item}}
-        with_items:
-          - influxdb
-          - perfdata
-        when: icinga_installed
-        tags: influxdb
-
-      - name: Define influxdb config template
-        template:
-          src: roles/icinga2-ansible/icinga2-ansible-no-ui/templates/influxdb.conf.j2
-          dest: /etc/icinga2/features-available/influxdb.conf
-          owner: root
-          group: deploy
-          mode: 0644
-          backup: yes
-        tags: influxdb
-
-
-    - name: restart icinga2
-      shell: service icinga2 restart
-      become: true
+     - name: Update apt-cache
+       become: true
+       apt:
+         update_cache: yes
