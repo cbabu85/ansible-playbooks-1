@@ -104,6 +104,19 @@
             "MessageTimeout": "{{ex_restoreworker.messagetimeout}}"
 	},
 
+	"FileRestoreWorker": {
+            "NetworkConnections": {{ex_filerestoreworker.networkconnections}},
+            "Workers": {{ex_filerestoreworker.workers}},
+            "NsqTopic": "{{ex_filerestoreworker.nsqtopic}}",
+            "NsqChannel": "{{ex_filerestoreworker.nsqchannel}}",
+            "MaxAttempts": {{ex_filerestoreworker.maxattempts}},
+            "MaxInFlight": {{ex_filerestoreworker.maxinflight}},
+            "HeartbeatInterval": "{{ex_filerestoreworker.heartbeatinterval}}",
+            "ReadTimeout": "{{ex_filerestoreworker.readtimeout}}",
+            "WriteTimeout": "{{ex_filerestoreworker.writetimeout}}",
+            "MessageTimeout": "{{ex_filerestoreworker.messagetimeout}}"
+	},
+
 	"FileDeleteWorker": {
             "NetworkConnections": {{ex_filedeleteworker.networkconnections}},
             "Workers": {{ex_filedeleteworker.workers}},
