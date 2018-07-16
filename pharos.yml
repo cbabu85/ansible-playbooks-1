@@ -39,6 +39,7 @@
                 passenger_app_root {{ pharos_app_root }};
                 passenger_app_env {{ RAILS_ENV }};
                 passenger_friendly_error_pages off;
+                passenger_intercept_errors on;
 
                 location ^~ /assets/ {
                      gzip_static on;
