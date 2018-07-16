@@ -38,6 +38,18 @@
               - "proxy_set_header X-Forwarded-Host $host;"
               - "proxy_set_header X-Forwarded-Server $host;"
               - "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
+          - config_name: kibana
+            backend_name: kibana-backend
+            backends:
+              - localhost:5601
+            # Currently only one supported due to certbot limit. Can't extract
+            # multiple domains and pass into multiple '-d' params.
+            domains:
+              - graylog.aptrust.org
+            extra_params:
+              - "proxy_set_header X-Forwarded-Host $host;"
+              - "proxy_set_header X-Forwarded-Server $host;"
+              - "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
 
     roles:
       - {role: common, tags: common}

@@ -66,6 +66,15 @@ services:
       - 12301:12301/udp
       # Nginx error log
       - 12302:12302/udp
+ # BEATS
+      - 5044:5044
+  # Kibana
+  kibana:
+      image: docker.elastic.co/kibana/kibana:6.3.1
+      links:
+        - elasticsearch
+      depends_on:
+        - elasticsearch
 volumes:
   mongo_data:
     driver: local
