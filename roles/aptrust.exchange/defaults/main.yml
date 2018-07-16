@@ -25,6 +25,7 @@ ex_apt_services:
   - apt_store
   - apt_volume_service
   - apt_glacier_restore_init
+  - apt_file_restore
 
 ex_dpn_services:
   - dpn_copy
