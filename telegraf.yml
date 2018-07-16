@@ -16,6 +16,11 @@
             - urls = ["http://ops.aptrust.org:8086"]
             - database = "icinga2"
             - precision = "s"
+      telegraf_plugins_extra:
+        docker:
+        elasticsearch:
+            servers = ["http://localhost:9200"]
+
 
 
 # Workaround for using Ubuntu 16.04LTS which doesn't come with Python 2.x
