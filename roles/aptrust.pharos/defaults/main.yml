@@ -31,4 +31,4 @@ PHAROS_RELEASE: "Unknown"
 #
 
 pharos_setup: false
-
+pharos_logserver: ''
