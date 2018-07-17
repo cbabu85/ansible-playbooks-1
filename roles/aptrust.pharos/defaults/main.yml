@@ -32,3 +32,4 @@ PHAROS_RELEASE: "Unknown"
 
 pharos_setup: false
 pharos_logserver: ''
+pharos_logserver_port: '12219'
