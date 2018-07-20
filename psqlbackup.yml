@@ -119,7 +119,7 @@
           iam_name: "aptrust.backup"
           policy_name: "aptrust-backup-s3policy"
           state: present
-          policy_document: aptrust-backup-s3policy.json.j2
+          policy_document: roles/psqlbackup/templates/aptrust-backup-s3policy.json.j2
 
     roles:
         - {role: Aplyca.S3fs, tags: s3fs}
