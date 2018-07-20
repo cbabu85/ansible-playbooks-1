@@ -3,6 +3,8 @@
   become: yes
   file:
     path: "{{ item.mountpoint }}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
     state: directory
   with_items: "{{ s3fs.buckets }}"
   ignore_errors: yes
