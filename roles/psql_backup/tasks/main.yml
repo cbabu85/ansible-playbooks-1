@@ -10,11 +10,12 @@
     path: "{{item}}"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
-    mode: 0755
+    mode: 0770
     state: directory
   with_items:
     - '/etc/psql_backup'
     - "{{pg_backup_dir}}"
+  tags: psqlbackupperm
 
 - name: Copy psql_backup scripts
   copy:
