@@ -23,6 +23,7 @@
         # Pharos Role
         pharos_app_root: "{{ ansistrano_deploy_to }}/current"
         pharos_environment: "{{ruby_env}}"
+        pharos_logserver: logs.aptrust.org
 
         # NGINX Webserver
         install_passenger: true
