@@ -123,5 +123,5 @@
 
     roles:
         - {role: Aplyca.S3fs, tags: s3fs}
-        - {role: psql_backup, tags: [psql_backup]}
+          #        - {role: psql_backup, tags: [psql_backup]}
 
