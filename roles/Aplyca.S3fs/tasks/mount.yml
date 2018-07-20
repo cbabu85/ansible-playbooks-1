@@ -15,8 +15,8 @@
   template:
     src: passwd-s3fs.j2
     dest: "{{ s3fs_passwd_file }}"
-    mode: 0640
-    owner: "{{ ansible_user_id }}"
+    mode: 0600
+    owner: "{{ system_default_user }}"
   with_items: "{{ s3fs.buckets }}"
   notify: restart s3fs
   no_log: True
