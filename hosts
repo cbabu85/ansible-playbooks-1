@@ -1,8 +1,5 @@
 [local]
-localhost ansible_connection=local host_eip=127.0.0.1
-
-[personal]
-rtfaws ansible_user=ubuntu hostname_name=rtf-aws system_default_user=ubuntu host_eip=192.168.33.10
+#localhost ansible_connection=local host_eip=127.0.0.1
 
 [monitoring_servers]
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
@@ -16,15 +13,14 @@ apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
-apt-util hostname_name=apt-util hostname_fqdn=nfs.aptrust.org  host_eip=54.175.28.251 # NFS Server
+#apt-util hostname_name=apt-util hostname_fqdn=nfs.aptrust.org  host_eip=54.175.28.251 # NFS Server
 
 [pharos-servers]
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
-pharos ansible_user=vagrant hostname_name=pharos hostname_fqdn=pharos.aptrust.local host_eip=192.168.33.12
 apt-prod-repo2 hostname_name=apt-prod-repo22 hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Prod
 
 [pharos-staging]
-tmp-ebs-test2 ansible_ssh_user=ubuntu hostname_name=docker.aptrust.org hostname_fqdn=ec2-34-231-222-220.compute-1.amazonaws.com host_eip=34.231.222.220 instance_id=i-0c986eb59c16ae67a
+#tmp-ebs-test2 ansible_ssh_user=ubuntu hostname_name=docker.aptrust.org hostname_fqdn=ec2-34-231-222-220.compute-1.amazonaws.com host_eip=34.231.222.220 instance_id=i-0c986eb59c16ae67a
 
 [production-servers]
 # APTrust 2.0
@@ -45,7 +41,7 @@ dpn-demo2 hostname=dpn-demo2 hostname_fqdn=dpn-demo2.aptrust.org host_eip=34.195
 
 [dpn-prod-servers]
 dpn-prod2 hostname=dpn-prod2.aptrust.org hostname_fqdn=dpn-prod2.aptrust.org host_eip=34.195.237.213
-dpn-prod3 hostname=dpn-prod3.aptrust.org hostname_fqdn=dpn-prod3.aptrust.org host_eip=34.206.100.82
+#dpn-prod3 hostname=dpn-prod3.aptrust.org hostname_fqdn=dpn-prod3.aptrust.org host_eip=34.206.100.82
 
 [dpn-servers:children]
 dpn-prod-servers
