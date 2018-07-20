@@ -290,7 +290,7 @@ certbot_renew_certs: true
 certbot_standalone: false
 
 #PSQL_backup
-pg_backup_dir: "/mnt/nfs/backups/psql_backup/{{ansible_hostname}}/"
+pg_backup_dir: "/mnt/s3fs/backup-oh/psql_backup/{{ansible_hostname}}/"
 
 # Docker
 docker_data_dir: "/srv/docker"
