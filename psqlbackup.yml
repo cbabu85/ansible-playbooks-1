@@ -1,0 +1,127 @@
+---
+  - hosts:
+      - pharos-servers
+      - dpn-servers
+
+    user: "{{ system_default_user }}"
+    become: yes
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+      # s3fs
+      s3fs:
+        buckets:
+          - mountpoint: /mnt/s3fs/backup-oh
+            bucket: aptrust-backup-oh
+            accessKeyId: "{{ access_key }}"
+            secretAccessKey: "{{ secret_key }}"
+            options: "allow_other,max_stat_cache_size=100000,uid=1000,gid=1000,umask=0002"
+      s3fs_passwd_file: "/home/{{ system_default_user }}/.passwd-s3fs"
+
+      # psql_backup
+
+# Workaround for using Ubuntu 16.04LTS which doesn't come with Python 2.x
+# Alternatively add `ansible_python_interpreter: /usr/bin/python3` to group_vars/all.yml
+    pre_tasks:
+      - name: Install python for Ansible
+        raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+        register: output
+        changed_when: output.stdout != ""
+      - setup: # aka gather_facts
+
+# Note: This is an anti-pattern and should be solved by group_vars. We'd need a
+# loop and a dict of vars to support multiple databases. Also vars would need
+# to merge in case of multiple dbs in multiple host groups.
+      - name: Is this an APT or DPN Server
+        set_fact: orgtype="{% if 'dpn' in ansible_hostname%}DPN{%else%}APT{%endif%}"
+
+      - name: Set DPN
+        set_fact:
+          pg_hostname: "{{dpnserver_db_hostname}}"
+          pg_username: "{{dpnserver_db_user}}"
+          pg_pass: "{{dpnserver_db_pwd}}"
+        when: orgtype == 'DPN'
+
+      - name: Set APT
+        set_fact:
+          pg_hostname: "{{ pharos_db_host }}"
+          pg_username: "{{pharos_db_user}}"
+          pg_pass: "{{pharos_db_pwd}}"
+        when: orgtype == 'APT'
+
+      # Bucket default encryption is not a thing yet in awscli or ansbile.
+      - name: Create S3 buckets
+        become: no
+        delegate_to: 127.0.0.1
+        s3_bucket:
+          name: "aptrust-backup-oh"
+          region: "us-east-2"
+          state: present
+          tags:
+            purpose: backup
+            orgtype: apt
+            environment: demo
+            environment: production
+        register: new_bucket
+        tags: new_bucket
+
+# Note: This creates the user with access credentials when initially created.
+# It errors when the role is run a second time as the secret access key is not
+# recoverable once accessed once. This way we do not need to keep track of creds.
+# It may be useful to use AWS Secrets Manager.
+      - name: Define IAM user
+        become: no
+        delegate_to: 127.0.0.1
+        iam:
+         iam_type: user
+         name: "aptrust.backup"
+         access_key_state: create
+         state: present
+        register: iamuser
+        tags: iamgroups
+        run_once: true
+
+      - debug: var=iamuser
+        delegate_to: 127.0.0.1
+
+      - name: Set IAM access and secret keys for later use
+        set_fact:
+          access_key: "{{ iamuser.user_meta.access_keys[0].access_key_id if iamuser.user_meta is defined else '' }}"
+          secret_key: "{{ iamuser.user_meta.access_keys[0].secret_access_key if iamuser.user_meta is defined else '' }}"
+
+      - name: Store IAM creds in boto for mount later.
+        blockinfile:
+          path: "/home/{{system_default_user}}/.aws/credentials"
+          create: yes
+          owner: "{{system_default_user}}"
+          group: "{{system_default_user}}"
+          mode: 0600
+          block: |
+            [aptrust.backup]
+            aws_access_key_id = {{ access_key }}
+            aws_secret_access_key = {{ secret_key }}
+
+      - name: Store IAM creds in passwd-s3fs
+        blockinfile:
+          path: "/home/{{system_default_user}}/.passwd-s3fs"
+          block: |
+            {{ access_key }}:{{ secret_key }}
+          mode: 0600
+          owner: "{{system_default_user}}"
+          group: "{{system_default_user}}"
+          create: yes
+
+      - name: Set IAM Policy for bucket
+        become: no
+        delegate_to: 127.0.0.1
+        iam_policy:
+          iam_type: user
+          iam_name: "aptrust.backup"
+          policy_name: "aptrust-backup-s3policy"
+          state: present
+          policy_document: aptrust-backup-s3policy.json.j2
+
+    roles:
+        - {role: Aplyca.S3fs, tags: s3fs}
+        - {role: psql_backup, tags: [psql_backup]}
+
