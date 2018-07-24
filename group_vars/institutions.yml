@@ -1,0 +1,32 @@
+institutions:
+  - inst_id: virginia.edu
+    inst_name: 'University of Virginia'
+    inst_type: member
+    inst_user:
+      - name: andrew.diamond
+        email: andrew.diamond@aptrust.org
+        phone: "434123456"
+      - name: christian.dahlhausen
+        email: christian.dahlhausen@aptrust.org
+        phone: "4342496014"
+      - name: kelly.cobb
+        email: kelly.cobb@aptrust.org
+    inst_admin:
+      - andrew.diamond
+      - christian.dahlhausen
+      - kelly.cobb
+    inst_subs:
+      - viul.edu
+      - vwu.edu
+      - chd.edu
+
+  - inst_id: nd
+    inst_name: 'University of Notre Dame'
+    inst_type: member
+    inst_user:
+      - alexander.papson
+      - patrick.rader
+    inst_admin:
+      - alexander.papson
+      - patrick.rader
+
