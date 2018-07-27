@@ -28,7 +28,7 @@ services:
 
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
-    image: graylog/graylog:2.4.5-1
+    image: graylog/graylog:2.4.6-1
     volumes:
       - ./graylog_data:/usr/share/graylog/data
 {% for jarr in graylog_plugins %}
