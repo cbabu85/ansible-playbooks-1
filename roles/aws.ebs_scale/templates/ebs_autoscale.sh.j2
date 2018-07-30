@@ -353,7 +353,7 @@ fi
 check_if_mounted
 
 # Checking if we need to do something
-free_space=$(df | grep $MOUNT_POINT | awk '{print $4}')
+free_space=$(df $MOUNT_POINT | sed 1d | awk '{print $4}')
 
 # Get LVM free size to calc threshold values correctly
 LVM_SIZE=$(sudo vgs --units g --nosuffix |grep $NAME |awk '{print $6}')
