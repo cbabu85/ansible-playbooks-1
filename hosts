@@ -29,7 +29,7 @@ apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.ap
 apt-prod-web hostname_name=apt-prod-web hostname_fqdn=wiki.aptrust.org host_eip=34.200.146.5 # Web and Wiki Instance
 docker2 hostname_name=docker2 hostname_fqdn=logs.aptrust.org host_eip=34.231.222.220 instance_id=i-0ef049a6ae46171a9
 
-[exchange-services]
+[exchange-servers]
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 dpn-demo2 hostname=dpn-demo2 hostname_fqdn=dpn-demo2.aptrust.org host_eip=34.195.115.140

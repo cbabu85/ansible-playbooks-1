@@ -1,5 +1,5 @@
 ---
--   hosts: exchange-services
+-   hosts: exchange-servers
     vars_files:
         - "group_vars/vault.yml"
 
