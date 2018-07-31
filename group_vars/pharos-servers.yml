@@ -1,4 +1,7 @@
 orgtype: APT
 telegraf_plugins_extra:
   nginx:
+    config:
+     - urls =  [ "http://localhost/server_status" ]
+     - insecure_skip_verify = true
   passenger:
