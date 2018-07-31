@@ -1,0 +1,8 @@
+vg_disk_size: 20
+
+APP_ENV: demo
+orgtype: "APT"
+
+telegraf_plugins_extra:
+  docker:
+  elasticsearch:

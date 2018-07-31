@@ -16,10 +16,10 @@
             - urls = ["http://ops.aptrust.org:8086"]
             - database = "icinga2"
             - precision = "s"
-      telegraf_plugins_extra:
-        docker:
-        elasticsearch:
-            servers = ["http://localhost:9200"]
+            #      telegraf_plugins_extra:
+            #        docker:
+            #        elasticsearch:
+            #            servers = ["http://localhost:9200"]
 
 
 
