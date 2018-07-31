@@ -1,1 +1,4 @@
 orgtype: APT
+telegraf_plugins_extra:
+  nginx:
+  passenger:
