@@ -47,5 +47,14 @@
   become: yes
   notify: "Restart Telegraf"
 
+- name: Allow telegraf user to exec passenger-status
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%telegraf ALL='
+    line: '%telegraf ALL=(ALL) NOPASSWD: /usr/sbin/passenger-status'
+    validate: '/usr/sbin/visudo -cf %s'
+  when: telegraf_plugins_extra.passenger is defined
+
 - name: "Force restart service after reread config"
   meta: flush_handlers
