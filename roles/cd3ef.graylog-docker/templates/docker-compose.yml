@@ -6,6 +6,7 @@ services:
     image: mongo:3
     volumes:
       - ./mongo_data:/data/db
+    restart: on-failure
   # Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/docker.html
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
@@ -25,6 +26,7 @@ services:
     mem_limit: {{graylog_mem_limit}}m
     ports:
       - 9200:9200
+    restart: on-failure
 
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
@@ -71,6 +73,7 @@ services:
       - 12302:12302/udp
  # BEATS
       - 5044:5044
+    restart: on-failure
   # Kibana
   kibana:
       image: docker.elastic.co/kibana/kibana:5.6.3
