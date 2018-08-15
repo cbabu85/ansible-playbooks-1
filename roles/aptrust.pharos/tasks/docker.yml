@@ -1,0 +1,126 @@
+---
+
+# TODO: Test env defaults with cli overwrite when starting docker-compose
+# TODO: Write ansible code to fill env file. have a default development env file in repo. may use dotenv instead of figaro since it can be used for compose and regular dotenv.
+# Prerequisite: Installed docker daemon
+# Initial deploy
+# - Create /srv/docker/pharos directory as workdir
+# - Git pull -o githash pharos into workdir (creates pharos dir in /srv/docker/pharos/githash)
+# - cd githashdir & docker-compose build
+# - Create /srv/docker/pharos/logs and symlink to current checkout logs in githash dir
+# - cd githashdir && populare .env-file
+# - cd githashdir && docker-compose up -d -f docker-compose.yml -f docker-compose.production.yml (production will add env file. that is populated and created by Ansible)
+# Update deploy
+# -  git pull into githash dir
+# - cd githashdir & docker-compose build
+# -
+# - cd workdir/pharos
+# - Diff between docker-compose.yml and docker-compose-rds.yml
+# - create /srv/docker/pharos/nginx and copy nginx conf.
+# - docker-compose build
+# - docker-compose up
+# TODO: SSL and letsencrypt
+
+
+# Create DB on RDS if it doesn't exist.
+# Note: When command is changed to modify, comment [db_name, subnet, tags] out.
+  - name: Create DB on RDS
+    rds:
+        command: create
+        instance_name: "{{ pharos_rds_instance_name }}"
+        instance_type: "{{ pharos_rds_instance_type | default('db.t2.small') }}"
+        size: "{{pharos_db_size | default('16') }}"
+        username: "{{pharos_db_user}}"
+        password: "{{pharos_db_pwd}}"
+        db_name: "{{pharos_db_name}}"
+        db_engine: postgres
+        multi_zone: "{{pharos_rds_multi_az | default('no')}}"
+        region: "{{pharos_rds_region | default('us-east-1')}}"
+# TODO: dependent on environment. set default to demo
+# Note: security group name doesn't work, only id. Security groups have to be
+#       configured manually via AWS web console.
+        vpc_security_groups: "{{  pharos_vpc_sec_group | default('sg-65b4211f') }}"
+        subnet: "{{ pharos_rds_subnet | default('demo') }}"
+# Note: Timeout is set high since inital RDS creation may take a while.
+        wait_timeout: 600
+        wait: yes
+        aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+        aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+        backup_retention: "{{pharos_rds_backup_retention | default('1')}}"
+        backup_window: '10:00-10:30'
+        maint_window: 'Tue:10:30-Tue:11:00'
+        tags:
+            Environment: "{{RAILS_ENV}}"
+    tags: createrds, dd
+    register: rds_facts
+    when: pharos_local_db == False
+
+# Note: Can be overridden with command line variable ... -e pharos_db_host=something.db.com
+  - name: Set RDS db_host fact
+    set_fact: pharos_db_host="{{rds_facts.instance.endpoint}}"
+    when: pharos_local_db == False
+    tags: dd
+
+  - name: Set local db_host fact
+    set_fact: pharos_db_host="db"
+    when: pharos_local_db == true
+
+# Note: This creates a dependency on ansistrano-deploy
+  - name: Get Git Hash Fact
+    shell: tail -n1 "{{pharos_app_root}}/REVISION" | cut -c1-5
+    register: pharos_timestamp
+    tags: appenv
+
+  - name: Set Release fact
+    set_fact: PHAROS_RELEASE="{{pharos_timestamp.stdout}}"
+    tags: appenv
+
+  - name: Define application environment configuration
+    template:
+        src: application.yml.j2
+        dest: "{{pharos_app_root}}/config/application.yml"
+        owner: "{{system_default_user}}"
+        group: "{{deploy_group}}"
+        mode: 0644
+    vars:
+        PHAROS_RELEASE: "{{PHAROS_RELEASE}}"
+    tags: appenv
+
+# Note: This wipes the database first. But provides fixtures that pharos:setup does not.
+#  - name: PHAROS | Populate DB with fixtures
+#    shell: chdir="{{pharos_app_root}}" rake pharos:populate_db
+#    become: true
+#    become_user: "{{ system_default_user }}"
+#    when: RAILS_ENV == 'development'
+#    tags: populatedb
+
+# TODO: How to add logrotation within the container?
+# TODO: Cron jobs containers??
+#
+#docker run -it --rm alpine sh -c "echo \"* * * * * echo hello\" | crontab - && crond -f -L -"
+#docker run -it --rm alpine sh -c "echo \"* * * * * echo hello\" | crontab - && crond -f -L -"
+#
+  - name: Setup Cron job for email notification helper script
+    cron: name="pharos notify"
+          user="{{system_default_user}}"
+          minute='*/10'
+          hour='*'
+          job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py
+             >> {{pharos_app_root}}/log/cron_pharos_notify.log 2>&1"
+          state=present
+          disabled=no
+    tags: pharos_notify_cron
+
+  - name: Setup Cron job for email notification helper script
+    cron: name="pharos snapshot notification"
+          user="{{system_default_user}}"
+          minute='1'
+          hour='0'
+          day='1'
+          month='*'
+          job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py -o snapshot
+             >> {{pharos_app_root}}/log/cron_pharos_notify.log 2>&1"
+          state=present
+          disabled=no
+    tags: pharos_snapshot_cron
+
