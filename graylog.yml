@@ -1,11 +1,11 @@
 # - All other nodes:
-# -- Automate setup nginx logformat and log per syslog
-# -> nginx needs to add graylog logformat
-# -- Automate setup syslog forwarder to Graylog
-# -> as part of graylog deployment playbook as task
-# --- Need to open ports for private subnets
-# -- Automate setup pharos gelf gem and forward to logs (needs production ready setup)
-# --- Need to open ports for private subnets
+# X-- Automate setup nginx logformat and log per syslog
+# X-> nginx needs to add graylog logformat
+# X -- Automate setup syslog forwarder to Graylog
+# X -> as part of graylog deployment playbook as task
+# X --- Need to open ports for private subnets
+# X -- Automate setup pharos gelf gem and forward to logs (needs production ready setup)
+# X--- Need to open ports for private subnets
 # - nginx: https://marketplace.graylog.org/addons/6b867cbe-8f5b-4fc9-84d2-fc1a75a0830d
 # - nsq: https://marketplace.graylog.org/addons/775319b1-4737-42af-ae05-f8089727e7b8
 # - nicetohave: https://marketplace.graylog.org/addons/962af1ae-dee3-400a-9207-7af2188fca49
