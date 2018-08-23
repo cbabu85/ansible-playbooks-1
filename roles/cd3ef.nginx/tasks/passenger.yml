@@ -2,7 +2,7 @@
   - name: Passenger | Add GPG key to apt keyring
     become: yes
     apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7
-    when: ansible_os_family == "Debian" and nginx_present|failed
+    when: ansible_os_family == "Debian" and nginx_present is failed
     tags: passenger
 
   - name: Passenger | Install needed packages
@@ -11,13 +11,13 @@
     with_items:
      - apt-transport-https
      - ca-certificates
-    when: ansible_os_family == "Debian" and nginx_present|failed
+    when: ansible_os_family == "Debian" and nginx_present is failed
     tags: passenger
 
   - name: Passenger | Add Passenger repository
     become: yes
     apt_repository: repo="deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main" state=present
-    when: ansible_os_family == "Debian" and nginx_present|failed
+    when: ansible_os_family == "Debian" and nginx_present is failed
     tags: passenger
 
   - name: Install Phusion Passenger
@@ -33,7 +33,7 @@
       owner: root
       group: root
       mode: 0644
-    when: ansible_os_family == "Debian" and nginx_present|failed and install_passenger
+    when: ansible_os_family == "Debian" and nginx_present is failed and install_passenger
     notify: nginx reload
     tags: nginx
 

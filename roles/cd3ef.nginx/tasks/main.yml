@@ -55,14 +55,14 @@
     with_items:
       - /etc/nginx/sites-available
       - /etc/nginx/sites-enabled
-    when: ansible_os_family == "Debian" and nginx_present|failed
+    when: ansible_os_family == "Debian" and nginx_present is failed
     tags:
       - nginx
     become: yes
 
   - name: Nginx | Configure include sites-enabled
     lineinfile: dest=/etc/nginx/nginx.conf regexp=".*sites-enabled.*" line="    include /etc/nginx/sites-enabled/*;" insertbefore="}" state=present
-    when: ansible_os_family == "Debian" and nginx_present|failed
+    when: ansible_os_family == "Debian" and nginx_present is failed
     become: yes
     tags: nginx
 
