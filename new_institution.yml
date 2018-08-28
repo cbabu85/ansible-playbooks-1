@@ -28,9 +28,9 @@
 #  consistent state of APTrust infrastructure.
 # It's probably easiest to define it as a nested dict, as follows
 # Institution:
-# - inst_id: virginia
+# - inst_id: uva
 #   - inst_name: University of Virginia
-#   - inst_member: virginia
+#   - inst_member: uva
 #   - inst_type: member
 #   - inst_users:
 #      - joe.schmo
