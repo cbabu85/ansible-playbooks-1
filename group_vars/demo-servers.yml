@@ -63,10 +63,10 @@ vg_disk_size: 50
 nsq_address: "demo-services.aptrust.org:4151"
 
 # Exchange Go Services
-#aws_go_user: "{{vault_aws_go_demo_user}}"
-#aws_go_pwd: "{{vault_aws_go_demo_pwd}}"
-aws_go_user: "{{vault_aws_go_user}}"
-aws_go_pwd: "{{vault_aws_go_pwd}}"
+aws_go_user: "{{vault_aws_go_demo_user}}"
+aws_go_pwd: "{{vault_aws_go_demo_pwd}}"
+#aws_go_user: "{{vault_aws_go_user}}"
+#aws_go_pwd: "{{vault_aws_go_pwd}}"
 
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
 pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
