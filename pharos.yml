@@ -77,6 +77,12 @@
       - {role: psql_backup, tags: [psql_backup]}
     tasks:
 
+    - name: Setup Nginx logging to Graylog.
+      import_role:
+        name: cd3ef.graylog-docker
+        tasks_from: nginx
+      tags: always
+
     - name: Slack to all
       slack:
         token: "{{slack_token}}"
