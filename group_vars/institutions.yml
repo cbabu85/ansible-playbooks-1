@@ -1,5 +1,6 @@
 institutions:
-  - inst_id: virginia.edu
+  virginia.edu:
+    inst_id: virginia.edu
     inst_name: 'University of Virginia'
     inst_type: member
     inst_user:
@@ -12,15 +13,16 @@ institutions:
       - name: kelly.cobb
         email: kelly.cobb@aptrust.org
     inst_admin:
-      - andrew.diamond
-      - christian.dahlhausen
-      - kelly.cobb
+       - andrew.diamond
+       - christian.dahlhausen
+       - kelly.cobb
     inst_subs:
-      - viul.edu
-      - vwu.edu
-      - chd.edu
+       - viul.edu
+       - vwu.edu
+       - chd.edu
 
-  - inst_id: nd
+  nd.edu:
+    inst_id: nd
     inst_name: 'University of Notre Dame'
     inst_type: member
     inst_user:
