@@ -18,12 +18,12 @@ services:
       - network.host=0.0.0.0
       # Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/security-settings.html#general-security-settings
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms{{graylog_es_xm}}m -Xmx{{graylog_es_xm}}m"
+      - "ES_JAVA_OPTS=-Xms{{graylog_es_xm}}g -Xmx{{graylog_es_xm}}g"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    mem_limit: {{graylog_mem_limit}}m
+    mem_limit: {{graylog_es_xm * 2}}g
     ports:
       - 9200:9200
     restart: on-failure
@@ -71,7 +71,7 @@ services:
       - 12301:12301/udp
       # Nginx error log
       - 12302:12302/udp
- # BEATS
+      # FileBEATS
       - 5044:5044
     restart: on-failure
   # Kibana
