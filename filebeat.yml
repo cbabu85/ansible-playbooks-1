@@ -1,0 +1,24 @@
+# Filebeat
+# Send exchange logs to Graylog
+#
+  - hosts:
+      - exchange-servers
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+        playbook_name: 'filebeat'
+
+        # Filebeat
+        filebeat_create_config: true
+        filebeat_ssl_insecure: "true"
+        filebeat_prospectors:
+          - input_type: log
+            paths:
+              - "/mnt/lvm/apt/logs/apt_fixity_check.log"
+            fields:
+              "type": "fixitylog"
+        filebeat_output_logstash_enabled: true
+        filebeat_output_logstash_hosts:
+          - "34.231.222.220:5044"
+    roles:
+      - {role: geerlingguy.filebeat, tags: filebeat}
