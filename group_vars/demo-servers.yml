@@ -440,7 +440,7 @@ ex_dpn_dpns3downloadworker: {
   writetimeout: "10s",
   messagetimeout: "360m"
 }
-ex_dpn_fixityworker: {
+ex_dpn_dpnfixityworker: {
   networkconnections: "8",
   workers: "4",
   nsqtopic: "dpn_fixity_topic",
