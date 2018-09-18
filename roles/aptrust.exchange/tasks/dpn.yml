@@ -9,7 +9,7 @@
     state: directory
   with_nested:
     - ['dpn']
-    - ['staging','logs']
+    - ['staging','logs','restoration']
   tags: exchange_folders
 
 # Create symlink outbound directories for each DPN node user on the system.
