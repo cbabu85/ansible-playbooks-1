@@ -414,6 +414,47 @@ ex_dpn_dpnrestoreworker: {
     writetimeout: "10s",
     messagetimeout: "180m"
 }
+
+ex_dpn_dpnglacierrestoreworker: {
+  networkconnections: "4",
+  workers: "4",
+  nsqtopic: "dpn_glacier_restore_topic",
+  nsqchannel: "dpn_glacier_restore_channel",
+  maxattempts: "10",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpns3downloadworker: {
+  networkconnections: "8",
+  workers: "4",
+  nsqtopic: "dpn_s3_download_topic",
+  nsqchannel: "dpn_s3_download_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "360m"
+}
+ex_dpn_fixityworker: {
+  networkconnections: "8",
+  workers: "4",
+  nsqtopic: "dpn_fixity_topic",
+  nsqchannel: "dpn_fixity_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "360m"
+}
+
+
+
 #
 # NSQ services config
 ex_nsq_mem_queue_size: "0"
