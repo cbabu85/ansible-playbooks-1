@@ -1,0 +1,198 @@
+---
+# Config tasks for bare metal installation
+#
+
+# Install required packages
+- name: Install required packages
+  become: yes
+  apt: pkg="{{item}}" state=present update_cache=yes
+  with_items:
+      - python-pip
+      - libmagic-dev
+      - git
+      - bzr
+      - mercurial
+      - curl
+  environment:
+     DEBIAN_FRONTEND: noninteractive
+
+# Set AWS Credentials as ENV
+- name: Set AWS Credentials, GoPath, ExchangeHome
+  no_log: true
+  lineinfile: >
+    dest="/home/{{system_default_user}}/.profile"
+    state=present
+    regexp="{{item.name}}=.*"
+    line="export {{item.name}}={{item.value}}"
+  with_items:
+    - { name: "AWS_ACCESS_KEY_ID", value: "{{aws_go_user|default ('')}}"}
+    - { name: "AWS_SECRET_ACCESS_KEY", value: "{{aws_go_pwd| default ('')}}"}
+    - { name: "GOPATH", value: "{{go_env.GOPATH}}"}
+    - { name: "EXCHANGE_HOME", value: "{{goapp_src_path}}"}
+    - { name: "PHAROS_API_USER", value: "{{pharos_api_user}}"}
+    - { name: "PHAROS_API_KEY", value: "{{pharos_api_key}}"}
+  tags: envvars
+
+# Note: Commmon role creates and mounts external filesystems like EFS/EBS.
+#       When deploy is on virtualbox, directories will be created locally.
+#       Applying permissions recursively to avoid Supervisor bug that creates
+#       logfiles only with root:root rw access.
+#       https://github.com/Supervisor/supervisor/issues/114
+- name: "Create {{mount_dir}} volume directories"
+  become: yes
+  file:
+    path: "{{mount_dir}}/{{item.0}}/{{item.1}}"
+    owner: "{{system_default_user}}"
+    group: "{{deploy_group}}"
+    mode: 0775
+    recurse: yes
+    state: directory
+  with_nested:
+    - ['apt']
+    - ['data','logs','restore','replication']
+  tags: exchange_ebs
+  when: orgtype == 'apt'
+
+
+# TODO: Refactor this as it will clone the repo on every run and overwrite the
+#      config files everytime. Consider moving config files in ~/go/bin/config
+# Checking if repo has been updated. Does not clone since 'go get' below will
+- name: clone exchange repository
+  git: repo="git@github.com:APTrust/exchange.git"
+      dest="{{ goapp_src_path }}"
+      accept_hostkey=yes
+      clone=yes
+      update=yes
+      force=yes
+      version="{{ ex_git_branch | default(master)}}"
+  become_user: "{{system_default_user}}"
+  become: true
+  register: gitclone
+  tags: buildgo, gitclone
+
+# Checkout Exchange repo
+- name: Go get exchange repo
+  become_user: "{{system_default_user}}"
+  become: true
+  shell: "go get -u -f -d github.com/APTrust/exchange/..."
+  environment: "{{go_env}}"
+  register: checkout
+  when: gitclone|changed
+  tags: buildgo, gitclone
+
+# go install exchange binaries.
+- name: Build and install go binaries
+  shell: "go install $(glide novendor)"
+  args:
+    chdir: "{{goapp_src_path}}"
+  environment: "{{go_env}}"
+  become_user: "{{system_default_user}}"
+  become: true
+  when: checkout.changed or buildgo|bool == true
+  register: go_build_result
+  failed_when: "'no non-test Go files' not in go_build_result.stderr"
+  #  Note: This failed_when only applies to older Go <1.10  versions.
+  #  failed_when: "'no buildable Go source files' not in go_build_result.stderr"
+  # Note: even if status is sucessful this will be a changed task.?
+  changed_when: "'no buildable Go source files' not in go_build_result.stderr"
+  tags: buildgo,goinstall
+
+- name: Set apt exchange services fact to configure supervisor
+  set_fact:
+      exchangeservices: "{{ex_apt_services}}"
+  when: orgtype == 'apt'
+  tags: lsfiles
+
+- name: Set nsq services fact to configure supervisor
+  set_fact:
+      nsqservices: ['nsqadmin','nsqlookupd','nsqd']
+  when: orgtype == 'apt'
+  tags: lsfiles
+
+- name: Update Exchange config file
+  become_user: "{{system_default_user}}"
+  become: true
+  template: src=exchange.json.j2
+            dest="/{{goapp_cfg_path}}/{{GO_ENV}}.json"
+  tags: buildgo, exchangetemplate
+
+- name: Update NSQ config file
+  become_user: "{{system_default_user}}"
+  become: true
+  template: src=nsq.config.j2
+            dest="{{goapp_cfg_path}}/nsq/{{GO_ENV}}.config"
+  tags: buildgo, nsq_supervisor
+
+- name: Set Supervisor config for Exchange and NSQ Services
+  template: src="{{item.name}}"
+            dest="/etc/supervisor/conf.d/{{item.dest}}"
+  register: supervisor_config_files
+  with_items:
+    - { name: 'exchange_supervisor.conf.j2', dest: 'exchange.conf'}
+    - { name: 'nsq_supervisor.conf.j2', dest: 'nsq.conf'}
+  tags: listfiles
+
+- name: Add APTrust cronjobs
+  cron: name="{{item.key}}"
+        user="{{system_default_user}}"
+        minute="{{item.value.minute | default('*')}}"
+        hour="{{item.value.hour | default('*')}}"
+        job=". $HOME/.profile; {{goapp_bin_path}}/{{item.key}}
+             -config={{goapp_cfg_path}}/{{GO_ENV}}.json
+             {{item.value.params | default('')}}
+             >> {{goapp_log_path}}/cron_{{item.key}}.log 2>&1"
+        state=present
+        disabled=no
+  with_dict: "{{ apt_cronjobs }}"
+  when: orgtype == 'apt'
+  tags: apt_cronjobs
+
+- set_fact:
+      supervisor_apps:
+        - 'nsqservices:'
+        - 'exchange:'
+  when: orgtype == 'apt'
+  tags: restartapps
+
+# When state = present, the module will call supervisorctl reread then
+# supervisorctl add if the program/group does not exist
+- name: Reread/Add supervisor app config files
+  supervisorctl: name="{{item}}" state=present
+  with_items: "{{supervisor_apps}}"
+  register: supervisor_config_update
+  when: supervisor_config_files.changed or go_build_result.changed or checkout.changed
+  tags: reread_supervisor
+
+# Supervisor controls nsq, not upstart. Disable nsq upstart services.
+- name: Ensure nsq upstart services are stopped and disabled
+  service: name="{{item}}" state=stopped enabled=no
+  ignore_errors: true
+  with_items:
+#    - nsqd
+    - nsqadmin
+    - nsqlookupd
+
+- set_fact: restartapps=true
+  tags: restartapps
+
+# When state = restarted, the module will call supervisorctl update then
+# call supervisorctl restart.
+- name: Update and restart supervisor processes
+  supervisorctl: name="{{item}}" state=restarted
+  when: restartapps is defined or supervisor_config_files.changed or go_build_result.changed or checkout.changed
+  with_items: "{{supervisor_apps}}"
+  tags: restartapps
+
+# Note: exchange is the program group used in supervisor config.
+- name: Ensure Exchange services are running
+  supervisorctl: name="{{item}}" state=started
+  with_items: "{{supervisor_apps}}"
+
+- name: Add logrotation because supervisor doesn't want to
+  template:
+      src: logrotation.yml.j2
+      dest: "/etc/logrotate.d/exchange_{{APP_ENV}}"
+      owner: "root"
+      group: "{{deploy_group}}"
+      mode: 0644
+  tags: exchange_logrotate
