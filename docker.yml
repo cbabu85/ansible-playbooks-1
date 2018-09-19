@@ -1,5 +1,5 @@
 -   hosts:
-        - tmp-ebs-test2
+        - all
     vars_files:
       - "group_vars/vault.yml"
     vars:
@@ -22,6 +22,7 @@
       - {role: ssl, tags: ssl}
         #      - {role: 030.certbot, tags: certbot, letsencrypt}
         #  - {role: cd3ef.nginx, tags: nginx}
+      - {role: franklinkim.docker-compose, tags: docker-compose}
       - {role: mongrelion.docker, tags: docker}
         #      - {role: thomasjpfan.docker, tags: docker}
 
