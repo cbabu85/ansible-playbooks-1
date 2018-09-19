@@ -2,7 +2,7 @@
 
 - name: "Create Overrides directory for Docker"
   file:
-    path: /etc/systemd/system/docker.service.d/
+    path: /etc/systemd/system/docker.service.d
     state: directory
 
 - name: "Push the Docker daemon config to Server"
