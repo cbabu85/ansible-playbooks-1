@@ -43,6 +43,9 @@ ex_dpn_services:
   - dpn_package
   - dpn_replication_store
   - dpn_validate
+  - dpn_fixity_checker
+  - dpn_glacier_restore
+  - dpn_s3_retriever
 
 apt_cronjobs:
   apt_bucket_reader:
