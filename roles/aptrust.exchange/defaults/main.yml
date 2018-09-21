@@ -17,8 +17,15 @@ mount_dir: /mnt
 #Git branch to deploy
 ex_git_branch: master
 
+
 # Flag to deploy docker-only environment
 ex_docker: false
+
+# Docker related settings
+dockerapp_path: "/srv/docker/exchange"
+dockerapp_repo_path: "/srv/docker/exchange/repo"
+dockerapp_data_path: "/srv/docker/exchange/data"
+
 
 # Used to determine which services to deploy on server.
 # Demo server will have ingeste and restore, prod will
