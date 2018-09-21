@@ -1,16 +1,68 @@
-# TODO:  Need to reinable once refactored for DPN use.
+# These tasks are meant for an alternative Docker only install and
+# may repeat some of the baremental.yml steps.
+## TODO:  Need to reinable once refactored for DPN use.
   # - include: dpn.yml
   # when: orgtype == 'dpn'
 
-# TODO: Need to ensure dockerd is running
 # TODO: Define dockerhub (wherever that may be) in defaults. Default to hub.docker.com
 # TODO: Need to create volume directories to mount config and data volumes
 # TODO: Need to ensure to pass in ENV Vars to docker containers, like AWS, pharos api key,...
 # TODO: Run and start containers. Stop. Update config in volume mounts. Restart containers
 
-# Set AWS Credentials as ENV
-# TODO: Consider using separate creds for staging and prod S3 access.
+# TODO: Refactor this as it will clone the repo on every run and overwrite the
+#      config files everytime. Consider moving config files in ~/go/bin/config
+# Checking if repo has been updated. Does not clone since 'go get' below will
+# Note: This will go away once all services are containerized. It may only update config files and just pull the latest containers from dockerhub.
+- name: Ensure dockerd is installed and running
+  command: docker --version
+  tags: checkdock
+
+- name: Setup dockerapp directory structure
+  file:
+    path: "{{item}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0755
+    state: directory
+  with_items:
+      - "{{dockerapp_path}}"
+      - "{{dockerapp_repo_path}}"
+      - "{{dockerapp_data_path}}"
+  tags: makdir
+
+- name: Clone exchange repo
+  git: repo="git@github.com:APTrust/exchange.git"
+      dest="{{ dockerapp_repo_path }}"
+      accept_hostkey=yes
+      clone=yes
+      update=yes
+      force=yes
+      version="{{ ex_git_branch | default(master)}}"
+  become_user: "{{system_default_user}}"
+  become: true
+  register: gitclone
+  tags: buildgo, gitclone
+
+# Note: Environment env vars (user profile) supersede .env
+# https://docs.docker.com/compose/environment-variables/#the-env-file
+- name: Update env vars in .env
+  lineinfile:
+    dest: "{{dockerapp_repo_path }}/.env"
+    regexp: "^{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: 'nsq_mem_queue_size=', line: 'nsq_mem_queue_size={{ex_nsq_mem_queue_size}}' }
+    - { regexp: 'nsq_data_path=', line: 'nsq_data_path={{ex_nsq_data_path}}' }
+    - { regexp: 'nsq_broadcast_address=', line: 'nsq_broadcast_address={{ex_nsq_broadcast_address}}' }
+    - { regexp: 'nsq_msg_timeout=', line: 'nsq_msg_timeout={{ex_nsq_msg_timeout}}' }
+    - { regexp: 'nsq_max_msg_timeout=', line: 'nsq_max_msg_timeout={{ex_nsq_max_msg_timeout}}' }
+#    - { regexp: 'nsq_max_msg_size=', line: 'nsq_max_msg_size={{ex_nsq_max_msg_size}}' }
+    - { regexp: 'nsq_tcp_address=', line: 'nsq_tcp_address={{ex_nsq_tcp_address}}' }
+  tags: dotenv
+
+
 # TODO: pass in ENV vars into container runs
+# Set AWS Credentials as ENV
 - name: Set AWS Credentials, GoPath, ExchangeHome
   no_log: true
   lineinfile: >
@@ -28,7 +80,6 @@
   tags: envvars
 
 # Note: Commmon role creates and mounts external filesystems like EFS/EBS.
-#       When deploy is on virtualbox, directories will be created locally.
 #       Applying permissions recursively to avoid Supervisor bug that creates
 #       logfiles only with root:root rw access.
 #       https://github.com/Supervisor/supervisor/issues/114
@@ -48,21 +99,13 @@
   when: orgtype == 'apt'
 
 
-
-# TODO: Update path to volume mount of containers, once defined. It's fine to copy the file multiple times for each service as it allows to update config per microservice/container
+# TODO: Update path to volume mount of each container, once defined. It's fine to copy the file multiple times for each service as it allows to update config per microservice/container
 - name: Update Exchange config file
   become_user: "{{system_default_user}}"
   become: true
   template: src=exchange.json.j2
             dest="/{{goapp_cfg_path}}/{{GO_ENV}}.json"
   tags: buildgo, exchangetemplate
-
-- name: Update NSQ config file
-  become_user: "{{system_default_user}}"
-  become: true
-  template: src=nsq.config.j2
-            dest="{{goapp_cfg_path}}/nsq/{{GO_ENV}}.config"
-  tags: buildgo, nsq_supervisor
 
 
 # TODO: Need to figure out if cronjobs should run in containers or bare-metal.
@@ -83,14 +126,20 @@
 
 - set_fact:
       supervisor_apps:
-        - 'nsqservices:'
         - 'exchange:'
   when: orgtype == 'apt'
 
 # Ensure docker container running state.
+- name: Start docker containers from compose
+  docker_service:
+    project_name: exchange
+    project_src: "{{dockerapp_repo_path}}/"
+  tags: dockserv
+
 - name: Ensure Exchange services are running
   supervisorctl: name="{{item}}" state=started
   with_items: "{{supervisor_apps}}"
+
 
 # TODO: Logs should be redirected to Graylog instance.
 # TODO: Need add option for non-Graylog, local file storage.
