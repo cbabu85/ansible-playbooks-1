@@ -4,9 +4,12 @@
   # - include: dpn.yml
   # when: orgtype == 'dpn'
 
+# NOTE: Former home of repo was /home/ubuntu/go/src/github.com/APTrust/exchange, new home is
+# /srv/docker/exchange/repo
 # TODO: Define dockerhub (wherever that may be) in defaults. Default to hub.docker.com
 # TODO: Need to create volume directories to mount config and data volumes
 # TODO: Need to ensure to pass in ENV Vars to docker containers, like AWS, pharos api key,...
+## - use .env file with option to overwrite with cli params.
 # TODO: Run and start containers. Stop. Update config in volume mounts. Restart containers
 
 # TODO: Refactor this as it will clone the repo on every run and overwrite the
@@ -83,7 +86,7 @@
 #       Applying permissions recursively to avoid Supervisor bug that creates
 #       logfiles only with root:root rw access.
 #       https://github.com/Supervisor/supervisor/issues/114
-- name: "Create {{mount_dir}} volume directories"
+- name: "Create {{mount_dir}} volume directories (dockerapp)"
   become: yes
   file:
     path: "{{mount_dir}}/{{item.0}}/{{item.1}}"
@@ -98,14 +101,94 @@
   tags: exchange_ebs
   when: orgtype == 'apt'
 
+##### TEMP HYBRID SETUP START ####
+##### THIS IS ONLY TEMPORARY TO RUN baremetal exchange and docker NSQ #######
+- name: clone exchange repository
+  git: repo="git@github.com:APTrust/exchange.git"
+      dest="{{ goapp_src_path }}"
+      accept_hostkey=yes
+      clone=yes
+      update=yes
+      force=yes
+      version="{{ ex_git_branch | default(master)}}"
+  become_user: "{{system_default_user}}"
+  become: true
+  register: gitclone
+  tags: buildgo, gitclone
 
-# TODO: Update path to volume mount of each container, once defined. It's fine to copy the file multiple times for each service as it allows to update config per microservice/container
+# Checkout Exchange repo
+- name: Go get exchange repo
+  become_user: "{{system_default_user}}"
+  become: true
+  shell: "go get -u -f -d github.com/APTrust/exchange/..."
+  environment: "{{go_env}}"
+  register: checkout
+  when: gitclone|changed
+  tags: buildgo, gitclone
+
+# go install exchange binaries.
+- name: Build and install go binaries
+  shell: "go install $(glide novendor)"
+  args:
+    chdir: "{{goapp_src_path}}"
+  environment: "{{go_env}}"
+  become_user: "{{system_default_user}}"
+  become: true
+  when: checkout.changed or buildgo|bool == true
+  register: go_build_result
+  failed_when: "'no non-test Go files' not in go_build_result.stderr"
+  #  Note: This failed_when only applies to older Go <1.10  versions.
+  #  failed_when: "'no buildable Go source files' not in go_build_result.stderr"
+  # Note: even if status is sucessful this will be a changed task.?
+  changed_when: "'no buildable Go source files' not in go_build_result.stderr"
+  tags: buildgo,goinstall
+
+- name: Set apt exchange services fact to configure supervisor
+  set_fact:
+      exchangeservices: "{{ex_apt_services}}"
+  when: orgtype == 'apt'
+  tags: lsfiles
+
+- name: Set Supervisor config for Exchange and NSQ Services
+  template: src="{{item.name}}"
+            dest="/etc/supervisor/conf.d/{{item.dest}}"
+  register: supervisor_config_files
+  with_items:
+    - { name: 'exchange_supervisor.conf.j2', dest: 'exchange.conf'}
+  tags: listfiles
+
+# When state = present, the module will call supervisorctl reread then
+# supervisorctl add if the program/group does not exist
+- name: Reread/Add supervisor app config files
+  supervisorctl: name="exchange:" state=present
+  register: supervisor_config_update
+  when: supervisor_config_files.changed or go_build_result.changed or checkout.changed
+  tags: reread_supervisor
+
+# When state = restarted, the module will call supervisorctl update then
+# call supervisorctl restart.
+- name: Update and restart supervisor processes
+  supervisorctl: name="exchange:" state=restarted
+  when: restartapps is defined or supervisor_config_files.changed or go_build_result.changed or checkout.changed
+  tags: restartapps
+
+# Note: exchange is the program group used in supervisor config.
+- name: Ensure Exchange services are running
+  supervisorctl: name="exchange:" state=started
+
+
+
+#Note: This will be used going forward in containerized apps.
+# mounted as volume into each container.
 - name: Update Exchange config file
   become_user: "{{system_default_user}}"
   become: true
   template: src=exchange.json.j2
-            dest="/{{goapp_cfg_path}}/{{GO_ENV}}.json"
+            dest="{{dockerapp_repo_path}}/config/{{GO_ENV}}.json"
   tags: buildgo, exchangetemplate
+
+
+#### TEMP HYBRID SETUP END ####
 
 
 # TODO: Need to figure out if cronjobs should run in containers or bare-metal.
@@ -119,15 +202,18 @@
              {{item.value.params | default('')}}
              >> {{goapp_log_path}}/cron_{{item.key}}.log 2>&1"
         state=present
-        disabled=no
+        disabled=yes
   with_dict: "{{ apt_cronjobs }}"
   when: orgtype == 'apt'
   tags: apt_cronjobs
 
-- set_fact:
-      supervisor_apps:
-        - 'exchange:'
-  when: orgtype == 'apt'
+- name: Update Exchange config file
+  become_user: "{{system_default_user}}"
+  become: true
+  template: src=exchange.json.j2
+            dest="/{{goapp_cfg_path}}/{{GO_ENV}}.json"
+  tags: buildgo, exchangetemplate
+
 
 # Ensure docker container running state.
 - name: Start docker containers from compose
@@ -141,8 +227,8 @@
   with_items: "{{supervisor_apps}}"
 
 
-# TODO: Logs should be redirected to Graylog instance.
-# TODO: Need add option for non-Graylog, local file storage.
+# TODO: Need add option for non-Graylog, local file storage and Graylog.
+# NOTE: https://docs.docker.com/compose/compose-file/#logging
 - name: Add logrotation because supervisor doesn't want to
   template:
       src: logrotation.yml.j2
