@@ -182,7 +182,7 @@
 
   - name: Update permissions on logfile
     file:
-        path: "{{pharos_app_root}}/log/{{RAILS_ENV}}.log"
+        path: "{{pharos_app_root}}/log/*.log"
         owner: "{{system_default_user}}"
         group: "{{deploy_group}}"
         mode: 0664
