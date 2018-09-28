@@ -51,7 +51,7 @@ ex_dpn_services:
   - dpn_replication_store
   - dpn_validate
   - dpn_fixity_checker
-  - dpn_glacier_restore
+  - dpn_glacier_restore_init
   - dpn_s3_retriever
 
 apt_cronjobs:
