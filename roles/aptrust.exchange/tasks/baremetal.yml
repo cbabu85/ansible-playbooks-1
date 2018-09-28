@@ -68,7 +68,8 @@
   become_user: "{{system_default_user}}"
   become: true
   register: gitclone
-  tags: buildgo, gitclone
+  tags: ["buildgo", "gitclone"]
+
 
 # Checkout Exchange repo
 - name: Go get exchange repo
@@ -78,7 +79,7 @@
   environment: "{{go_env}}"
   register: checkout
   when: gitclone|changed
-  tags: buildgo, gitclone
+  tags: ['buildgo', 'gitclone', 'goget']
 
 # go install exchange binaries.
 - name: Build and install go binaries
