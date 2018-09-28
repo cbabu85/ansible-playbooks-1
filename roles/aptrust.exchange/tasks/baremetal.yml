@@ -122,6 +122,7 @@
   become: true
   template: src=nsq.config.j2
             dest="{{goapp_cfg_path}}/nsq/{{GO_ENV}}.config"
+  when: orgtype == 'apt'
   tags: buildgo, nsq_supervisor
 
 - name: Set Supervisor config for Exchange and NSQ Services
@@ -131,6 +132,7 @@
   with_items:
     - { name: 'exchange_supervisor.conf.j2', dest: 'exchange.conf'}
     - { name: 'nsq_supervisor.conf.j2', dest: 'nsq.conf'}
+  when: orgtype == 'apt'
   tags: listfiles
 
 - name: Add APTrust cronjobs
