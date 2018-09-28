@@ -1,4 +1,10 @@
 ---
+# Deploy on all exchange servers:
+#  ansible-playbook exchange.yml -t deploy --diff
+# Deploy on a specific exchange server:
+#  ansible-playbook exchange.yml -t deploy --diff -l dpn-demo2
+# Deploy a specific branch of exchange:
+#  ansible-playbook exchange.yml -t deploy --diff -e ex_git_branch=<specific_branchname>
 -   hosts: exchange-servers
     vars_files:
         - "group_vars/vault.yml"
@@ -22,6 +28,8 @@
       - {role: futurice.supervisor, tags: supervisor}
       - {role: sansible.golang, tags: golang}
       - {role: retr0h.nsq, tags: nsq}
+        #  - {role: franklinkim.docker-compose, tags: docker-compose, when: ex_docker==true}
+        #  - {role: mongrelion.docker, tags: docker, when: ex_docker==true}}
       - {role: aptrust.exchange, tags: [exchange, deploy]}
     tasks:
 
