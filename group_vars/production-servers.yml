@@ -112,7 +112,6 @@ ex_aptrustglacierregion: "us-west-2"
 ex_preservationbucket: "aptrust.preservation.storage"
 ex_replicationbucket: "aptrust.preservation.oregon"
 
-ex_customrestorebucket: ""
 ex_restoretotestbuckets: "false"
 ex_maxdayssincefixitycheck: 90
 
