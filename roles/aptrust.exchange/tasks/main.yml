@@ -7,7 +7,7 @@
   when: orgtype == 'dpn'
 
 - import_tasks: docker.yml
-  when: ex_docker == 'true'
+  when: ex_docker
 
 - import_tasks: baremetal.yml
-  when: ex_docker == false
+  when: not ex_docker
