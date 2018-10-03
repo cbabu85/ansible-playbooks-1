@@ -10,4 +10,4 @@
   when: ex_docker == 'true'
 
 - import_tasks: baremetal.yml
-  when: ex_docker == 'false'
+  when: ex_docker == false

@@ -128,7 +128,7 @@
   shell: "go get -u -f -d github.com/APTrust/exchange/..."
   environment: "{{go_env}}"
   register: checkout
-  when: gitclone|changed
+  when: gitclone is changed
   tags: buildgo, gitclone
 
 # go install exchange binaries.
