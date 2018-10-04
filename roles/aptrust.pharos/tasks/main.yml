@@ -182,10 +182,11 @@
 
   - name: Update permissions on logfile
     file:
-        path: "{{pharos_app_root}}/shared/log/*.log"
+        path: "{{pharos_app_root}}/log/"
         owner: "{{system_default_user}}"
         group: "{{deploy_group}}"
-        mode: 0664
+        mode: 0755
+        recurse: yes
     tags: logperm
 
   - name: Setup log rotation
