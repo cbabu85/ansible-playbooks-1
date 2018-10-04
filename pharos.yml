@@ -1,5 +1,8 @@
 ---
--   hosts: pharos-servers
+-   hosts:
+     - pharos-servers
+     - docker1
+
     vars_files:
         - "group_vars/vault.yml"
 
@@ -17,8 +20,8 @@
         ansistrano_keep_releases: 3
         # Check disabled to allow for symlink to central log directory for
         # log file persistence
-        ansistrano_ensure_shared_paths_exist: no
-        # ansistrano_ensure_basedirs_shared_paths_exist: no
+        ansistrano_ensure_shared_paths_exist: yes
+        ansistrano_ensure_basedirs_shared_paths_exist: yes
 
         # Pharos Role
         pharos_app_root: "{{ ansistrano_deploy_to }}/current"
