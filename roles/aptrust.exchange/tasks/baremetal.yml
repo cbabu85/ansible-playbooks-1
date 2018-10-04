@@ -157,6 +157,12 @@
   when: orgtype == 'apt'
   tags: restartapps
 
+- set_fact:
+      supervisor_apps:
+        - 'exchange:'
+  when: orgtype == 'dpn'
+  tags: restartapps
+
 # When state = present, the module will call supervisorctl reread then
 # supervisorctl add if the program/group does not exist
 - name: Reread/Add supervisor app config files
