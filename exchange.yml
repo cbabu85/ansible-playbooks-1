@@ -30,8 +30,8 @@
       - {role: futurice.supervisor, tags: supervisor}
       - {role: sansible.golang, tags: golang}
       - {role: retr0h.nsq, tags: nsq}
-        #  - {role: franklinkim.docker-compose, tags: docker-compose, when: ex_docker==true}
-        #  - {role: mongrelion.docker, tags: docker, when: ex_docker==true}}
+      - {role: franklinkim.docker-compose, tags: docker-compose, when: ex_docker}
+      - {role: mongrelion.docker, tags: docker, when: ex_docker }
       - {role: aptrust.exchange, tags: [exchange, deploy]}
     tasks:
 
