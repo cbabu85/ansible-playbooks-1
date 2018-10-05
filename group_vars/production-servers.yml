@@ -67,6 +67,10 @@ nsq_address: "prod-services.aptrust.org:4151"
 aws_go_user: "{{ vault_aws_go_user }}"
 aws_go_pwd: "{{ vault_aws_go_pwd }}"
 
+#aws_go_user: "{{ vault_aws_go_prod_user }}"
+#aws_go_pwd: "{{ vault_aws_go_prod_pwd }}"
+
+
 pharos_api_user: "{{vault_pharos_prod_api_user}}"
 pharos_api_key: "{{vault_pharos_prod_api_pwd}}"
 
