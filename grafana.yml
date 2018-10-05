@@ -21,7 +21,7 @@
         grafana_dir_data: "{{ops_data_grafana}}"
         grafana_database:
           type: postgres
-          host: 127.0.0.1:5432
+          host: "{{grafana_psql_host}}"
           name: "{{grafana_psql_db}}"
           user: "{{grafana_psql_owner}}"
           password: "{{grafana_psql_pwd}}"

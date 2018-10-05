@@ -239,6 +239,7 @@ influxdb_db: 'icinga2'
 #
 # Grafana
 grafana_admin_password: "{{vault_grafana_admin_password}}"
+grafana_psql_host: "{{vault_grafana_psql_host}}"
 grafana_psql_owner: "{{vault_grafana_psql_owner}}"
 grafana_psql_pwd: "{{vault_grafana_psql_pwd}}"
 grafana_auth_github_client_id: "{{vault_grafana_auth_github_client_id}}"
