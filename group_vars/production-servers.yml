@@ -84,6 +84,7 @@ apt_cronjobs:
     minute: "*/30"
     params: "-maxfiles=2500"
 
+ex_docker: true
 ex_tardirectory: "/mnt/lvm/apt/data"
 ex_restoredirectory: "/mnt/lvm/apt/restore"
 ex_logdirectory: "/mnt/lvm/apt/logs"
