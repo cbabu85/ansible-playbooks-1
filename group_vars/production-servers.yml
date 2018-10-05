@@ -465,7 +465,7 @@ ex_nsq_broadcast_address: "{{hostname_fqdn}}"
 ex_nsq_nsqlookupd_tcp_addresses: "127.0.0.1:4160"
 ex_nsq_msg_timeout: "4880m0s"
 ex_nsq_max_msg_timeout: "720m0s"
-ex_nsq_max_req_timeout: "180m"
+ex_nsq_max_req_timeout: "240m0s"
 
 # Mediawiki / wiki
 wiki_server_name: 'wiki.aptrust.org'
