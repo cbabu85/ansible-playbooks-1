@@ -263,7 +263,8 @@ ex_receivingbuckets: [
     'aptrust.receiving.virginia.edu',
     'aptrust.receiving.viul.virginia.edu',
     'aptrust.receiving.vt.edu',
-    'aptrust.receiving.vwu.edu'
+    'aptrust.receiving.vwu.edu',
+    'aptrust.receiving.test.edu'
     ]
 
 ## FOR CHANGES ON DPN NODES THIS NEEDS TO BE CHANGED
