@@ -217,7 +217,7 @@
              {{item.value.params | default('')}}
              >> {{goapp_log_path}}/cron_{{item.key}}.log 2>&1"
         state=present
-        disabled=yes
+        disabled=false
   with_dict: "{{ apt_cronjobs }}"
   when: orgtype == 'apt'
   tags: apt_cronjobs
