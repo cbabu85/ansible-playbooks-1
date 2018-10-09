@@ -61,7 +61,6 @@
     - { regexp: 'nsq_max_msg_timeout=', line: 'nsq_max_msg_timeout={{ex_nsq_max_msg_timeout}}' }
 #    - { regexp: 'nsq_max_msg_size=', line: 'nsq_max_msg_size={{ex_nsq_max_msg_size}}' }
     - { regexp: 'nsq_tcp_address=', line: 'nsq_tcp_address={{ex_nsq_tcp_address}}' }
-    - { regexp: 'nsq_max_req_timeout=', line: 'nsq_max_req_timeout={{ex_nsq_max_req_timeout}}' }
   tags: dotenv
 
 
@@ -217,7 +216,7 @@
              {{item.value.params | default('')}}
              >> {{goapp_log_path}}/cron_{{item.key}}.log 2>&1"
         state=present
-        disabled=false
+        disabled=no
   with_dict: "{{ apt_cronjobs }}"
   when: orgtype == 'apt'
   tags: apt_cronjobs
