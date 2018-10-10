@@ -444,7 +444,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             while [ "$openfiles" -gt "0" ]; do
               log "Waiting until no open files are present"
               sleep 3
-              openfiles=$(sudo lsof | grep -c $MOUNT_POINT)
+              openfiles=$(sudo lsof $MOUNT_POINT | wc -l)
               log "Open files= $openfiles"
             done
             umount $MOUNT_POINT
