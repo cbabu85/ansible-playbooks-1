@@ -47,7 +47,7 @@ if [ -f $PIDFILE ]
 then
   PID=$(cat $PIDFILE)
   ps -p $PID > /dev/null 2>&1
-  if [ $? -eq 0 ]
+  if [ $(ps -p $PID > /dev/null 2>&1) -eq 0 ]
   then
     echo "Process already running"
     exit 1
@@ -195,10 +195,10 @@ add_to_fstab(){
     # Workaround to get the device name since Ubuntu thinks its funny to double
     # dash the vg.
     MOUNT_DEVICE=$(grep $MOUNT_POINT /proc/mounts | awk '{print $1}')
-    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. Exiting." && exit 1 }
+    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. Exiting." && exit 1; }
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
 
-    if $(grep -q "$fstab_entry" $fstab); then
+    if grep -q "$fstab_entry" $fstab; then
          log "Entry in fstab exists. Just made sure it is there."
     else
         log "Entry in fstab does not exists. Adding for persistence."
@@ -217,21 +217,21 @@ add_to_fstab(){
   }
 
 next_disk() {
-    log ${FUNCNAME[0]}
+    log "${FUNCNAME[0]}"
     # No disk exist yet
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
     else
       num=$(ord $1)
 # TODO: Allow for second-level disk letters, https://www.pivotaltracker.com/story/show/154039718
-        if [ $num -ge 122 ];then
+        if [ "$num" -ge 122 ];then
             # Too lazy to handle /dev/sdaa, 24 disks (24TB) should be enough, no?
             log "No more disk letter available"
             send_msg "Ran out of disk letters.  Need manual intervention"
             DISK_LETTER=""
             return 1
         fi
-        let num=$num+1
+        let num="$num"+1
         DISK_LETTER=$(chr $num)
     fi
 }
@@ -424,9 +424,9 @@ if [[ $less_space_needed -eq 1 ]]; then
         log "Too much space but minimum disk limit reached"
     else
         # In case the DISK_SIZE has changed since creating the LVM.
-        LAST_DISK_SIZE=`sudo pvs --units g|tail -n1| awk '{print $5}'| sed 's/.$//'`
-        root_device_name=`jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info`
-        LAST_VOLUME=`jq -r '.Reservations[].Instances[].BlockDeviceMappings[] | select(.DeviceName != "'$root_device_name'") | .Ebs.VolumeId' /etc/ec2_instance_info | tail -n1`
+        LAST_DISK_SIZE=$(sudo pvs --units g|tail -n1| awk '{print $5}'| sed 's/.$//')
+        root_device_name=$(jq -r '.Reservations[].Instances[].RootDeviceName' /etc/ec2_instance_info)
+        LAST_VOLUME=$(jq -r '.Reservations[].Instances[].BlockDeviceMappings[] | select(.DeviceName != "'$root_device_name'") | .Ebs.VolumeId' /etc/ec2_instance_info | tail -n1)
         log "Root device info: $root_device_name \t LastVolume $LAST_VOLUME"
         # Check for inflight items to avoid stopping services if not necessary.
         # Shrinking will commence once no worker is processing items.
@@ -434,8 +434,8 @@ if [[ $less_space_needed -eq 1 ]]; then
         log "NSQ_RESULT: $nsq_result"
         if [ $nsq_result == "takeoff" ];then
             log "---SHRINKING VOLUME START----"
-            send_msg "Worker queues empty. Shutting down exchange services. \n \
-                        `df -h $MOUNT_POINT` Shrinking by $LAST_DISK_SIZE GB"
+            send_msg "Worker queues empty. Shutting down exchange services. \\n \
+                $(df -h $MOUNT_POINT) Shrinking by $LAST_DISK_SIZE GB"
             log "Shutting down exchange services. \n `df -h $MOUNT_POINT`"
             sudo supervisorctl stop all
             sudo docker stop exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
@@ -451,10 +451,10 @@ if [[ $less_space_needed -eq 1 ]]; then
             if [ $? -eq 0 ]; then
               log "Unmount of VG successful. LAST_VOLUME is $LAST_VOLUME and will be removed"
               time e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
-              lvreduction=`time lvreduce -A y -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME} || exit 1`
+              lvreduction=$(time lvreduce -A y -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME} || exit 1)
               if [ $? -eq 0 ]; then
                   log $lvreduction
-                  reduct=`vgreduce -a vg_${NAME}`
+                  reduct=$(vgreduce -a vg_${NAME})
                   log $reduct
                   lvextend -r -l +100%FREE /dev/vg_${NAME}/lv_${NAME} || exit 1
                   mount /dev/vg_${NAME}/lv_$NAME $MOUNT_POINT || exit 1
@@ -480,7 +480,7 @@ if [[ $less_space_needed -eq 1 ]]; then
                   log "---SHRINKING VOLUME END----"
               fi
             else
-              send_msg "Unable to unmount. Aborting shrinking on $hostname"
+              send_msg "Unable to unmount. Aborting shrinking on $(hostname)"
               sudo supervisorctl start exchange:
               sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
               exit 1
