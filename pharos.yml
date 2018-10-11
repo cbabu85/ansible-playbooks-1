@@ -5,7 +5,7 @@
 #  ansible-playbook pharos.yml -t deploy --diff -l apt-demo-repo2
 # Deploy a specific branch of pharos:
 #  ansible-playbook pharos.yml -t deploy --diff -e ansistrano_git_branch=<specific_branchname>
-#-   hosts:
+-   hosts:
      - pharos-servers
      - docker1
 
