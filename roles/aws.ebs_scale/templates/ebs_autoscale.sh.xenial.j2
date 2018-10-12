@@ -194,7 +194,7 @@ add_to_fstab(){
     # Workaround to get the device name since Ubuntu thinks its funny to double
     # dash the vg.
     MOUNT_DEVICE=$(grep $MOUNT_POINT /proc/mounts | awk '{print $1}')
-    [ -z "$MOUNT_DEVICE" ] && {echo "No mounts. Empty. exit here." && exit 1}
+    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. exit here." && exit 1; }
 
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nofail,x-systemd.device-timeout=1 0 0"
 
