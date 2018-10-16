@@ -48,6 +48,11 @@ pharos_rds_multi_az: 'yes'
 pharos_rds_region: 'us-east-1'
 pharos_rds_backup_retention: '10'
 
+#Pharos Google API for sheets export
+pharos_google_api_key: "{{vault_pharos_google_api_key}}"
+pharos_google_client_id: "{{vault_pharos_google_client_id}}"
+pharos_google_client_secret: "{{vault_pharos_google_client_secret}}"
+
 # AWS EFS/DBS
 # External Filesystems
 use_efs: false
