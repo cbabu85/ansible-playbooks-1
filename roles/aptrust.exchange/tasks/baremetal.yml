@@ -143,7 +143,7 @@
         job=". $HOME/.profile; {{goapp_bin_path}}/{{item.key}}
              -config={{goapp_cfg_path}}/{{GO_ENV}}.json
              {{item.value.params | default('')}}
-             >> {{goapp_log_path}}/cron_{{item.key}}.log 2>&1"
+             > /dev/null 2>&1"
         state=present
         disabled=no
   with_dict: "{{ apt_cronjobs }}"
