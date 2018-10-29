@@ -50,7 +50,8 @@ ex_dpn_services:
   - dpn_package
   - dpn_replication_store
   - dpn_validate
-  - dpn_fixity_checker
+  #  Disabled cause, you know. Titanic and Icebergs.
+  #  - dpn_fixity_checker
   - dpn_glacier_restore_init
   - dpn_s3_retriever
 
