@@ -248,8 +248,8 @@ add_disk() {
       --availability-zone $AV_ZONE \
       --tag-specifications "ResourceType=volume,
                             Tags=[{Key=Name,Value=ebsscale_${NAME}_disk_${DISK_LETTER}},
-                            {Key=orgtype,Value=${ORGTYPE}},
-                            {Key=environment,Value=${ENVIRONMENT}}]" > /etc/ebs_volume_info
+                            {Key=Organisation_type,Value=${ORGTYPE}},
+                            {Key=Environment,Value=${ENVIRONMENT}}]" > /etc/ebs_volume_info
     volume_id=$(jq -r '.VolumeId' /etc/ebs_volume_info)
 
     volume_status=""
