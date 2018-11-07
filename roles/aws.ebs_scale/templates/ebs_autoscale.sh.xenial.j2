@@ -252,6 +252,7 @@ add_disk() {
       --volume-type ${VOLUME_TYPE} \
       --size $DISK_SIZE \
       --availability-zone $AV_ZONE \
+      --region $REGION \
       --tag-specifications "ResourceType=volume,
                             Tags=[{Key=Name,Value=ebsscale_${NAME}_disk_${DISK_LETTER}},
                             {Key=Organisation_type,Value=${ORGTYPE}},
@@ -320,7 +321,7 @@ extend_lv() {
 
 INSTANCE_ID=$(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)
 AV_ZONE=$(wget -q -O - http://169.254.169.254/latest/meta-data/placement/availability-zone)
-REGION="$(echo \"$AV_ZONE\" | sed -e 's:\([0-9][0-9]*\)[a-z]*\$:\\1:')"
+REGION="$(echo $AV_ZONE | sed 's/[a-z]$//')"
 
 # Create base VG if not existing
 if [[ ! -d "/dev/vg_$NAME/lv_$NAME" && ! -L "/dev/vg_$NAME/lv_$NAME" ]]; then
