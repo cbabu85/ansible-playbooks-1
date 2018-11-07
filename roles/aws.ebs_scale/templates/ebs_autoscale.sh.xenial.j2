@@ -117,6 +117,11 @@ AWS_EC2="/usr/local/bin/aws ec2"
 # e.g. demo-services.aptrust.org:4151
 NSQ_ADDRESS="{{nsq_address}}"
 
+# Pharos API creds to check running processes before shrinking
+PHAROS_URL="{{pharos_url}}"
+PHAROS_API_USER="{{pharos_api_key}}"
+PHAROS_API_KEY="{{pharos_api_user}}"
+
 # Notification type 'slack' or 'email'
 NOTIFICATION_TYPE='slack'
 
@@ -401,9 +406,14 @@ fi
 
 check_nsq_inflight(){
     # If NSQ is not used it will default to empty and will default to the else clause below.
-    # Added timeout to fail fast if no NSQ is used. It'll default to else clause.
-    airtraffic=$(timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n")
-    # Check for Rsync jobs on when script is run on DPN node.
+        # Added timeout to fail fast if no NSQ is used. It'll default to else clause.
+    # Disabled querying the API for now since long running exchange-service tasks
+    # may hit timeout in NSQ and won't show up there anymore. This leads to
+    # premature shutdown of services and interrupting running processes.
+    # airtraffic=$(timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n")
+    airtraffic=$(curl -H "Content-Type: application/json" -H "Accept: application/json" -H "X-Pharos-API-User: $PHAROS_API_USER" -H "X-Pharos-API-Key: $PHAROS_API_KEY" -G "$PHAROS_URL/api/v2/items?node_not_empty=true&pid_not_empty=true" | jq .count)
+
+# Check for Rsync jobs on when script is run on DPN node.
     rsyncing=$(ps axu |pgrep rsync | wc -l)
 
      if [[ "$airtraffic" -gt "0" || "$rsyncing" -gt "0" ]]; then
