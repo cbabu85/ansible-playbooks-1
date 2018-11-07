@@ -62,7 +62,8 @@ efs_mount_uri: "fs-97ff5bde.efs.us-east-1.amazonaws.com:/"
 
 # AWS EBS Autoscale
 # Starter disk volume in GB for LVM
-vg_disk_size: 50
+volume_type: gp2
+vg_disk_size: 10
 nsq_address: "demo-services.aptrust.org:4151"
 
 # Exchange Go Services
