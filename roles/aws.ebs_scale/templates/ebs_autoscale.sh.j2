@@ -200,7 +200,7 @@ add_to_fstab(){
     # Workaround to get the device name since Ubuntu thinks its funny to double
     # dash the vg.
     MOUNT_DEVICE=$(grep $MOUNT_POINT /proc/mounts | awk '{print $1}')
-    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. Exiting." && exit 1; }
+    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. Exiting." && send_msg "LVM not mounted. Initializing LVM" && initialize_lv; }
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
 
     if grep -q "$fstab_entry" $fstab; then
