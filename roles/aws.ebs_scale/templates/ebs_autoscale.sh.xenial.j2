@@ -210,7 +210,7 @@ add_to_fstab(){
         log "Entry in fstab does not exists. Adding for persistence."
         sudo cp $fstab /etc/fstab.bak
         sudo bash -c "echo $fstab_entry >> /etc/fstab"
-        if sudo mount -fav; then
+        if sudo mount -fv $MOUNT_POINT; then
           log "Checked fstab, looks good."
         else
           log "Error in fstab entry. Need manual intervention.\
@@ -302,7 +302,7 @@ initialize_lv() {
     sudo mkfs.ext4 /dev/vg_$NAME/lv_$NAME
 
     sudo mkdir -p $MOUNT_POINT
-    sudo mount /dev/vg_$NAME/lv_$NAME $MOUNT_POINT
+    sudo mount $MOUNT_POINT
 
     add_to_fstab
 
