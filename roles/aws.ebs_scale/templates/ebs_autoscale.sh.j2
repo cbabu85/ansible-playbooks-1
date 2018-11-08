@@ -450,6 +450,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             log "Shutting down exchange services. \n `df -h $MOUNT_POINT`"
             sudo supervisorctl stop all
             sudo docker stop exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+            [[ -e /usr/bin/filebeat ]] && sudo service filebeat stop
             # Set dummy value to run through loop at least once
             openfiles=100
             while [ "$openfiles" -gt "0" ]; do
@@ -485,15 +486,19 @@ if [[ $less_space_needed -eq 1 ]]; then
                   log "LVM shrinking completed. Re-mounting LVM & restarting exchange services."
               # Note: already mounted on line 414
               #    sudo mount $MOUNT_POINT
-                  sudo supervisorctl start exchange:
                   sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+                  sudo supervisorctl start exchange:
+
+                  [[ -e /usr/bin/filebeat ]] && sudo service filebeat start
                   send_msg "LVM shrinking completed. New drive: \n `df -h $MOUNT_POINT`"
                   log "---SHRINKING VOLUME END----"
               fi
             else
               send_msg "Unable to unmount. Aborting shrinking on $(hostname)"
-              sudo supervisorctl start exchange:
               sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+              sudo supervisorctl start exchange:
+
+              [[ -e /usr/bin/filebeat ]] && sudo service filebeat start
               exit 1
             fi
         else
