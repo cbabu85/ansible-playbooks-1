@@ -172,6 +172,12 @@
     - { name: 'exchange_supervisor.conf.j2', dest: 'exchange.conf'}
   tags: listfiles
 
+- name: Remove nsq.conf for supervisor to ensure docker
+  file:
+    dest: /etc/supervisor/conf.d/nsq.conf
+    state: absent
+  tags: rmnsqconf
+
 # When state = present, the module will call supervisorctl reread then
 # supervisorctl add if the program/group does not exist
 - name: Reread/Add supervisor app config files
