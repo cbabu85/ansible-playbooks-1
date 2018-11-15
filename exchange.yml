@@ -35,10 +35,16 @@
       - {role: aptrust.exchange, tags: [exchange, deploy]}
     tasks:
 
+    - name: whoami
+      become: no
+      local_action: shell whoami
+      register: whobrokeit
+      tags: [exchange,slack,deploy]
+
     - name: Slack to all
       slack:
         token: "{{slack_token}}"
-        msg: "{{playbook_name}} deployment on {{ inventory_hostname }} completed"
+        msg: "{{playbook_name}} deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
         icon_emoji: ":dog:"
         channel: 'ops'
       tags: [exchange,slack,deploy]
