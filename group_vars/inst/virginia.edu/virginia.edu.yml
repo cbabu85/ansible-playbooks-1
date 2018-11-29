@@ -1,0 +1,15 @@
+name: virginia.edu
+inst_id: uva.edu
+inst_name: "University of Virginia"
+inst_type: member
+inst_user:
+  - andrew.diamond
+  - christian.dahlhausen
+inst_admin:
+  - andrew.diamond
+  - christian.dahlhausen
+inst_subs:
+  - viul.edu
+  - vwu.edu
+  - chd.edu
+

@@ -1,8 +1,8 @@
 institutions:
   uva:
-     inst_id: test
+     inst_id: virginia
      inst_suff: edu
-     inst_name: 'University of Test'
+     inst_name: 'University of Virginia'
      inst_type: member
      inst_user:
        - name: andrew.diamond
@@ -21,3 +21,15 @@ institutions:
         - viul.edu
         - vwu.edu
         - chd.edu
+
+  ndedu:
+     inst_id: nd
+     inst_name: 'University of Notre Dame'
+     inst_type: member
+     inst_user:
+       - alexander.papson
+       - patrick.rader
+     inst_admin:
+       - alexander.papson
+       - patrick.rader
+
