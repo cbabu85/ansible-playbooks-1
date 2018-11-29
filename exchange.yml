@@ -5,7 +5,7 @@
 #  ansible-playbook exchange.yml -t deploy --diff -l dpn-demo2
 # Deploy a specific branch of exchange:
 #  ansible-playbook exchange.yml -t deploy --diff -e ex_git_branch=<specific_branchname>
-# Only rebuild go binaries
+# Only rebuild go binaries, does not restart services.
 #  ansible-playbook exchange.yml -t gobuild --diff
 -   hosts: exchange-servers
     vars_files:
