@@ -294,6 +294,9 @@ certbot_standalone: false
 pg_backup_dir: "/mnt/s3fs/backup-oh/psql_backup/{{ansible_hostname}}/"
 
 # Docker
+docker_registry: "registry.gitlab.com"
+docker_namespace: "aptrust/container-registry"
+
 docker_data_dir: "/srv/docker"
 docker_data_mount: "/mnt/lvm/docker"
 
@@ -306,3 +309,5 @@ graylog_web_endpoint_uri: http://127.0.0.1:9000/api
 graylog_es_xm: 3
 aws_prod_cidr: "{{vault_aws_prod_cidr}}"
 aws_demo_cidr: "{{vault_aws_demo_cidr}}"
+
+
