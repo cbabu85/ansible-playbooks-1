@@ -84,9 +84,9 @@
       with_items:
         - "{{new_buckets.results}}"
 
-		# The s3_lifecyle module is incomplete which is why we revert to use awscli
-    # version below.
-    # See https://github.com/ansible/ansible/issues/43434
+#		# The s3_lifecyle module is incomplete which is why we revert to use awscli
+#    # version below.
+#    # See https://github.com/ansible/ansible/issues/43434
 #   - name: Set up lifecycle polices for buckets
 #      s3_lifecycle:
 #         name: "aptrust.{{ item.name }}.{{inst_id}}.{{inst_id_suffix}}"
@@ -105,7 +105,7 @@
       command: >
            aws s3api put-bucket-lifecycle-configuration
             --bucket "aptrust.{{ item.name }}.{{inst_id}}.{{inst_id_suffix}}"
-            --lifecycle-configuration '{"Rules":[{"ID":"Expiration {{item.days}} Days","Prefix":"","Status":"Enabled","NoncurrentVersionExpiration":{"NoncurrentDays":{{item.days}}},"AbortIncompleteMultipartUpload":{"DaysAfterInitiation":{{item.incomplete}}}}]}'
+            --lifecycle-configuration '{"Rules":[{"ID":"Expiration {{item.days}} Days","Prefix":"","Status":"Enabled","Expiration":{"Days":{{item.days}}},"AbortIncompleteMultipartUpload":{"DaysAfterInitiation":{{item.incomplete}}}}]}'
       with_items:
         - { name: receiving, days: 60, incomplete: 7 }
         - { name: receiving.test, days: 30, incomplete: 7 }
