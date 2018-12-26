@@ -14,11 +14,34 @@
         filebeat_prospectors:
           - input_type: log
             paths:
-              - "/mnt/lvm/apt/logs/apt_fixity_check.log"
+              - "/mnt/lvm/apt/logs/apt_*.log"
             fields:
-              "type": "fixitylog"
+              environment: "{{APP_ENV}}"
+              app_group: "Exchange"
+            exclude_files: ['apt_fixity_check.log']
+#          - input_type: log
+#            paths:
+#              - "/mnt/lvm/apt/logs/apt_bucket_reader_stats.json"
+#            fields:
+#              ex_app: apt_bucket_reader
+#              app_group: "Exchange"
+#              environment: "{{APP_ENV}}"
+#            json.keys_under_root: true
+#            json.add_error_key: true
+#            json.message_key: name
+#            multiline.pattern: '^{'
+#            multiline.negate: true
+#            multiline.match:  after
+#            exclude_files: ['\.gz$']
+#            tags: ["json"]
+#            processors:
+#              - decode_json_fields:
+#                  fields: ['message']
+#                  target: json
+#
         filebeat_output_logstash_enabled: true
         filebeat_output_logstash_hosts:
           - "34.231.222.220:5044"
+
     roles:
       - {role: geerlingguy.filebeat, tags: filebeat}
