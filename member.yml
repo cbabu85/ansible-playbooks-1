@@ -84,16 +84,34 @@
       with_items:
         - "{{new_buckets.results}}"
 
-    - name: Set up lifecycle polices for buckets
-        s3_lifecycle:
-          name: "{{item.name}}"
-          region: "{{item.region}}"
-          status: enabled
-          state: present
-          storage_class: glacier
-          transition_days: 0
-          rule_id: ArchiveToGlacier
-        loop: "{{aptrust_s3_buckets}}"
+		# The s3_lifecyle module is incomplete which is why we revert to use awscli
+    # version below.
+    # See https://github.com/ansible/ansible/issues/43434
+#   - name: Set up lifecycle polices for buckets
+#      s3_lifecycle:
+#         name: "aptrust.{{ item.name }}.{{inst_id}}.{{inst_id_suffix}}"
+#         status: enabled
+#         state: present
+#         expiration_days: "{{ item.days }}"
+#         rule_id: "Clear {{item.name}}.{{inst_id}} bucket after {{ item.days}} days"
+#      with_items:
+#        - { name: receiving, days: 60, incomplete: 7 }
+#        - { name: receiving.test, days: 30, incomplete: 7 }
+#        - { name: restore, days: 14, incomplete: 7 }
+#        - { name: restore.test, days: 7, incomplete: 7 }
+#      tags: lcycle
+
+    - name: Setup S3 Lifecycle policies (cli-verision because Ansible module is insufficient.)
+      command: >
+           aws s3api put-bucket-lifecycle-configuration
+            --bucket "aptrust.{{ item.name }}.{{inst_id}}.{{inst_id_suffix}}"
+            --lifecycle-configuration '{"Rules":[{"ID":"Expiration {{item.days}} Days","Prefix":"","Status":"Enabled","NoncurrentVersionExpiration":{"NoncurrentDays":{{item.days}}},"AbortIncompleteMultipartUpload":{"DaysAfterInitiation":{{item.incomplete}}}}]}'
+      with_items:
+        - { name: receiving, days: 60, incomplete: 7 }
+        - { name: receiving.test, days: 30, incomplete: 7 }
+        - { name: restore, days: 14, incomplete: 7 }
+        - { name: restore.test, days: 7, incomplete: 7 }
+      tags: lcyclecli
 
     - name: Create IAM Group
       iam:
