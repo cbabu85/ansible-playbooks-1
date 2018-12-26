@@ -1,0 +1,158 @@
+---
+# This is used to ramp up a new member and not require manual GUI interaction
+# It will do the following tasks:
+# 1. Create S3 buckets
+# 2. Create IAM Group
+# 3. Create IAM Users
+# 4. Setup an IAM policy to manage access to S3 buckets
+# 4. Apply the IAM inline policy to the groups (test/prod)
+
+# This playbook utilizes encrypted data structures in the group_vars/members/[inst_id].yml
+# inst_id: The ID the institution goes by. Usually organized by domain names,
+#          e.g. UVa -> virginia
+
+# inst_member: member, sub, subs
+# Member: Sustaining member account.
+# Sub accounts: Sub accounts can be schools/departments within institutions,
+#               at UVa the Law Library would be a sub-account and hence go by
+#               viul.virginia.edu and have their own IAM groups, users and buckets.
+# Subscriber accounts: Are managed the same way as sub accounts.
+#
+# TODO: Create a nested dict that includes all member inst, subscribers and sub
+# accounts and their users. Can be used to ensure consistent state as well as
+# consistent tagging. Needs to be encrypted in vault.
+    # Example dict to iterate over
+    # { inst_idv: 'viul' , inst_member: virginia, inst_type: 'sub', inst_users: ('loren.moulds','humpty dumpty')}
+
+# EXAMPLE
+# virginia.yml:
+## inst_id: virginia
+## inst_type: member
+## inst_member: virginia # Self referencing if memberfile is sust. APT member
+##
+# TODO: Template data structure for all institutions. Should go in group vars.
+#  can ideally be used to rebuild all buckets and inst users. Will ensure
+#  consistent state of APTrust infrastructure.
+# It's probably easiest to define it as a nested dict, as follows
+# Institution:
+# - inst_id: virginia
+#   - inst_name: University of Virginia
+#   - inst_member: virginia
+#   - inst_type: member
+#   - inst_users:
+#      - joe.schmo
+#      - betty.sue
+#      - christian.dahlhausen
+#   - inst_admin:
+#      - christian.dahlhausen
+#
+# Note: Each institution could 'live' in a separate encrypted group var file like
+# group_vars/institutions/virginia.edu.yml
+# group_vars/institutions/vt.edu.yml
+#
+# TODO: Think of more sensible AWS tags.
+# TODO: Needs testing with test institution to ensure nothing is removed or it
+# does not throw errors.
+
+- name: Setting up AWS buckets and groups
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  become: no
+
+  vars:
+    # ID without suffix (e.g. .edu)
+    inst_id: cd3ef
+  vars_files:
+    - "group_vars/members/{{inst_id}}.yml"
+
+    # Usually domain suffix like 'edu' or 'org' ... Disregard '.' notation!
+    #    inst_id_suffix
+    #inst_name: 'University of Awesome'
+    # Member institution, may be the same as inst_id if it's a member institution
+    #inst_member: cd3ef
+    # member, subscriber, or subaccount
+    #inst_type: member
+    # Will generate user and test user for each, e.g. joe.schmo and joe.schmo.test
+
+  tasks:
+    - name: Create S3 buckets
+      s3_bucket:
+        name: "aptrust.{{ item }}.{{inst_id}}.{{inst_id_suffix}}"
+        state: present
+        validate_certs: no
+        tags:
+          institution: "{{inst_id}}"
+          institution_name: "{{inst_name}}"
+          institution_type: "{{inst_type}}"
+          institution_member: "{{inst_member}}"
+      with_items:
+          - logs
+          - receiving
+          - restore
+          - receiving.test
+          - restore.test
+      register: new_buckets
+      tags: new_buckets, justbuckets
+
+      # Bug: https://github.com/boto/boto/issues/2836
+      ## Fixed in boto3 but s3_logging is using boto. May be possible to rewrite but for now look for awscli alternative.
+      #    - name: Enable S3 logging
+      # s3_logging:
+      #   name: "{{ item.name }}"
+      #   target_bucket: "aptrust.logs.{{inst_id}}.{{inst_id_suffix}}"
+      #   target_prefix: "{{item.name}}"
+      #   state: present
+      #   region: us-east-1
+      #   validate_certs: no
+      #with_items:
+      # - "{{new_buckets.results}}"
+      #tags: new_buckets
+
+    - name: Setup S3 Logging per awscli (ugly but works)
+      shell: 'echo { \"LoggingEnabled\": { \"TargetBucket\": \"aptrust.s3.logs\", \"TargetPrefix\": \"{{item.name}}/\"} } > /tmp/logging.json && aws s3api put-bucket-logging --bucket {{item.name}} --bucket-logging-status file:///tmp/logging.json'
+      with_items:
+        - "{{new_buckets.results}}"
+
+    - name: Create IAM Group
+      iam:
+        iam_type: group
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "{{inst_id}}.{{inst_id_suffix}}.users"
+        - "test.{{inst_id}}.{{inst_id_suffix}}.users"
+      register: new_groups
+      tags: iamgroups
+
+    - debug: msg="{{item.group_name}}, {{inst_users}}"
+      with_items:
+        -  "{{ new_groups.results }}"
+      tags: iamgroups
+
+    - name: Add users to created groups
+      iam:
+        iam_type: user
+        name: "{{item.1}}"
+        state: present
+        groups: "{{ item.0.group_name }}"
+      with_nested:
+        -  "{{ new_groups.results }}"
+        -  "{{ inst_users }}"
+      tags: iamgroups
+
+      # uva.edu.users, test.edu.users
+      #      joe.schmo, joe.schmo.test, jane.doe, jane.doe.test
+
+# TODO: This needs some logic somewhere to support test and prod namespaces.
+# group_names have .users suffix that could be trimmed with regex.
+#    - name: Assign IAM policy to user groups
+#      iam_policy:
+#        iam_type: group
+#        iam_name: "{{ item.0.group_name }}"
+#        policy_name: "{{inst_id}}.{{inst_id_suffix}}-s3policy"
+#        state: present
+#        policy_document: s3-test-policy.json.j2
+#      with_together:
+#        - "{{ new_groups.results }}"
+#        - test
