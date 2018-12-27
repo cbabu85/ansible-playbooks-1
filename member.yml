@@ -42,6 +42,11 @@
   vars:
     # ID without suffix (e.g. .edu)
     inst_id: cd3ef
+    # These should go in roles default vars
+    inst_groups:
+        - "{{inst_id}}.{{inst_id_suffix}}.users"
+        - "test.{{inst_id}}.{{inst_id_suffix}}.users"
+
   vars_files:
     - "group_vars/members/{{inst_id}}.yml"
 
@@ -118,25 +123,17 @@
         iam_type: group
         name: "{{ item }}"
         state: present
-      with_items:
-        - "{{inst_id}}.{{inst_id_suffix}}.users"
-        - "test.{{inst_id}}.{{inst_id_suffix}}.users"
+      with_items: "{{inst_groups}}"
       register: new_groups
-      tags: iamgroupsi, always
-
-    - debug: msg="{{item.group_name}}, {{inst_users}}"
-      with_items:
-        -  "{{ new_groups.results }}"
-      tags: iamgroups
+      tags: iamgroups, always
 
     - name: Add users to created groups
       iam:
         iam_type: user
-        name: "{{item.1}}"
+        name: "{{item}}"
         state: present
-        groups: "{{ item.0.group_name }}"
-      with_nested:
-        -  "{{ new_groups.results }}"
+        groups: "{{ inst_groups }}"
+      with_items:
         -  "{{ inst_users }}"
       tags: iamgroups
 
@@ -164,3 +161,4 @@
 
 # TODO: Create credentials when creating users and print to stdout or put into encrypted var file for initial distribution
 
+# TODO: Support users for test und prod groups. Not all users should be in all groups per default.
