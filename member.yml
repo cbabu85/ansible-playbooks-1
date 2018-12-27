@@ -122,7 +122,7 @@
         - "{{inst_id}}.{{inst_id_suffix}}.users"
         - "test.{{inst_id}}.{{inst_id_suffix}}.users"
       register: new_groups
-      tags: iamgroups
+      tags: iamgroupsi, always
 
     - debug: msg="{{item.group_name}}, {{inst_users}}"
       with_items:
@@ -140,16 +140,42 @@
         -  "{{ inst_users }}"
       tags: iamgroups
 
-# TODO: This needs some logic somewhere to support test and prod namespaces.
-# group_names have .users suffix that could be trimmed with regex.
-#    - name: Assign IAM policy to user groups
-#      iam_policy:
-#        iam_type: group
-#        iam_name: "{{ item.0.group_name }}"
-#        policy_name: "{{inst_id}}.{{inst_id_suffix}}-s3policy"
-#        state: present
-#        policy_document: s3-test-policy.json.j2
-#      with_together:
-#        - "{{ new_groups.results }}"
-#        - test
+    - name: set user_data
+      set_fact:
+        user_data: "{{ lookup('template', '../templates/user_data.json') | string }}"
+
+    - name: set policydata
+      set_fact:
+         s3policydata: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy.json.j2') | string }}"
+      tags: iampol
+
+    - name: set policydata_test
+      set_fact:
+         s3policydatatest: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_test.json.j2') | string }}"
+      tags: iampol
+
+    - name: debug datastring
+      debug: msg={{datastring.results}}
+      tags: iampol2
+
+    - name: Assign IAM policy to user groups
+      iam_policy:
+        iam_type: group
+        iam_name: "{{ item.0 }}"
+        policy_name: "{{inst_id}}-{{inst_id_suffix}}-s3policy"
+        state: present
+        policy_json: "{{item.1 }}"
+      with_together:
+        - [ 'test.{{inst_id}}.{{inst_id_suffix}}.users', '{{inst_id}}.{{inst_id_suffix}}.users' ]
+        - [ '{{s3policydatatest}}','{{s3policydata}}' ]
+      tags: iampol
+
+    - name: Test jinja2template
+      template: src=roles/aptrust.member/templates/s3_policy.json.j2 dest=/tmp/test.json
+      with_together:
+        - "{{ new_groups.results }}"
+        - test
+      tags: poltest
+
+# TODO: Create credentials when creating users and print to stdout or put into encrypted var file for initial distribution
 
