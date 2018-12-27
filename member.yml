@@ -140,10 +140,6 @@
         -  "{{ inst_users }}"
       tags: iamgroups
 
-    - name: set user_data
-      set_fact:
-        user_data: "{{ lookup('template', '../templates/user_data.json') | string }}"
-
     - name: set policydata
       set_fact:
          s3policydata: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy.json.j2') | string }}"
@@ -153,10 +149,6 @@
       set_fact:
          s3policydatatest: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_test.json.j2') | string }}"
       tags: iampol
-
-    - name: debug datastring
-      debug: msg={{datastring.results}}
-      tags: iampol2
 
     - name: Assign IAM policy to user groups
       iam_policy:
@@ -169,13 +161,6 @@
         - [ 'test.{{inst_id}}.{{inst_id_suffix}}.users', '{{inst_id}}.{{inst_id_suffix}}.users' ]
         - [ '{{s3policydatatest}}','{{s3policydata}}' ]
       tags: iampol
-
-    - name: Test jinja2template
-      template: src=roles/aptrust.member/templates/s3_policy.json.j2 dest=/tmp/test.json
-      with_together:
-        - "{{ new_groups.results }}"
-        - test
-      tags: poltest
 
 # TODO: Create credentials when creating users and print to stdout or put into encrypted var file for initial distribution
 
