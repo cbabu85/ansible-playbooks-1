@@ -42,13 +42,14 @@
   vars:
     # ID without suffix (e.g. .edu)
     inst_id: cd3ef
+    inst_suffix: edu
     # These should go in roles default vars
     inst_groups:
         - "{{inst_id}}.{{inst_id_suffix}}.users"
         - "test.{{inst_id}}.{{inst_id_suffix}}.users"
 
   vars_files:
-    - "group_vars/members/{{inst_id}}.yml"
+    - "group_vars/members/{{inst_id}}.{{inst_suffix}}.yml"
 
   tasks:
     - name: Create S3 buckets
