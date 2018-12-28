@@ -90,7 +90,7 @@
       with_items:
         - "{{new_buckets.results}}"
 
-#		# The s3_lifecyle module is incomplete which is why we revert to use awscli
+#       # The s3_lifecyle module is incomplete which is why we revert to use awscli
 #    # version below.
 #    # See https://github.com/ansible/ansible/issues/43434
 #   - name: Set up lifecycle polices for buckets
@@ -138,11 +138,19 @@
         -  "{{ inst_users }}"
       tags: iamgroups
 
+      # A bug in the iam_policy module is sending json as dict not as raw text,
+      # therefore jinja string filter has to be applied outside of the task.
+      # per official workaround:
+      # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
     - name: set policydata
       set_fact:
          s3policydata: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy.json.j2') | string }}"
       tags: iampol
 
+      # A bug in the iam_policy module is sending json as dict not as raw text,
+      # therefore jinja string filter has to be applied outside of the task.
+      # per official workaround:
+      # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
     - name: set policydata_test
       set_fact:
          s3policydatatest: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_test.json.j2') | string }}"
