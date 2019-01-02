@@ -1,0 +1,17 @@
+inst_id: virginia
+inst_id_suffix: edu
+inst_name: "University of Virginia"
+inst_member: virginia
+inst_type: member
+inst_users:
+  - name: daniel.cavanaugh
+    email: "dmc7be@virginia.edu"}
+    phone: +14349820576
+  - name: s3.hsl.virignia.edu
+    email: ''
+    phone: ''
+  - name: s3.virginia.edu
+    email: ''
+    phone: ''
+inst_admin:
+  - name: daniel.cavanaugh
