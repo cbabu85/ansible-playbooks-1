@@ -131,7 +131,7 @@
     - name: Add users to created groups
       iam:
         iam_type: user
-        name: "{{item}}"
+        name: "{{item.name}}"
         state: present
         groups: "{{ inst_groups }}"
       with_items:
@@ -189,5 +189,6 @@
 # TODO: Support users for test und prod groups. Not all users should be in all groups per default.
 # Test1: Add a user (not in yml) to group, run this play and see if it removes the user.
 # --> Keeps user in group.
-# Test2: ?
+# Test2: Are existing IAM policies removed when running this play?
+
 
