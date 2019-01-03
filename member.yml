@@ -63,7 +63,7 @@
           institution_type: "{{inst_type}}"
           institution_member: "{{inst_member}}"
       with_items:
-          - logs
+        #          - logs
           - receiving
           - restore
           - receiving.test
