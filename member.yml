@@ -202,18 +202,21 @@
     - name: Create user credentials for testing
       iam:
         iam_type: user
-        name: foobar
+        name: "{{item.name}}"
         state: present
         access_key_state: create
       register: credentials
+      with_items:
+        -  "{{ inst_users }}"
       tags: iamcred
 
     - debug: var=credentials
       tags: iamcred
 
-    - debug:
-        msg: "{{ credentials.user_meta.access_keys | json_query('[].access_key_id') }}"
-      tags: iamcred
+  # Needs set_fact to results since the fact dict has more than one value
+      #    - debug:
+      #        msg: "{{ credentials.user_meta.access_keys | json_query('[].access_key_id') }}"
+      # tags: iamcred
 # TODO: Support users for test und prod groups. Not all users should be in all groups per default.
 # Test1: Add a user (not in yml) to group, run this play and see if it removes the user.
 # --> Keeps user in group.
