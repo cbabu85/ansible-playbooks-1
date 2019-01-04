@@ -5,7 +5,9 @@
 # 2. Create IAM Group
 # 3. Create IAM Users
 # 4. Setup an IAM policy to manage access to S3 buckets
-# 4. Apply the IAM inline policy to the groups (test/prod)
+# 5. Apply the IAM inline policy to the groups (test/prod)
+# 6. Setup logging of S3 buckets to aptrust.s3.logs bucket
+# 7. Setup lifecycle rules of S3 buckets
 
 # This playbook utilizes encrypted data structures in the group_vars/members/[inst_id].yml
 # inst_id: The ID the institution goes by. Usually organized by domain names,
@@ -32,6 +34,9 @@
 # Note: Each institution is in a separate encrypted group var file like
 # group_vars/members/virginia.yml
 # group_vars/members/vt.yml
+#
+# To run this playbook for a particular member,
+# change the inst_id and inst_suffix in the vars below
 
 - name: Setting up AWS buckets and groups
   hosts: localhost
@@ -128,14 +133,27 @@
       register: new_groups
       tags: iamgroups, always
 
-    - name: Add users to created groups
+    - name: Add users to created test group
       iam:
         iam_type: user
         name: "{{item.name}}"
         state: present
-        groups: "{{ inst_groups }}"
+        groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-        -  "{{ inst_users }}"
+          -  "{{ inst_users }}"
+          #      when: {{item.name}} | search('test')
+      when: '"test" in item.name'
+      tags: iamgroups
+
+    - name: Add users to created prod group
+      iam:
+        iam_type: user
+        name: "{{item.name}}"
+        state: present
+        groups: "{{inst_id}}.{{inst_id_suffix}}.users"
+      with_items:
+          -  "{{ inst_users }}"
+      when: '"test" not in item.name'
       tags: iamgroups
 
     - name: Add metadata tags to users
