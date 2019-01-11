@@ -1,21 +1,21 @@
 inst_id: cd3ef
 inst_id_suffix: edu
-inst_name: "University of Awesome"
+inst_name: "University of BeesomeA"
 inst_member: cd3ef
 inst_type: member
 inst_users:
   - name: joe.schmo
-    email: "schmo@joe.com"
-    phone: +4341234567
+    email: jo@joe.com
+    phone: +5341234567
   - name: betty.sue
-    email: "schmo@joe.com"
-    phone: +4341234567
+    email: betty@joe.com
+    phone: +6341234567
   - name: christian.dahlhausen.cd3ef
-    email: "schmo@joe.com"
-    phone: +4341234567
+    email: ricebob@joe.com
+    phone: +74412345672
   - name: foo.bar
     email: foo@bar.com
-    phone: +4341234567
+    phone: +8341234567
 inst_admin:
   - christian.dahlhausen.cd3ef
 
