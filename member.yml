@@ -165,6 +165,15 @@
         -  "{{ inst_users }}"
       tags: iamgroups, taggin
 
+    - name: Add admin metadata tag to users
+      command: >
+          aws iam tag-user --user-name "{{item}}"
+          --tags Key=inst_admin,Value="true"
+      with_items:
+        -  "{{ inst_admin }}"
+      tags: iamgroups, taggin
+
+
       # A bug in the iam_policy module is sending json as dict not as raw text,
       # therefore jinja string filter has to be applied outside of the task.
       # per official workaround:
