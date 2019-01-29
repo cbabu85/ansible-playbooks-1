@@ -37,13 +37,15 @@
     notify: nginx reload
     tags: nginx
 
-  - name: Verify Passenger install
-    become: true
-    shell: "sudo /usr/bin/passenger-config validate-install"
-    register: passenger_verification
-    changed_when: "passenger_verification.rc == 1"
-    when: install_passenger
-    tags: verifypassenger
+    #  Displays a interactive menu to select passenger or apache.
+    #  Not automation friendly so disabling for now.
+    #  - name: Verify Passenger install
+    # become: true
+    #shell: "sudo /usr/bin/passenger-config validate-install"
+    #register: passenger_verification
+    #changed_when: "passenger_verification.rc == 1"
+    #when: install_passenger
+    #tags: verifypassenger
     #
 # TODO: Add passengers start script with params
 # --min-instances
