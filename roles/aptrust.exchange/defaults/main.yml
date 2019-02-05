@@ -68,6 +68,10 @@ apt_cronjobs:
     hour: "*/1"
     minute: "*/30"
     params: "-maxfiles=2500"
+# This only runs in prod. See group_vars/production
+#  apt_spot_test_restore:
+#   hour: "1"
+ 
 
 ex_tardirectory: "~/tmp/data"
 ex_restoredirectory: "~/tmp/apt/restore"

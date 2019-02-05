@@ -93,6 +93,9 @@ apt_cronjobs:
     hour: "*"
     minute: "*/30"
     params: "-maxfiles=2500"
+  apt_spot_test_restore:
+    hour: "1"
+    minute: "30"
 
 ex_docker: true
 ex_tardirectory: "/mnt/lvm/apt/data"
