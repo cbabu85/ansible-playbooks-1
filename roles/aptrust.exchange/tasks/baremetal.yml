@@ -140,7 +140,7 @@
         user="{{system_default_user}}"
         minute="{{item.value.minute | default('*')}}"
         hour="{{item.value.hour | default('*')}}"
-	day="{{item.value.day | default('*')}}"
+        day="{{item.value.day | default('*')}}"
         month="{{item.value.month | default('*')}}"
         job=". $HOME/.profile; {{goapp_bin_path}}/{{item.key}}
              -config={{goapp_cfg_path}}/{{GO_ENV}}.json
