@@ -64,7 +64,10 @@
 
 - name: Install AWS CLI tools and Boto
   become: yes
-  pip: name=['awscli', 'boto']
+  pip:
+    name:
+      - awscli
+      - boto
 
 # Identify type of server, DPN or APTrust. Default to apt.
 - name: Is this an APT or DPN Server
