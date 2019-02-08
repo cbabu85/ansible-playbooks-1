@@ -8,7 +8,7 @@ docker_deploy_user: "{{system_default_user}}"
 vagrant: no
 upgrade_docker: false
 default_docker_config:
-  - storage-driver: devicemapper
+  - storage-driver: overlay2
   - log-level: info
   #  tlscacert: "/etc/docker/ssl/ca.pem"
   #tlscert: "/etc/docker/ssl/cert.pem"
