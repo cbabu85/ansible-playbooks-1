@@ -155,6 +155,29 @@
       when: '"test" not in item.name'
       tags: iamgroups
 
+    - name: Remove users from test group
+      iam:
+        iam_type: user
+        name: "{{item}}"
+        state: absent
+        groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
+      with_items:
+          -  "{{ inst_users_remove }}"
+      when: '"test" in item'
+      tags: iamgroups, removeuser
+
+    - name: Remove users from prod group
+      iam:
+        iam_type: user
+        name: "{{item}}"
+        state: absent
+        groups: "{{inst_id}}.{{inst_id_suffix}}.users"
+      with_items:
+          -  "{{ inst_users_remove }}"
+      when: '"test" not in item'
+      tags: iamgroups, removeuser
+
+
     - name: Add metadata tags to users
       command: >
           aws iam tag-user --user-name "{{item.name}}"
