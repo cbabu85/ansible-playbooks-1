@@ -3,13 +3,11 @@
     vars_files:
       - "group_vars/vault.yml"
     vars:
-        playbook_name: 'mongrelion.docker'
+        playbook_name: 'pre-docker'
 
         # NGINX
         # Setup reverse proxy
-
-        certbot_standalone: false
-        certbot_nginx: true
+        # TODO: Should be a container role once at the end
 
         # Docker TLS
         docker_local_cacert: "{{ssl_chain}}"
@@ -20,9 +18,5 @@
     roles:
       - {role: common, tags: common}
       - {role: ssl, tags: ssl}
-        #      - {role: 030.certbot, tags: certbot, letsencrypt}
-        #  - {role: cd3ef.nginx, tags: nginx}
       - {role: franklinkim.docker-compose, tags: docker-compose}
       - {role: mongrelion.docker, tags: docker}
-        #      - {role: thomasjpfan.docker, tags: docker}
-
