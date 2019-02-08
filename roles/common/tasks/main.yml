@@ -42,25 +42,21 @@
 
 - name: install emacs packages Ubuntu 14.04LTS
   become: yes
-  apt: pkg={{ item }} state=latest update_cache=true
-  with_items:
-    - emacs23-nox
+  apt: pkg=emacs23-nox state=latest update_cache=true
   when: ansible_distribution_release == 'trusty'
   tags: packages
 
 - name: install emacs packages Ubuntu 16.04LTS
   become: yes
-  apt: pkg={{ item }} state=latest update_cache=true
-  with_items:
-    - emacs24-nox
+  apt: pkg=emacs24-nox  state=latest update_cache=true
   when: ansible_distribution_release == 'xenial'
   tags: packages
 
 # http://stackoverflow.com/questions/35535566/installing-pip-using-get-pip-py-snimissingwarning
 # https://urllib3.readthedocs.io/en/latest/user-guide.html#ssl-py2
 - name: Make up for outdated Python libraries. SNIMissingWarning
-  pip: name={{item}}
-  with_items:
+  pip:
+    name:
     - pyopenssl
     - ndg-httpsclient
     - pyasn1
@@ -68,10 +64,7 @@
 
 - name: Install AWS CLI tools and Boto
   become: yes
-  pip: name={{item}}
-  with_items:
-    - awscli
-    - boto
+  pip: name=['awscli', 'boto']
 
 # Identify type of server, DPN or APTrust. Default to apt.
 - name: Is this an APT or DPN Server
