@@ -23,17 +23,19 @@
   with_items:
     - /etc/docker
     - "{{docker_data_dir}}"
-    - "{{docker_data_mount}}"
+#    - "{{docker_data_mount}}"
 
-- name: Symlink Docker Data Directory
-  file:
-    state: link
-    dest: "{{docker_data_dir}}"
-    src: "{{docker_data_mount}}"
-    owner: "{{system_default_user}}"
-    group: "{{system_default_user}}"
-    mode: 0755
-    force: yes
+# This does not make sense as really only the /srv/docker/service/data dir
+# should be linked which should be part of the dockerapp deploy.
+#- name: Symlink Docker Data Directory
+#  file:
+#    state: link
+#    dest: "{{docker_data_dir}}"
+#    src: "{{docker_data_mount}}"
+#    owner: "{{system_default_user}}"
+#    group: "{{system_default_user}}"
+#    mode: 0755
+#    force: yes
 
 - name: ensure docker-py module is installed
   pip:
