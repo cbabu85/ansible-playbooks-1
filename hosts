@@ -12,7 +12,7 @@ apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 #apt-util hostname_name=apt-util hostname_fqdn=nfs.aptrust.org  host_eip=54.175.28.251 # NFS Server
-docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=ec2-34-231-222-220.compute-1.amazonaws.com host_eip=54.86.24.227 instance_id=i-0c986eb59c16ae67a
+docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=docker1.aptrust.org host_eip=34.201.130.220 instance_id=i-0c986eb59c16ae67a
 
 [pharos-servers]
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
@@ -32,7 +32,7 @@ apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.ap
 dpn-demo2 hostname=dpn-demo2 hostname_fqdn=dpn-demo2.aptrust.org host_eip=34.195.115.140
 dpn-prod2 hostname=dpn-prod2.aptrust.org hostname_fqdn=dpn-prod2.aptrust.org host_eip=34.195.237.213
 dpn-prod3 hostname=dpn-prod3.aptrust.org hostname_fqdn=dpn-prod3.aptrust.org host_eip=34.206.100.82
-docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=ec2-34-231-222-220.compute-1.amazonaws.com host_eip=54.86.24.227 instance_id=i-0c986eb59c16ae67a
+docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=docker1.aptrust.org host_eip=34.201.130.220 instance_id=i-0c986eb59c16ae67a
 
 [dpn-demo-servers]
 dpn-demo2 hostname=dpn-demo2 hostname_fqdn=dpn-demo2.aptrust.org host_eip=34.195.115.140
