@@ -87,7 +87,7 @@
 
 - name: ensure vagrant user can run docker commands
   user:
-    name: vagrant
+    name: "{{docker_deploy_user}}"
     groups: docker
     append: yes
-  when: vagrant
+  when: vagrant or docker_deploy_user
