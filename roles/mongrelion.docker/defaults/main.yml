@@ -2,6 +2,9 @@
 consul_ip: 127.0.0.1
 docker_clusterstore: no
 dockerpy: no
+# Deploy user defaults at APTrust to ubuntu, which is a
+# system default user.
+docker_deploy_user: "{{system_default_user}}"
 vagrant: no
 upgrade_docker: false
 default_docker_config:
