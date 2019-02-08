@@ -188,9 +188,14 @@
   tags: [aptmount, mountdir]
 
 - name: Identify my availabiltiy zone
-  shell: "curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone"
+  #shell: "curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone"
+  uri:
+    url: http://169.254.169.254/latest/meta-data/placement/availability-zone
+    return_content: yes
   register: my_aws_az
-  when: (ansible_bios_version != 'VirtualBox')
+  tags: awsaz
+
+- set_fact: my_aws_az="{{my_aws_az.content}}"
   tags: awsaz
 
 # Obsolete now, remove once nfs is in place.
