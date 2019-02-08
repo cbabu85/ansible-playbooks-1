@@ -7,7 +7,16 @@
 # All required changes should be env vars in the .env var for deploys in
 # different environemnts.
 #
--   name: Deploy Pharos Docker
+##  - Base dir for docker apps is /srv/docker/<appname>/{data,repo}
+#     The repo subdir is used to clone the github repo into
+#     The data subdir is used for storing persistent data if volume bind-mounts are used.
+#
+# Workflow:
+# 1.    Make sure /srv/docker dir exists
+# 1.1   Make sure Docker is installed and Gitlab registry is setup.
+# 2.    If apprepo defined, git clone into /srv/docker/appname/repo
+# 2.1   if apprepo defined, and git repo exists, run git pull in repo
+# 3.    If apphub defined, just do a docker run
     hosts:
         - all
     vars_files:
@@ -39,10 +48,7 @@
         pharos_db_password: 'preservationiscool'
 
     tasks:
-      # 1. Make sure /srv/docker dir exists
-      # 2. If apprepo defined, git clone into /srv/docker/appname/repo
-      # 2.1 if apprepo defined, and git repo exists, run git pull in repo
-      # 3. If apphub defined, just do a docker run
+
       - name: Setup dockerapp directory structure
         file:
           path: "{{item.0}}/{{item.1}}"
