@@ -98,5 +98,6 @@
         docker_service:
            project_name: "{{dockerapp}}"
            project_src: "{{dockerapp_path}}/repo"
+           files: docker-compose.traefik.yml
            pull: yes
         tags: dockserv
