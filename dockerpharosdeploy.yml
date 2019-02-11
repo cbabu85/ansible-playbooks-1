@@ -1,4 +1,4 @@
-# This is a simple webapp deploy for a docker-compose setup
+
 # It assumes that the repo includes
 #   - a docker-compose.yml in the code root
 #   - a .env file in the code root (with sensible defaults)
@@ -17,8 +17,8 @@
 # 2.    If apprepo defined, git clone into /srv/docker/appname/repo
 # 2.1   if apprepo defined, and git repo exists, run git pull in repo
 # 3.    If apphub defined, just do a docker run
-    hosts:
-        - all
+---
+-   hosts: all
     vars_files:
         - "group_vars/vault.yml"
 
