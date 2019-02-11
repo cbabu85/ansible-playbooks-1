@@ -28,6 +28,7 @@
         dockerapp: 'pharos' #Docker app name
         dockerapp_path: "/srv/docker/{{dockerapp}}"
         dockerapp_repo: "https://github.com/APtrust/pharos"
+        dockerapp_version: docker
         docker_image_name: "aptrust/container-registry/{{dockerapp}}"
         docker_container_name: pharos
         docker_tag_name: latest
@@ -39,7 +40,7 @@
 
 
         # Pharos config
-        nginx_virtual_host: pharos.docker1.aptrust.org
+        nginx_virtual_host: pharos2.docker1.aptrust.org
 
         #pharos_db_host: 'pharos-demo-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
         ## Test case 1: local PSQL, from scratch
@@ -65,6 +66,7 @@
         git:
           repo: "{{dockerapp_repo}}"
           dest: "{{dockerapp_path}}/repo"
+          version: "{{dockerapp_version}}"
           accept_hostkey: yes
           clone: yes
           force: yes
