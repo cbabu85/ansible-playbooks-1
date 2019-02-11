@@ -82,6 +82,18 @@
           group: "{{system_default_group}}"
           mode: 0644
 
+      - name: Touch traefik/acme files if non-existent
+        file:
+          path: "{{dockerapp_path}}/data/{{item}}"
+          owner: "{{system_default_user}}"
+          group: "{{system_default_user}}"
+          mode: 0755
+          state: touch
+        with_items:
+            - acme.json
+            - traefik.toml
+        tags: makdir
+
       - name: Start docker containers from compose
         docker_service:
            project_name: "{{dockerapp}}"
