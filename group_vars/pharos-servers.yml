@@ -1,4 +1,5 @@
 orgtype: APT
+pharos_logserver: logs.aptrust.org
 telegraf_plugins_extra:
   nginx:
     config:
