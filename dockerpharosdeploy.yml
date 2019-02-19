@@ -40,7 +40,13 @@
 
         #pharos_db_host: 'pharos-demo-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
         ## Test case 1: local PSQL, from scratch
-        pharos_db_host: 'db'
+        #        pharos_db_host: 'db'
+        #        pharos_db_user: 'apt_pharos'
+        # pharos_db_password: 'preservationiscool'
+        pharos_branch: "{{dockerapp_version}}"
+        pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
+        pharos_db_port: '5431'
+        pharos_db_name: 'pharos_demo'
         pharos_db_user: 'apt_pharos'
         pharos_db_password: 'preservationiscool'
 
@@ -97,6 +103,23 @@
             - acme.json
             - traefik.toml
         tags: makdir
+
+      - name: Setup Pharos Cron Jobs
+        # sudo docker run --rm --env-file .env -it aptrust/pharos:32ca2b4 bin/pharos_notify.py -o snapshot
+        # Alternative separate microservice: http://issamben.com/how-to-run-cron-jobs-with-docker/
+        # or https://jonathas.com/scheduling-tasks-with-cron-on-docker/
+        cron: name="{{item.key}}"
+              user="{{system_default_user}}"
+              minute="{{item.value.minute | default('*')}}"
+              hour="{{item.value.hour | default('*')}}"
+              day="{{item.value.day | default('*')}}"
+              month="{{item.value.month | default('*')}}"
+              job="sudo docker run --rm --env-file {{dockerapp_path}}/repo/.env
+                   --it {{docker_image_name}}:{{docker_tag_name}}
+                   bin/pharos_notify.py {{item.value.params | default('')}}"
+              state=present
+              disabled=yes
+        with_dict: "{{pharos_cronjobs}}"
 
       - name: Start docker containers from compose
         docker_service:
