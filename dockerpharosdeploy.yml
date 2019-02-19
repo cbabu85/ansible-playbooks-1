@@ -28,19 +28,15 @@
         dockerapp_path: "/srv/docker/{{dockerapp}}"
         dockerapp_data_path: "/srv/docker/{{dockerapp}}/data"
         dockerapp_repo: "https://github.com/APtrust/pharos"
-        dockerapp_version: docker
+        dockerapp_version: feature/two_factor #git branch/commit
         docker_image_name: "aptrust/container-registry/{{dockerapp}}"
         docker_container_name: pharos
-        docker_tag_name: latest
-        #                        config_dir: /root/.docker
-        #                    basedir: /bestsellers
-        #                        datadir: "{{ basedir }}/data"
-        #                            imagedir: "{{ basedir }}/images"
-        #                                listen_port: 8466
-
+        # Docker tag or commit hash to pull correct Docker image.
+        #docker_tag_name: ce4b049
+        docker_tag_name: 17be2ae
 
         # Pharos config
-        nginx_virtual_host: pharos2.docker1.aptrust.org
+        virtual_host: twofactor.docker1.aptrust.org
 
         #pharos_db_host: 'pharos-demo-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
         ## Test case 1: local PSQL, from scratch
