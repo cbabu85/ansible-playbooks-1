@@ -162,8 +162,10 @@
         state: absent
         groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          -  "{{ inst_users_remove }}"
-      when: '"test" in item'
+          -  "{{ inst_users_remove | default([])}}"
+      when:
+        - '"test" in item'
+        - inst_users_remove not in vars
       tags: iamgroups, removeuser
 
     - name: Remove users from prod group
@@ -173,8 +175,10 @@
         state: absent
         groups: "{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          -  "{{ inst_users_remove }}"
-      when: '"test" not in item'
+          -  "{{ inst_users_remove | default([])}}"
+      when:
+        - '"test" not in item'
+        - inst_users_remove not in vars
       tags: iamgroups, removeuser
 
 
