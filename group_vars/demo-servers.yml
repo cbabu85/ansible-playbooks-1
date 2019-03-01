@@ -31,6 +31,7 @@ pharos_rails_key: "{{ vault_pharos_dev_rails_key}}"
 pharos_two_factor_key: "{{vault_pharos_demo_two_factor_key}}"
 pharos_url: "https://demo.aptrust.org"
 
+pharos_aws_sns_region: "us-east-1"
 pharos_aws_ses_user: "{{vault_pharos_demo_aws_ses_user}}"
 pharos_aws_ses_pwd: "{{vault_pharos_demo_aws_ses_pwd}}"
 
