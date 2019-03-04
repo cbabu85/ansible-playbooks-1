@@ -40,6 +40,13 @@
     become_user: "{{ system_default_user }}"
     gem:  name=bundler state=latest user_install=yes
 
+
+  - name: Remove lockfile
+    file:
+        path: "{{pharos_app_root}}/Gemfile.lock"
+        state: absent
+    tags: remlock
+
 # Install Gems from Gemfile
   - name: Install Pharos gems
     become: true
