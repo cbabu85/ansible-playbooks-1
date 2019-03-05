@@ -38,21 +38,12 @@
   - name: Install Bundler
     become: true
     become_user: "{{ system_default_user }}"
-    gem:  name=bundler state=latest user_install=yes
-
-
-  - name: Remove lockfile
-    file:
-        path: "{{pharos_app_root}}/Gemfile.lock"
-        state: absent
-    tags: remlock
+    gem: name=bundler state=latest
 
 # Install Gems from Gemfile
   - name: Install Pharos gems
     become: true
     become_user: "{{ system_default_user }}"
-# TODO: Check if user_install would need to be set. User Vagrant doesn't run
-# nginx or passenger, so not sure if it is needed.
     bundler: state=present chdir="{{pharos_app_root}}"
 
 # Create DB on RDS if it doesn't exist.
