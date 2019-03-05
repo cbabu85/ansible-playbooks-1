@@ -55,6 +55,24 @@ pharos_google_client_secret: "{{vault_pharos_google_client_secret}}"
 
 pharos_logserver: logs.aptrust.org
 pharos_logserver_port: 12219
+pharos_cronjobs:
+    pharos_notify:
+        hour: "*/10"
+        minute: "*"
+        params: ''
+        disabled: 'no'
+    pharos_snapshot:
+        hour: "1"
+        minute: "1"
+        day: "1"
+        params: '-o snapshot'
+        disabled: 'no'
+    pharos_deletion:
+        hour: "1"
+        minute: "2"
+        day: "1"
+        params: '-o deletion'
+        disabled: 'no'
 
 # AWS EFS/DBS
 # External Filesystems
