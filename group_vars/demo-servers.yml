@@ -29,6 +29,8 @@ pharos_db_pwd: "{{ vault_pharos_dev_db_pwd}}"
 pharos_devise_key: "{{ vault_pharos_dev_devise_key}}"
 pharos_rails_key: "{{ vault_pharos_dev_rails_key}}"
 pharos_two_factor_key: "{{vault_pharos_demo_two_factor_key}}"
+pharos_authy_api_key: "{{vault_pharos_authy_api_key}}"
+
 pharos_url: "https://demo.aptrust.org"
 
 pharos_aws_sns_region: "us-east-1"
@@ -52,6 +54,8 @@ pharos_google_client_id: "{{vault_pharos_google_client_id}}"
 pharos_google_client_secret: "{{vault_pharos_google_client_secret}}"
 
 pharos_logserver: logs.aptrust.org
+pharos_logserver_port: 12219
+
 # AWS EFS/DBS
 # External Filesystems
 use_efs: false
