@@ -26,10 +26,27 @@ pharos_local_db: False
 # during deployment
 PHAROS_RELEASE: "Unknown"
 
-
-# Variable defaults are generelly set for a development/demo environment.
-#
-
+# Variable defaults are generally set for a development/demo environment.
 pharos_setup: false
 pharos_logserver: ''
 pharos_logserver_port: '12219'
+
+pharos_cronjobs:
+    pharos_notify:
+        hour: "*/10"
+        minute: "*"
+        params: ''
+        disabled: 'yes'
+    pharos_snapshot:
+        hour: "1"
+        minute: "1"
+        day: "1"
+        params: '-o snapshot'
+        disabled: 'yes'
+    pharos_deletion:
+        hour: "1"
+        minute: "2"
+        day: "1"
+        params: '-o deletion'
+        disabled: 'yes'
+

@@ -205,40 +205,18 @@
         mode: 0644
     tags: pharos_logrotate
 
-  - name: Setup Cron job for email notification helper script
-    cron: name="pharos notify"
+  - name: Setup Pharos Cron Jobs
+    cron: name="{{item.key}}"
           user="{{system_default_user}}"
-          minute='*/10'
-          hour='*'
+          minute="{{item.value.minute | default('*')}}"
+          hour="{{item.value.hour | default('*')}}"
+          day="{{item.value.day | default('*')}}"
+          month="{{item.value.month | default('*')}}"
           job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py
-             >> {{pharos_app_root}}/log/cron_pharos_notify.log 2>&1"
+                 {{item.value.params | default('')}}
+                 >> {{pharos_app_root}}/log/cron_{{item.key}}.log 2>&1"
           state=present
-          disabled=no
-    tags: pharos_notify_cron
-
-  - name: Setup Cron job for snapshot notification helper script
-    cron: name="pharos snapshot notification"
-          user="{{system_default_user}}"
-          minute='1'
-          hour='0'
-          day='1'
-          month='*'
-          job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py -o snapshot
-             >> {{pharos_app_root}}/log/cron_pharos_notify.log 2>&1"
-          state=present
-          disabled=no
-    tags: pharos_snapshot_cron
-
-  - name: Setup Cron job for deletion notification helper script
-    cron: name="pharos deletion notification"
-          user="{{system_default_user}}"
-          minute='1'
-          hour='0'
-          day='1'
-          month='*'
-          job=". $HOME/.profile; {{pharos_app_root}}/bin/pharos_notify.py -o deletion
-             >> {{pharos_app_root}}/log/cron_pharos_deletion.log 2>&1"
-          state=present
-          disabled=no
-    tags: pharos_snapshot_cron
+          disabled="{{item.value.disabled}}"
+    with_dict: "{{pharos_cronjobs}}"
+    tags: pharos_cron
 
