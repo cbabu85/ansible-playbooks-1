@@ -119,7 +119,7 @@
               day="{{item.value.day | default('*')}}"
               month="{{item.value.month | default('*')}}"
               job="sudo docker run --rm --env-file {{dockerapp_path}}/repo/.env
-                   --it {{docker_image_name}}:{{docker_tag_name}}
+              --it {{docker_image_name}}:{{docker_tag_name | default('latest')}}
                    bin/pharos_notify.py {{item.value.params | default('')}}"
               state=present
               disabled=yes
