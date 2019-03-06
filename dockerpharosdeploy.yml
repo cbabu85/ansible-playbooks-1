@@ -28,12 +28,13 @@
         dockerapp_path: "/srv/docker/{{dockerapp}}"
         dockerapp_data_path: "/srv/docker/{{dockerapp}}/data"
         dockerapp_repo: "https://github.com/APtrust/pharos"
-        dockerapp_version: feature/two_factor #git branch/commit
+        git_version: feature/two_factor #git branch/commit
         docker_image_name: "aptrust/container-registry/{{dockerapp}}"
         docker_container_name: pharos
         # Docker tag or commit hash to pull correct Docker image.
-        #docker_tag_name: ce4b049
-        docker_tag_name: 17be2ae
+        #       docker_tag_name: 17be2ae
+        #        docker_tag_name: d85a94f
+        docker_tag_name: latest
 
         # Pharos config
         virtual_host: twofactor.docker1.aptrust.org
@@ -43,7 +44,7 @@
         #        pharos_db_host: 'db'
         #        pharos_db_user: 'apt_pharos'
         # pharos_db_password: 'preservationiscool'
-        pharos_branch: "{{dockerapp_version}}"
+        #pharos_branch: "{{dockerapp_version}}"
         pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
         pharos_db_port: '5431'
         pharos_db_name: 'pharos_demo'
@@ -80,17 +81,23 @@
             - ['repo','data']
         tags: makdir
 
+      - name: Set commit-version fact
+        set_fact: git_version="{{docker_tag_name}}"
+        when: docker_tag_name != 'latest'
+        tags: gitclone
+
       - name: Git clone the {{dockerapp}} repo
         git:
           repo: "{{dockerapp_repo}}"
           dest: "{{dockerapp_path}}/repo"
-          version: "{{dockerapp_version}}"
+          version: "{{git_version}}"
           accept_hostkey: yes
           clone: yes
           force: yes
           update: yes
           umask: '0022'
         when: dockerapp_repo is defined
+        tags: gitclone
 
       - name: get revision
         shell: /bin/bash -c "cd {{dockerapp_path}}/repo && git rev-parse --short HEAD"
