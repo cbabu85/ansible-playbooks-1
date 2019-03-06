@@ -26,7 +26,8 @@ pharos_local_db: False
 # during deployment
 PHAROS_RELEASE: "Unknown"
 
-# Variable defaults are generally set for a development/demo environment.
+# Variable to allow from-scratch setup with db setup. Defaults to false to
+# avoid wiping demo/staging/prod databases.
 pharos_setup: false
 pharos_logserver: ''
 pharos_logserver_port: '12219'
@@ -50,3 +51,8 @@ pharos_cronjobs:
         params: '-o deletion'
         disabled: 'yes'
 
+# Docker deploy vars
+dockerapp_repo: "https://github.com/APTrust/pharos"
+docker_image_name: "registry.gitlab.com/aptrust/container-registry/pharos"
+docker_tag_name: 'latest'
+dockerapp_path: "/srv/docker/pharos"
