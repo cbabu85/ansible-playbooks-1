@@ -64,7 +64,7 @@
 
       - name: Set commit-version fact
         set_fact: git_version="{{docker_tag_name}}"
-        when: docker_tag_name != 'latest'
+        when: docker_tag_name is defined and docker_tag_name != 'latest'
         tags: gitclone
 
       - name: Git clone the {{dockerapp}} repo
