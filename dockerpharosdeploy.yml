@@ -1,6 +1,4 @@
 ---
-# It assumes that the repo includes
-#   - a docker-compose.yml in the code root
 #   - a .env file in the code root (with sensible defaults)
 # The instance to deploy to requires to be internet reachable on 80/443.
 # Pharos:
@@ -34,7 +32,7 @@
         # Docker tag or commit hash to pull correct Docker image.
         #       docker_tag_name: 17be2ae
         #        docker_tag_name: d85a94f
-        docker_tag_name: latest
+        # docker_tag_name: latest
 
         # Pharos config
         virtual_host: twofactor.docker1.aptrust.org
@@ -49,23 +47,6 @@
         pharos_db_port: '5431'
         pharos_db_name: 'pharos_demo'
         pharos_db_user: 'apt_pharos'
-
-
-        pharos_cronjobs:
-            pharos_notify:
-                hour: "*/10"
-                minute: "*"
-                params: ''
-            pharos_snapshot:
-                hour: "1"
-                minute: "1"
-                day: "1"
-                params: '-o snapshot'
-            pharos_deletion:
-                hour: "1"
-                minute: "2"
-                day: "1"
-                params: '-o deletion'
 
     tasks:
 
