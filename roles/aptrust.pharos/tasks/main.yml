@@ -92,7 +92,7 @@
 # TODO: May want to add a task if a non-RDS db instance already exists.
 #       In which case we will need an db address to connect to.
   - include: postgresql.yml
-    when: ansible_bios_version == "VirtualBox" or pharos_local_db == true
+    when: pharos_local_db == true
 
 # Note: This creates a dependency on ansistrano-deploy
   - name: Get Git Hash Fact
