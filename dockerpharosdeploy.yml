@@ -48,6 +48,25 @@
         pharos_db_port: '5431'
         pharos_db_name: 'pharos_demo'
         pharos_db_user: 'apt_pharos'
+        pharos_cronjobs:
+            pharos_notify:
+                hour: "*/10"
+                minute: "*"
+                params: ''
+                disabled: 'yes'
+            pharos_snapshot:
+                hour: "1"
+                minute: "1"
+                day: "1"
+                params: '-o snapshot'
+                disabled: 'yes'
+            pharos_deletion:
+                hour: "1"
+                minute: "2"
+                day: "1"
+                params: '-o deletion'
+                disabled: 'yes'
+
 
     tasks:
 
