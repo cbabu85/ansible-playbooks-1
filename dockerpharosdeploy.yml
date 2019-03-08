@@ -15,7 +15,7 @@
 # 2.    If apprepo defined, git clone into /srv/docker/appname/repo
 # 2.1   if apprepo defined, and git repo exists, run git pull in repo
 # 3.    If apphub defined, just do a docker run
--   hosts: all
+-   hosts: docker1
     vars_files:
         - "group_vars/vault.yml"
 
@@ -29,6 +29,7 @@
         git_version: feature/two_factor #git branch/commit
         docker_image_name: "aptrust/container-registry/{{dockerapp}}"
         docker_container_name: pharos
+        DOCKER_DOMAIN: docker1.aptrust.org
         # Docker tag or commit hash to pull correct Docker image.
         #       docker_tag_name: 17be2ae
         #        docker_tag_name: d85a94f
