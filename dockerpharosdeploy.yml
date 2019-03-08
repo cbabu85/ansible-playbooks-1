@@ -152,3 +152,16 @@
            files: docker-compose.traefik.yml
            pull: yes
         tags: dockserv
+      - name: whoami
+        become: no
+        local_action: shell whoami
+        register: whobrokeit
+        tags: [pharos,slack,deploy]
+
+      - name: Slack to all
+        slack:
+          token: "{{slack_token}}"
+          msg: "Docker Pharos deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
+          icon_emoji: ":dog:"
+          channel: 'ops'
+        tags: [pharos,slack, deploy]
