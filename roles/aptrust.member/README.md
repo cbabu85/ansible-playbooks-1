@@ -16,6 +16,7 @@ This playbook utilizes encrypted data structures in the
 
 ```group_vars/members/[inst_id].yml```
 
+### Sustaining Members
 inst_id: The ID the institution goes by. Usually organized by domain names,
 e.g. UVa -> virginia
 inst_id_suffix: edu|org|etc
@@ -24,7 +25,9 @@ inst_type: member, sub, subs
 // Sub accounts: Sub accounts can be schools/departments within institutions,
 //              at UVa the Law Library would be a sub-account and hence go by
 //              viul.virginia.edu and have their own IAM groups, users and buckets.
-// Subscriber accounts: Are managed the same way as sub accounts.
+
+### Subscriber accounts
+#### Example subscriber/sub-account
 inst_name: "Full name of entity"
 inst_member: virginia # Self referencing if memberfile is sust. APT member
 inst_users: #List of user names, format: firstname.lastname
@@ -45,5 +48,5 @@ Note: Each institution is in a separate encrypted group var file like
 To run this playbook for a particular member, change the inst_id and inst_suffix in the vars below.
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQ0NzAzMjY4M119
+eyJoaXN0b3J5IjpbLTEzMTEyMzg1MDNdfQ==
 -->
