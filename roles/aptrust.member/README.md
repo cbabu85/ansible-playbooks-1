@@ -1,9 +1,9 @@
+## Definition
 This role defines new APTrust members and sets up infrastructure (AWS and Pharos) and members. The goal is to ramp up a new member and not require manual GUI interaction.
 
 The term members is chosen to apply to academic institutions as well as cultural heritage organizations.
 
 It provides the following tasks:
-
  1. Create S3 buckets
  2. Create IAM Group
  3. Create IAM Users
@@ -14,7 +14,7 @@ It provides the following tasks:
 
 This playbook utilizes encrypted data structures in the 
 
-> group_vars/members/[inst_id].yml
+```group_vars/members/[inst_id].yml```
 
 inst_id: The ID the institution goes by. Usually organized by domain names,
 e.g. UVa -> virginia
@@ -40,11 +40,10 @@ inst_member: virginia # Self referencing if memberfile is sust. APT member
 Note: Each institution is in a separate encrypted group var file like
 ```group_vars/members/virginia.yml```
 ```group_vars/members/vt.yml```
-``` etc.
-#
-# To run this playbook for a particular member,
-# change the inst_id and inst_suffix in the vars below
+``` etc.```
+
+To run this playbook for a particular member, change the inst_id and inst_suffix in the vars below.
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE1MDA2Mjk0NV19
+eyJoaXN0b3J5IjpbLTQ0NzAzMjY4M119
 -->
