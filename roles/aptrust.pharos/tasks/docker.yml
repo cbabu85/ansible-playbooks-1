@@ -68,85 +68,85 @@
     when: pharos_local_db == true
 
   - name: Setup dockerapp directory structure
-	file:
-		path: "{{item.0}}/{{item.1}}"
-		owner: "{{system_default_user}}"
-		group: "{{system_default_user}}"
-		mode: 0755
-		state: directory
-	with_nested:
-		- "{{dockerapp_path}}"
-		- ['repo','data']
-	tags: makdir
+    file:
+      path: "{{item.0}}/{{item.1}}"
+      owner: "{{system_default_user}}"
+      group: "{{system_default_user}}"
+      mode: 0755
+      state: directory
+    with_nested:
+      - "{{dockerapp_path}}"
+      - ['repo','data']
+    tags: makdir
 
   - name: Set commit-version fact
-	set_fact: git_version="{{docker_tag_name}}"
-	when: docker_tag_name is defined and docker_tag_name != 'latest'
-	tags: gitclone
+    set_fact: git_version="{{docker_tag_name}}"
+    when: docker_tag_name is defined and docker_tag_name != 'latest'
+    tags: gitclone
 
   - name: Git clone the {{dockerapp}} repo
-	git:
- 		repo: "{{dockerapp_repo}}"
-		dest: "{{dockerapp_path}}/repo"
-		version: "{{git_version}}"
-		accept_hostkey: yes
-		clone: yes
-		force: yes
-		update: yes
-		umask: '0022'
-	when: dockerapp_repo is defined
-	tags: gitclone
+    git:
+      repo: "{{dockerapp_repo}}"
+      dest: "{{dockerapp_path}}/repo"
+      version: "{{git_version}}"
+      accept_hostkey: yes
+      clone: yes
+      force: yes
+      update: yes
+      umask: '0022'
+    when: dockerapp_repo is defined
+    tags: gitclone
 
   - name: get revision
-	shell: /bin/bash -c "cd {{dockerapp_path}}/repo && git rev-parse --short HEAD"
-	register: revision
-	tags: revs
+    shell: /bin/bash -c "cd {{dockerapp_path}}/repo && git rev-parse --short HEAD"
+    register: revision
+    tags: revs
 
   - set_fact: pharos_release="{{revision.stdout}}"
-	tags: revs
+    tags: revs
 
   - name: Update .env vars
-	template:
-		src: .env.j2
-		dest: "{{dockerapp_path}}/repo/.env"
-		owner: "{{system_default_user}}"
-		group: "{{system_default_group}}"
-		mode: 0644
+    template:
+      src: .env.j2
+      dest: "{{dockerapp_path}}/repo/.env"
+      owner: "{{system_default_user}}"
+      group: "{{system_default_group}}"
+      mode: 0644
 
   - name: Touch traefik/acme files if non-existent
-	file:
-		path: "{{dockerapp_path}}/data/{{item}}"
-		owner: "{{system_default_user}}"
-		group: "{{system_default_user}}"
-		mode: 0600
-		state: touch
-	with_items:
-		- acme.json
-		- traefik.toml
-	tags: makdir
+    file:
+      path: "{{dockerapp_path}}/data/{{item}}"
+      owner: "{{system_default_user}}"
+      group: "{{system_default_user}}"
+      mode: 0600
+      state: touch
+    with_items:
+      - acme.json
+      - traefik.toml
+    tags: makdir
 
   - name: Setup Pharos Cron Jobs
-	# sudo docker run --rm --env-file .env -it aptrust/pharos:32ca2b4 bin/pharos_notify.py -o snapshot
-	# Alternative separate microservice: http://issamben.com/how-to-run-cron-jobs-with-docker/
-	# or https://jonathas.com/scheduling-tasks-with-cron-on-docker/
-	cron: |
-		name="{{item.key}}"
-		user="{{system_default_user}}"
-	  	minute="{{item.value.minute | default('*')}}"
-	  	hour="{{item.value.hour | default('*')}}"
-	  	day="{{item.value.day | default('*')}}"
-	  	month="{{item.value.month | default('*')}}"
-	  	job="sudo docker run --rm --env-file {{dockerapp_path}}/repo/.env
-	  --it {{docker_image_name}}:{{docker_tag_name | default('latest')}}
-		   bin/pharos_notify.py {{item.value.params | default('')}}"
-  	  	state=present
-	  	disabled="{{item.value.disabled}}"
-	with_dict: "{{pharos_cronjobs}}"
+    # sudo docker run --rm --env-file .env -it aptrust/pharos:32ca2b4 bin/pharos_notify.py -o snapshot
+    # Alternative separate microservice: http://issamben.com/how-to-run-cron-jobs-with-docker/
+    # or https://jonathas.com/scheduling-tasks-with-cron-on-docker/
+    cron: |
+      name="{{item.key}}"
+      user="{{system_default_user}}"
+        minute="{{item.value.minute | default('*')}}"
+        hour="{{item.value.hour | default('*')}}"
+        day="{{item.value.day | default('*')}}"
+        month="{{item.value.month | default('*')}}"
+        job="sudo docker run --rm --env-file {{dockerapp_path}}/repo/.env
+      --it {{docker_image_name}}:{{docker_tag_name | default('latest')}}
+         bin/pharos_notify.py {{item.value.params | default('')}}"
+          state=present
+        disabled="{{item.value.disabled}}"
+    with_dict: "{{pharos_cronjobs}}"
 
   - name: Start docker containers from compose
-	docker_service:
-   		project_name: "{{dockerapp}}"
-   		project_src: "{{dockerapp_path}}/repo"
-   		files: docker-compose.traefik.yml
-   		pull: yes
-	tags: dockserv
+    docker_service:
+        project_name: "{{dockerapp}}"
+        project_src: "{{dockerapp_path}}/repo"
+        files: docker-compose.traefik.yml
+        pull: yes
+    tags: dockserv
