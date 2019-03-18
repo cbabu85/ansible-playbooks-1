@@ -26,24 +26,25 @@ inst_type: member, sub, subs
 //              viul.virginia.edu and have their own IAM groups, users and buckets.
 // Subscriber accounts: Are managed the same way as sub accounts.
 inst_name: "Full name of entity"
-# inst_member: virginia # Self referencing if memberfile is sust. APT member
-# inst_users: #List of user names, format: firstname.lastname
-# inst_admin: #List of user names, repeats one or more user names from inst_users.
+inst_member: virginia # Self referencing if memberfile is sust. APT member
+inst_users: #List of user names, format: firstname.lastname
+inst_admin: #List of user names, repeats one or more user names from inst_users.
 
-# EXAMPLE
-# virginia.yml:
-## inst_id: virginia
-## inst_type: member
-## inst_member: virginia # Self referencing if memberfile is sust. APT member
-##
-#
-# Note: Each institution is in a separate encrypted group var file like
-# group_vars/members/virginia.yml
-# group_vars/members/vt.yml
+## EXAMPLE
+```
+virginia.yml:
+inst_id: virginia
+inst_type: member
+inst_member: virginia # Self referencing if memberfile is sust. APT member
+```
+Note: Each institution is in a separate encrypted group var file like
+```group_vars/members/virginia.yml```
+```group_vars/members/vt.yml```
+``` etc.
 #
 # To run this playbook for a particular member,
 # change the inst_id and inst_suffix in the vars below
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTMyNjU2MDkyMl19
+eyJoaXN0b3J5IjpbMTE1MDA2Mjk0NV19
 -->
