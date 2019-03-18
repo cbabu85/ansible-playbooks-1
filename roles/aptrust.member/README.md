@@ -1,11 +1,13 @@
-This role defines new APTrust members and sets up infrastructure (AWS and Pharos) and members.
+This role defines new APTrust members and sets up infrastructure (AWS and Pharos) and members. The goal is to ramp up a new member and not require manual GUI interaction.
 
 The term members is chosen to apply to academic institutions as well as cultural heritage organizations.
 
+It provides the following tasks:
 
-# This is used to ramp up a new member and not require manual GUI interaction
-# It will do the following tasks:
-# 1. Create S3 buckets
+
+# 1.
+
+ 1. ListCreate S3 buckets
 # 2. Create IAM Group
 # 3. Create IAM Users
 # 4. Setup an IAM policy to manage access to S3 buckets
@@ -42,3 +44,6 @@ The term members is chosen to apply to academic institutions as well as cultural
 # To run this playbook for a particular member,
 # change the inst_id and inst_suffix in the vars below
 
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbNTA3ODA1MDM5XX0=
+-->
