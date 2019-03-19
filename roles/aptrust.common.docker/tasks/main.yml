@@ -1,0 +1,242 @@
+##
+# Install base packages
+#
+- name: install base packages
+  become: yes
+  apt:
+    name:
+     - sudo
+     - curl
+     - mailutils
+     - wget
+     - build-essential
+     - software-properties-common
+     - git-core
+     - tig
+     - tmux
+     - htop
+     - iotop
+     - bmon
+     - vim-tiny
+     - unzip
+     - tar
+     - python-pip
+     - postgresql-client
+     - libpq-dev
+     - nodejs
+     - sqlite3
+     - libsqlite3-dev
+     - nfs-common
+     - python3-pip
+# https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
+     - acl
+     - ntp
+     - jq
+    state: latest
+    update_cache: true
+  tags: packages, packlist
+
+- name: Ensure ntp deamon is running
+  service: name=ntp state=started
+  tags: ntp
+
+- name: install emacs packages Ubuntu 14.04LTS
+  become: yes
+  apt: pkg=emacs23-nox state=latest update_cache=true
+  when: ansible_distribution_release == 'trusty'
+  tags: packages
+
+- name: install emacs packages Ubuntu 16.04LTS
+  become: yes
+  apt: pkg=emacs24-nox  state=latest update_cache=true
+  when: ansible_distribution_release == 'xenial'
+  tags: packages
+
+# http://stackoverflow.com/questions/35535566/installing-pip-using-get-pip-py-snimissingwarning
+# https://urllib3.readthedocs.io/en/latest/user-guide.html#ssl-py2
+- name: Make up for outdated Python libraries. SNIMissingWarning
+  pip:
+    name:
+    - pyopenssl
+    - ndg-httpsclient
+    - pyasn1
+  when: ansible_distribution_release == 'trusty'
+
+- name: Install AWS CLI tools and Boto
+  become: yes
+  pip:
+    name:
+      - awscli
+      - boto
+
+# Identify type of server, DPN or APTrust. Default to apt.
+- name: Is this an APT or DPN Server
+  set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
+  tags: [always, mountdir]
+
+- name: set orgmountdir fact
+  set_fact: orgmountdir={{mount_dir}}/{{orgtype}}
+  tags: [always, mountdir]
+
+# This is a dupliacte from group_vars/all.yml to enure portability of role
+- name: set orgmountdirlogs fact
+  set_fact: orgmountdirlogs={{mount_dir}}/logs/{{ansible_hostname}}
+  tags: [always, mountdir]
+
+- name: "check mount point {{ orgmountdir }}"
+  command: mountpoint {{ orgmountdir }}
+  register: mount_stat
+  failed_when: False
+  changed_when: False
+  tags: [always, mountdir]
+
+- name: Create Deploy group
+  become: yes
+  group: name=deploy state=present gid=1234
+
+# Adding common users to the system.
+- name: add common users
+  become: yes
+  user: name="{{ item.name }}"
+        password="{{ item.pwd }}"
+        state=present
+        groups=admin,adm,deploy,www-data
+        shell='/bin/bash'
+  with_items:
+    - { name: 'adiamond', pwd: "{{ adiamond_pwd }}" }
+    - { name: 'cd3ef', pwd: "{{ cd3ef_pwd }}" }
+    - { name: 'kec6en', pwd: "{{ kec6en_pwd }}" }
+    - { name: "{{ system_default_user}}", pwd: "{{ aptdeploy_pwd }}" }
+  tags: [createusers, addcommonusers]
+
+- name: add common user public keys
+  become: yes
+  authorized_key: user="{{item.name}}" key="{{item.pubkeyfile}}" state=present
+  with_items:
+## Keys can be stored encrypted as a variable in group_vars/vault.yml or directly imported from GitHub
+#    - { name: 'andrew.diamond', keyfile: '~/.ansible/external/files/public_keys/diamond_pub' }
+#    - { name: 'cd3ef', pubkeyfile: "{{ inventory_dir }}/group_vars/vault/users/cd3ef/cd3ef2.pub" }
+#    - { name: 'cd3ef', pubkeyfile: "{{ var_cd3ef_sshkey }}" }
+    - { name: "adiamond", pubkeyfile: "{{ adiamond_sshkey }}" }
+    - { name: "cd3ef", pubkeyfile: "{{ cd3ef_sshkey }}" }
+    - { name: "kec6en", pubkeyfile: "{{ kec6en_sshkey }}" }
+    - { name: "{{system_default_user}}", pubkeyfile: "{{aptdeploy_sshkey}}" }
+    - { name: "{{system_default_user}}", pubkeyfile: "{{ cd3ef_sshkey }}"  }
+  tags: [common, pubkeys]
+
+- name: add common user home settings
+  copy: src=group_vars/users/{{item}} dest=/home/ owner={{item}} group={{item}}
+  with_items:
+    - adiamond
+    - cd3ef
+
+# TODO: Revisit this. We may not need it since deploy and git operations are
+#       done with Ansible, hence an ansible user.
+- name: add deploy user private key
+  become: yes
+  become_user: "{{ system_default_user }}"
+  no_log: true
+  copy: >
+    content="{{aptdeploy_sshkey_private}}"
+    dest=/home/{{system_default_user}}/.ssh/id_rsa
+    mode=0600
+    owner="{{system_default_user}}"
+
+# TODO: Fix user environment template before re-enabling this.
+#- name: Define deploy user environment
+#  template:
+#    src: bash_profile.yml.j2
+#    dest: "/home/{{system_default_user}}/.bash_profile"
+#    owner: "{{system_default_user}}"
+#    group: "{{deploy_group}}"
+#    mode: 0644
+#  tags: deployenv
+
+# Removing old user accounts
+#
+- name: Remove old user accounts
+  become: yes
+  user: name="{{ item }}" state=absent remove=yes
+  with_items:
+    - scott.turnbull
+  tags: remove_user
+
+# Message of the day explaining server is under control of Ansible.
+- name: MOTD
+  become: yes
+  template: src=motd.j2 dest=/etc/motd owner=root mode=0644
+  tags: ["common","motd"]
+  when: "'apt' in ansible_hostname"
+
+- name: Adjust /srv permissions.
+  become: yes
+  file: path=/srv owner="{{system_default_user}}" group="{{deploy_group}}" mode=0775
+
+- name: Create {{mount_dir}}/{apt,dpn} if not mounted already
+  become: yes
+  file:
+    path: "{{item}}"
+    owner: "{{system_default_user}}"
+    group: "{{deploy_group}}"
+    mode: 0775
+    state: directory
+  with_items:
+    - "{{mount_dir}}/{{orgtype}}"
+    - "{{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}"
+    - "{{orgmountdirlogs}}"
+  when: (ansible_bios_version != 'VirtualBox' and (use_efs == True or use_ebs == True) and mount_stat.rc == 0)
+  tags: [aptmount, mountdir]
+
+- name: Identify my availabiltiy zone
+  #shell: "curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone"
+  uri:
+    url: http://169.254.169.254/latest/meta-data/placement/availability-zone
+    return_content: yes
+  register: my_aws_az
+  tags: awsaz
+
+- set_fact: my_aws_az="{{my_aws_az.content}}"
+  tags: awsaz
+
+# Obsolete now, remove once nfs is in place.
+# Mount EFS volume.
+- name: Mount EFS volume
+  mount:
+    src: "{{efs_mount_uri}}"
+    name: "/mnt/efs/{{orgtype}}"
+    fstype: nfs
+    opts: nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
+    state: mounted
+  when: use_efs
+  tags: nfsmount
+
+## Making sure github.com is a known_host
+- name: Ensure github.com is a known host
+  become_user: "{{ system_default_user }}"
+  lineinfile:
+    dest: /home/{{ system_default_user }}/.ssh/known_hosts
+    create: yes
+    state: present
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+    regexp: "^github\\.com"
+
+
+# We might want to tighten this. Sudo pwd is helpful and more secure.
+# For ops/stage user ubuntu: could have restrictive settings.
+- name: Modifiy admins so they need no sudo password
+  become: yes
+  tags: common
+  lineinfile: dest=/etc/sudoers state=present regexp='^%admin ALL\=' line='%admin ALL=(ALL) NOPASSWD:ALL' validate='visudo -cf %s'
+
+##
+# Sendmail aliases workaround
+# This makes sure that root and ubuntu user emails
+# are being sent to ops@aptrust.org
+#
+- name: Check if postfix is installed
+  shell: dpkg-query -W 'postfix'
+  ignore_errors: True
+  register: is_postfix
+  changed_when: "is_postfix.rc != 0"
+  failed_when: >
+        is_postfix.rc != 0 and ('already exists' not in is_postfix.stderr)

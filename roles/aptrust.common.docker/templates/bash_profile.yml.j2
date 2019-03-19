@@ -1,0 +1,35 @@
+export RAILS_ENV="{{RAILS_ENV}}"
+export DPN_RELEASE="{{DPNSERVER_RELEASE | default('')}}"
+
+# Credentials for DPN REST servers.
+# DPN_REST_TOKEN is for our own local server.
+export DPN_REST_TOKEN="{{dpn_rest_token}}"
+export DPN_CHRON_TOKEN="{{dpn_chron_token}}"
+export DPN_HATHI_TOKEN="{{dpn_hathi_token}}"
+export DPN_SDR_TOKEN="{{dpn_sdr_token}}"
+export DPN_TDR_TOKEN="{{dpn_tdr_token}}"
+
+# Rails-specific stuff
+export DPN_DEVISE_SECRET_KEY="{{dpnserver_devise_secret_key}}"
+export DPN_SECRET_KEY="{{dpnserver_secret_key}}"
+export DPN_CIPHER_KEY="{{dpnserver_cipher_key}}"
+export DPN_CIPHER_IV="{{dpnserver_cipher_iv}}"
+export DPN_NAMESPACE="{{dpnserver_namespace}}"
+export DPN_API_ROOT="{{dpnserver_api_root}}"
+export DPN_STAGING_DIR="{{dpnserver_staging_dir}}"
+export DPN_REPO_DIR="{{dpnserver_repo_dir}}"
+export DPN_QUEUE_ADAPTER="{{dpnserver_queue_adapter}}"
+export DPN_TRANSFER_PRIVATE_KEY="{{dpn_transfer_private_key}}"
+
+
+# Database settings
+export DPN_DB_ADAPTER="{{dpnserver_db_adapter}}"
+export DPN_DB_PORT="{{dpnserver_db_port}}"
+export DPN_DB_NAME="{{dpnserver_db_name}}"
+export DPN_DB_HOSTNAME="{{dpnserver_db_hostname}}"
+export DPN_DB_USER="{{dpnserver_db_user}}"
+export DPN_DB_PASSWORD="{{dpnserver_db_pwd}}"
+
+# Email settings
+export AWS_SES_USER="{{aws_ses_user}}"
+export AWS_SES_PASSWORD="{{aws_ses_pwd}}"

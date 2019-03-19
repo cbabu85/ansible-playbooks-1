@@ -1,0 +1,11 @@
+---
+dependencies:
+    - { role: hostname, tags: hostname }
+      # - { role: ssl, tags: ssl }
+    - { role: postfix, tags: postfix }
+    - { role: logwatch, tags: logwatch }
+    - { role: fail2ban, tags: fail2ban }
+    - { role: sshd, tags: sshd }
+    - { role: unattended-upgrades, tags: unattended-upgrades }
+
+
