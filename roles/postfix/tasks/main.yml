@@ -17,12 +17,10 @@
   when: sendmail_installed.rc == 0 and service_status.stat.exists
 
 - name: Removing sendmail packages
-  apt: name={{ item }}  state=absent force=yes
-  with_items:
-    - sendmail-base
-    - sendmail-bin
-    - sendmail-cf
-    - sendmail-doc
+  apt:
+    name: ['sendmail-base', 'sendmail-bin', 'sendmail-cf', 'sendmail-doc']
+    state: absent
+    force: yes
   tags: sendmail
   when: sendmail_installed.rc == 0
 
@@ -37,11 +35,10 @@
 
 - name: install package
   apt:
-    name: "{{ item }}"
+    name: "{{ postfix_install }}"
     state: latest
     update_cache: true
     cache_valid_time: 3600
-  with_items: "{{postfix_install}}"
   tags: [configuration, postfix, postfix-install]
 
 - name: configure mailname
