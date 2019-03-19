@@ -1,0 +1,4 @@
+---
+block_device_name: /dev/nvme1n1
+mount_point: /data
+
