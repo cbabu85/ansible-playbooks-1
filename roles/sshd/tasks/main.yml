@@ -24,7 +24,7 @@
 
 - name: restart sshd
   service: name={{ sshd_service_name }} state=restarted
-  when: sshd_config|changed
+  when: sshd_config is changed
 
 - name: Set new sshd port as a fact
   set_fact:
