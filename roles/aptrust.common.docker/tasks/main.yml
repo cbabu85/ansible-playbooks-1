@@ -142,16 +142,6 @@
     mode=0600
     owner="{{system_default_user}}"
 
-# TODO: Fix user environment template before re-enabling this.
-#- name: Define deploy user environment
-#  template:
-#    src: bash_profile.yml.j2
-#    dest: "/home/{{system_default_user}}/.bash_profile"
-#    owner: "{{system_default_user}}"
-#    group: "{{deploy_group}}"
-#    mode: 0644
-#  tags: deployenv
-
 # Removing old user accounts
 #
 - name: Remove old user accounts
