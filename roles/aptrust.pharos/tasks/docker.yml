@@ -1,24 +1,4 @@
 ---
-
-# Prerequisite: Installed docker daemon
-# Initial deploy
-# - Create /srv/docker/pharos directory as workdir
-# - Git pull -o githash pharos into workdir (creates pharos dir in /srv/docker/pharos/githash)
-# - cd githashdir & docker-compose build
-# - Create /srv/docker/pharos/logs and symlink to current checkout logs in githash dir
-# - cd githashdir && populare .env-file
-# - cd githashdir && docker-compose up -d -f docker-compose.yml -f docker-compose.production.yml (production will add env file. that is populated and created by Ansible)
-# Update deploy
-# -  git pull into githash dir
-# - cd githashdir & docker-compose build
-# -
-# - cd workdir/pharos
-# - Diff between docker-compose.yml and docker-compose-rds.yml
-# - create /srv/docker/pharos/nginx and copy nginx conf.
-# - docker-compose build
-# - docker-compose up
-
-
 # TODO: Cron jobs containers??
 #docker run -it --rm alpine sh -c "echo \"* * * * * echo hello\" | crontab - && crond -f -L -"
 #docker run -it --rm alpine sh -c "echo \"* * * * * echo hello\" | crontab - && crond -f -L -"
