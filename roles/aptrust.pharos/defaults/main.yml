@@ -1,15 +1,16 @@
 ---
 pharos_docker: false
-pharos_app_root: "/var/www/{{ansible_fqdn}}/pharos"
 RAILS_ENV: 'development'
 
-pharos_db_name: "pharos_{{RAILS_ENV}}"
+pharos_app_root: "/var/www/{{ansible_fqdn}}/pharos"
 
+pharos_db_name: "pharos_{{RAILS_ENV}}"
 pharos_db_user: "pharos_admin"
 pharos_db_pwd: "s3cr3tp455w0rd"
 
 pharos_devise_key: "c0044b2aec4c34f7ce7342ce3b4367e4cf6757c1f8187a8916737e3dce07859c23648098ea8e26c6f472731b3971c23a48d3e436ebafcc4fadb20c56910040ed"
 pharos_rails_key: "6ea6849fb203a813ff2bd09275fb57246cbbabe01af1e52507791c7b5251f7d2819c723da646545ca44048a5e777f3ab517417f020d660d9e7d35a19cb9333"
+
 pharos_url: "https://pharos.aptrust.org"
 
 # AWS RDS
@@ -23,8 +24,7 @@ pharos_rds_subnet: "demo"
 # If true, postgresql is installed locally and used for pharos db
 pharos_local_db: False
 
-# Defaults to unknown since ansistrano is getting release from git hash
-# during deployment
+# Defaults to unknown since deployment updates this from git hash
 PHAROS_RELEASE: "Unknown"
 
 # Variable to allow from-scratch setup with db setup. Defaults to false to
