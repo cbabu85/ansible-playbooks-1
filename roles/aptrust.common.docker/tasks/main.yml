@@ -52,16 +52,6 @@
   when: ansible_distribution_release == 'xenial'
   tags: packages
 
-# http://stackoverflow.com/questions/35535566/installing-pip-using-get-pip-py-snimissingwarning
-# https://urllib3.readthedocs.io/en/latest/user-guide.html#ssl-py2
-- name: Make up for outdated Python libraries. SNIMissingWarning
-  pip:
-    name:
-    - pyopenssl
-    - ndg-httpsclient
-    - pyasn1
-  when: ansible_distribution_release == 'trusty'
-
 - name: Install AWS CLI tools and Boto
   become: yes
   pip:
