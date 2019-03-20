@@ -1,25 +1,24 @@
 ---
-  - hosts: apt-demo-docker
+  - hosts:
+      - apt-demo-docker
+      - docker1
     gather_facts: True
 
     vars_files:
       - "group_vars/vault.yml"
     vars:
-      ansible_python_interpreter: /usr/bin/python3
+      #      ansible_python_interpreter: /usr/bin/python3
       playbook_name: allservers
 
       docker_users: "{{system_default_user}}"
 # Workaround for using Ubuntu 16.04LTS which doesn't come with Python 2.x
 # Alternatively add `ansible_python_interpreter: /usr/bin/python3` to group_vars/all.yml
     pre_tasks:
-#    - raw: /bin/sh -c "which python || (apt-get -y update && apt-get install -y python-minimal)"
-#      register: output
-#      changed_when: output.stdout != ""
+    - raw: /bin/sh -c "which python || (apt-get -y update && apt-get install -y python-minimal)"
+      register: output
+      changed_when: output.stdout != ""
     - setup: # aka gather_facts
     roles:
       - {role: aptrust.common.docker, tags: common}
       - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
       - {role: geerlingguy.docker, tags: docker}
-        #- {role: 030.certbot, tags: certbot}
-        #- {role: franklinkim.docker-compose, tags: docker-compose}
-        #- {role: mongrelion.docker, tags: docker}
