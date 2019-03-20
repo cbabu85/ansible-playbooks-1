@@ -75,7 +75,7 @@
       force: yes
       update: yes
       umask: '0022'
-    when: dockerapp_repo is defined
+    when: pharos_repo is defined
     tags: gitclone
 
   - name: get revision
@@ -93,7 +93,18 @@
       owner: "{{system_default_user}}"
       group: "{{system_default_group}}"
       mode: 0644
+    tags: update_env
 
+  - name: Update traefik.toml
+    template:
+      src: traefik.toml.j2
+      dest: "{{docker_data_path}}/traefik.toml"
+      owner: "{{system_default_user}}"
+      group: "{{system_default_group}}"
+      mode: 0664
+
+
+# TODO: traefik.toml should be templatized. acme. json touch is ok since its generated
   - name: Touch traefik/acme files if non-existent
     file:
       path: "{{docker_data_path}}/{{item}}"
