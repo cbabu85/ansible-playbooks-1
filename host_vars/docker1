@@ -1,1 +1,5 @@
 vg_disk_size: 1
+
+# Temporary change since docker1 is running on t2 instance which does not yet
+# have block device names nvm1n1 etc
+block_device_name: /dev/xvdf
