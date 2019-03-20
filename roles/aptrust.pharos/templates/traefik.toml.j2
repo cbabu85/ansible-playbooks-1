@@ -1,0 +1,35 @@
+
+defaultEntryPoints = ["http", "https"]
+logLevel = "WARNING"
+[web]
+address = ":8080"
+
+[retry]
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "aptrust.org"
+watch = true
+exposedByDefault = false
+
+[entryPoints]
+
+[entryPoints.http]
+address = ":80"
+
+[entryPoints.http.redirect]
+entryPoint = "https"
+
+[entryPoints.https]
+address = ":443"
+[entryPoints.https.tls]
+
+[acme]
+email = "ops@aptrust.org"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+
+[acme.httpChallenge]
+  entryPoint = "http"
+
