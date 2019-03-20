@@ -53,7 +53,8 @@ pharos_cronjobs:
         disabled: 'yes'
 
 # Docker deploy vars
-dockerapp_repo: "https://github.com/APTrust/pharos"
+pharos_repo: "https://github.com/APTrust/pharos"
 docker_image_name: "registry.gitlab.com/aptrust/container-registry/pharos"
 docker_tag_name: 'latest'
-dockerapp_path: "/srv/docker/pharos"
+docker_app_path: "/srv/docker/pharos"
+docker_data_path: "/data/pharos"
