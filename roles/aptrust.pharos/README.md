@@ -1,9 +1,13 @@
-APTrust Pharos - Preservation Repository Web-UI and API
+# APTrust Pharos - Preservation Repository Web-UI and API
 ===
 
 Pharos is a rails application that provides a Web-UI for APTrust's
 preservation repository.
 
+It supports baremetal installation and Docker setup, which is chosen based on
+`pharos_docker` variable (true means docker setup).
+
+## Baremetal
 This role installs required system packages and creates the Pharos
 database. It supports creating an AWS RDS instance or a local Postgresql DB.
 Previously existing non-RDS instances are currently not supported. Large parts
@@ -33,14 +37,12 @@ Some of the configuration has to be kept in Ansible as many variables create
 dependencies to other services.
 
 
-Requirements
-------------
+## Requirements
 This role is designed to be deployed on a Ubuntu Linux system.
 It requires rbenv and a webserver like Nginx or Apache. If you choose to not
 run it's database on AWS RDS Postgresql needs to be installed first.
 
-Role Variables
---------------
+### Role Variables
 
 See defaults/main.yml
 
@@ -56,7 +58,11 @@ extra vars `-e pharos_rds_instance_name=pharos-staging` and
 Dependencies
 ------------
 
-Role dependencies:
+Docker:
+- Docker deaemon
+- docker-compose
+
+Baremetal:
 - common
 - zzet.rbenv
 - cd3ef.nginx
@@ -124,7 +130,6 @@ Example Playbook
 
     roles:
       - {role: common, tags: common}
-      - {role: oracle-java8, tags: oracle-java8 }
       - {role: zzet.rbenv, tags: rbenv}
       - {role: cd3ef.nginx, tags: [nginx, passenger, nginx-passenger]}
       - {role: carlosbuenosvinos.ansistrano-deploy, tags: deploy}
