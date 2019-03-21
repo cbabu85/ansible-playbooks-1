@@ -1,6 +1,7 @@
 #!/bin/bash
-# Version: "{{githash}}"
-# Date: "{{ansible_date_time.iso8601}}"
+
+# Version: "a5e7e80"
+# Date: "2018-11-06T16:34:41Z"
 # Allows to attach and remove EBS volumes managed under LVM to
 # have a dynamically sized partition attached to an EC2 instance
 #
@@ -44,8 +45,8 @@
 PIDFILE=/var/run/ebs_autoscale.pid
 if [ -f $PIDFILE ]
 then
-  PID=$(cat $PIDFILE)
-  $(ps -p $PID > /dev/null 2>&1)
+  PID=$(cat "$PIDFILE")
+  $(ps -p "$PID" > /dev/null 2>&1)
   if [ $? -eq 0 ]
   then
     echo "Process already running"
@@ -71,63 +72,63 @@ fi
 # Base name for VG and LV.
 # VG = vg_$NAME
 # LV = lv_$NAME
-NAME="{{vg_name}}_lvm"
+NAME="dpn-demo2_lvm"
 
 # Orgtype
 # Describes the orgtype (APT,DPN) for resource tags
-ORGTYPE="{{orgtype|default('apt')}}"
+ORGTYPE="dpn"
 
 # Environment
 # Describes the environment (prod,demo,dev,test)
-ENVIRONMENT="{{envtype|default('demo')}}"
+ENVIRONMENT="dev"
 
 # Volume Type
 # Choose between Provisioned IOPS SSD (io1), General Purpose SSD (gp2),
 # Throughput Optimized HDD (st1), Cold HDD (sc1)
-VOLUME_TYPE="{{volume_type|default('gp2')}}"
+VOLUME_TYPE="gp2"
 
 # Where to mount it
-MOUNT_POINT="{{vg_mount_point}}"
+MOUNT_POINT="/mnt/lvm"
 
 # Size of each disk in GB
 # Maximum EBS size is 1024GB
-DISK_SIZE="{{vg_disk_size}}"
+DISK_SIZE="20"
 # %age of free space (relative to disk size) before adding a new disk
-SPACE_UP="{{vg_space_up}}"
+SPACE_UP="25"
 
 # %age of free space above 1 free disk (relative to disk size) before removing one.
-SPACE_DOWN="{{vg_space_down}}"
+SPACE_DOWN="50"
 
 # If you want to start with a higher disk identifier to leave room for other partitions.
 # /dev/sda is the root device
 # /dev/sdb is the default instance-store partition
 # No disk above /dev/sdz will be created
 
-START_DISK_LETTER='{{vg_start_disk_letter}}'
+START_DISK_LETTER='g'
 # Minimum number of disks to keep
-MIN_DISKS="{{vg_min_disks}}"
+MIN_DISKS="1"
 
 # Maximum number of disks to use
-MAX_DISKS="{{vg_max_disks}}"
+MAX_DISKS="10"
 
 # base AWS CLI command
 AWS_EC2="/usr/local/bin/aws ec2"
 
 # NSQ Address
 # e.g. demo-services.aptrust.org:4151
-NSQ_ADDRESS="{{nsq_address}}"
+NSQ_ADDRESS="demo-services.aptrust.org:4151"
 
 # Pharos API creds to check running processes before shrinking
-PHAROS_URL="{{pharos_url}}"
-PHAROS_API_USER="{{pharos_api_user}}"
-PHAROS_API_KEY="{{pharos_api_key}}"
+PHAROS_URL="https://demo.aptrust.org"
+PHAROS_API_USER="5768743cef7caece42a3bb0df09ff73d085ac522"
+PHAROS_API_KEY="system@aptrust.org"
 
 # Notification type 'slack' or 'email'
 NOTIFICATION_TYPE='slack'
 
 # Slack settings
-EBS_SLACK_WEBHOOK="{{ebs_slack_webhook}}"
-EBS_SLACK_CHANNEL="{{ebs_slack_channel}}"
+EBS_SLACK_WEBHOOK="https://hooks.slack.com/services/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"
+EBS_SLACK_CHANNEL="#ops"
 EBS_SLACK_USERNAME=${EBS_SLACK_USERNAME:-$(hostname | cut --delimiter=. --fields=1)}
 EBS_SLACK_ICON_EMOJI=${EBS_SLACK_ICON_EMOJI:-:slack:}
 
@@ -160,7 +161,7 @@ send_slack() {
 
 send_email() {
 		SENDER=$(whoami)
-		RECEIVER="ops@aptrust.org"
+		RECEIVER="christian@aptrust.org"
 		USER="noreply"
 
 		SUBJECT=$1
@@ -199,10 +200,8 @@ add_to_fstab(){
     # Workaround to get the device name since Ubuntu thinks its funny to double
     # dash the vg.
     MOUNT_DEVICE=$(grep $MOUNT_POINT /proc/mounts | awk '{print $1}')
-    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. exit here." && send_msg "LVM not mounted. Running init LVM" && initialize_lv; }
-
-
-    fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nofail,x-systemd.device-timeout=1 0 0"
+    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. Exiting." && send_msg "LVM not mounted. Running init LVM" && initialize_lv; }
+    fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nobootwait 0 0"
 
     if grep -q "$fstab_entry" $fstab; then
          log "Entry in fstab exists. Just made sure it is there."
@@ -210,7 +209,7 @@ add_to_fstab(){
         log "Entry in fstab does not exists. Adding for persistence."
         sudo cp $fstab /etc/fstab.bak
         sudo bash -c "echo $fstab_entry >> /etc/fstab"
-        if sudo mount -fv $MOUNT_POINT; then
+        if sudo mount -fv /mnt/lvm; then
           log "Checked fstab, looks good."
         else
           log "Error in fstab entry. Need manual intervention.\
@@ -223,21 +222,21 @@ add_to_fstab(){
   }
 
 next_disk() {
-    log ${FUNCNAME[0]}
+    log "${FUNCNAME[0]}"
     # No disk exist yet
     if [ "x"$1 == "x" ]; then
         DISK_LETTER=$START_DISK_LETTER
     else
       num=$(ord $1)
 # TODO: Allow for second-level disk letters, https://www.pivotaltracker.com/story/show/154039718
-        if [ $num -ge 122 ];then
+        if [ "$num" -ge 122 ];then
             # Too lazy to handle /dev/sdaa, 24 disks (24TB) should be enough, no?
             log "No more disk letter available"
             send_msg "Ran out of disk letters.  Need manual intervention"
             DISK_LETTER=""
             return 1
         fi
-        let num=$num+1
+        let num="$num"+1
         DISK_LETTER=$(chr $num)
     fi
 }
@@ -279,7 +278,7 @@ add_disk() {
     $AWS_EC2 modify-instance-attribute --instance-id $INSTANCE_ID --block-device-mappings "[{\"DeviceName\": \"/dev/sd${DISK_LETTER}\",\"Ebs\":{\"DeleteOnTermination\":true}}]" || return 1
 
     # https://www.logicworks.com/blog/2018/03/manage-aws-ebs-volumes-c5-m5-puppet-chef-ansible/
-    stat /dev/xvd${DISK_LETTER} || { log "Device does not exist." && exit 1; }
+    stat /dev/xvd${DISK_LETTER} || { log "Device does not exist."; exit 1; }
 
     pvcreation=$(sudo pvcreate /dev/xvd${DISK_LETTER} || return 1) #/dev/sdX is attached as /dev/xvdX
     log "$pvcreation"
@@ -303,6 +302,7 @@ initialize_lv() {
     sudo mkfs.ext4 /dev/vg_$NAME/lv_$NAME
 
     sudo mkdir -p $MOUNT_POINT
+#    sudo mount /dev/vg_$NAME/lv_$NAME $MOUNT_POINT
     sudo mount $MOUNT_POINT
 
     add_to_fstab
@@ -408,14 +408,14 @@ fi
 
 check_nsq_inflight(){
     # If NSQ is not used it will default to empty and will default to the else clause below.
-        # Added timeout to fail fast if no NSQ is used. It'll default to else clause.
+    # Added timeout to fail fast if no NSQ is used. It'll default to else clause.
     # Disabled querying the API for now since long running exchange-service tasks
     # may hit timeout in NSQ and won't show up there anymore. This leads to
     # premature shutdown of services and interrupting running processes.
     # airtraffic=$(timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n")
     airtraffic=$(curl -H "Content-Type: application/json" -H "Accept: application/json" -H "X-Pharos-API-User: $PHAROS_API_USER" -H "X-Pharos-API-Key: $PHAROS_API_KEY" -G "$PHAROS_URL/api/v2/items?node_not_empty=true&pid_not_empty=true" | jq .count)
 
-# Check for Rsync jobs on when script is run on DPN node.
+    # Check for Rsync jobs on when script is run on DPN node.
     rsyncing=$(ps axu |pgrep rsync | wc -l)
 
      if [[ "$airtraffic" -gt "0" || "$rsyncing" -gt "0" ]]; then
@@ -446,12 +446,11 @@ if [[ $less_space_needed -eq 1 ]]; then
         log "NSQ_RESULT: $nsq_result"
         if [ $nsq_result == "takeoff" ];then
             log "---SHRINKING VOLUME START----"
-            send_msg "Worker queues empty. Shutting down exchange services. \n \
+            send_msg "Worker queues empty. Shutting down exchange services. \\n \
                 $(df -h $MOUNT_POINT) Shrinking by $LAST_DISK_SIZE GB"
-            log "Shutting down exchange services. \n $(df -h $MOUNT_POINT)"
+            log "Shutting down exchange services. \n `df -h $MOUNT_POINT`"
             sudo supervisorctl stop all
             sudo docker stop exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
-            [[ -e /usr/bin/filebeat ]] && sudo service filebeat stop
             # Set dummy value to run through loop at least once
             openfiles=100
             while [ "$openfiles" -gt "0" ]; do
@@ -478,7 +477,7 @@ if [[ $less_space_needed -eq 1 ]]; then
                     log "Waiting for detached volume to become available..."
                     sleep 2
                     $AWS_EC2 describe-volumes --volume-ids $LAST_VOLUME > /etc/ebs_to_shrink
-                    volume_status=$(jq -r '.Volumes[].State' /etc/ebs_to_shrink)
+                    volume_status=`jq -r '.Volumes[].State' /etc/ebs_to_shrink`
                   done
                   log "Volume detached and available. Deleting Volume $LAST_VOLUME"
                   $AWS_EC2 delete-volume --volume-id $LAST_VOLUME
@@ -487,17 +486,15 @@ if [[ $less_space_needed -eq 1 ]]; then
                   log "LVM shrinking completed. Re-mounting LVM & restarting exchange services."
               # Note: already mounted on line 414
               #    sudo mount $MOUNT_POINT
-                  sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
                   sudo supervisorctl start exchange:
-                  [[ -e /usr/bin/filebeat ]] && sudo service filebeat start
-                  send_msg "LVM shrinking completed. New drive: \n $(df -h $MOUNT_POINT)"
+                  sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+                  send_msg "LVM shrinking completed. New drive: \n `df -h $MOUNT_POINT`"
                   log "---SHRINKING VOLUME END----"
               fi
             else
-              send_msg "Unable to unmount. Aborting shrinking on $hostname"
-              sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+              send_msg "Unable to unmount. Aborting shrinking on $(hostname)"
               sudo supervisorctl start exchange:
-              [[ -e /usr/bin/filebeat ]] && sudo service filebeat start
+              sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
               exit 1
             fi
         else
@@ -505,6 +502,6 @@ if [[ $less_space_needed -eq 1 ]]; then
         fi
     fi
 else
-    diskusage=$(df |grep $MOUNT_POINT|awk '{print $5}' | sed 's/%//')
-    log "Scale down: No shrinking needed. Free LVM space $((100-$diskusage))% within the limit of $((100+$SPACE_DOWN))% individual disk or minimum disks reached."
+  diskusage=`df |grep $MOUNT_POINT|awk '{print $5}' | sed 's/%//'`
+  log "Scale down: No shrinking needed. Free LVM space $((100-$diskusage))% within the limit of $((100+$SPACE_DOWN))% individual disk or minimum disks reached."
 fi
