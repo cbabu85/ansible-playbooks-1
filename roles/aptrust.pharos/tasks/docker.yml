@@ -34,11 +34,11 @@
             Environment: "{{RAILS_ENV}}"
     tags: createrds, dd
     register: rds_facts
-    when: pharos_local_db == False
+    when: pharos_local_db and pharos_setup
 
   - name: Set RDS db_host fact
     set_fact: pharos_db_host="{{rds_facts.instance.endpoint}}"
-    when: pharos_local_db == False
+    when: pharos_local_db and pharos_setup
     tags: dd
 
     # Note: For docker environments this means that the db port needs to be
