@@ -24,7 +24,7 @@
         # Dockerapp config
         dockerapp: 'pharos' #Docker app name
         dockerapp_path: "/srv/docker/{{dockerapp}}"
-        dockerapp_data_path: "/srv/docker/{{dockerapp}}/data"
+        dockerapp_data_path: "/data/{{dockerapp}}"
         dockerapp_repo: "https://github.com/APtrust/pharos"
         git_version: feature/two_factor #git branch/commit
         docker_image_name: "aptrust/container-registry/{{dockerapp}}"
