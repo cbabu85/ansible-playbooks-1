@@ -5,17 +5,14 @@
 # All required changes should be env vars in the .env var for deploys in
 # different environemnts.
 #
-##  - Base dir for docker apps is /srv/docker/<appname>/{data,repo}
-#     The repo subdir is used to clone the github repo into
-#     The data subdir is used for storing persistent data if volume bind-mounts are used.
+##  - Base dir for docker apps is /srv/docker/<appname>
+#     The base directory is used to clone the git repository into.
+#     The data directory is used for storing persistent data if volume
+#     bind-mounts are used.
 #
-# Workflow:
-# 1.    Make sure /srv/docker dir exists
-# 1.1   Make sure Docker is installed and Gitlab registry is setup.
-# 2.    If apprepo defined, git clone into /srv/docker/appname/repo
-# 2.1   if apprepo defined, and git repo exists, run git pull in repo
-# 3.    If apphub defined, just do a docker run
--   hosts: docker1
+-   hosts:
+      - docker1
+      - apt-demo-docker
     vars_files:
         - "group_vars/vault.yml"
 
@@ -27,16 +24,15 @@
         dockerapp_data_path: "/data/{{dockerapp}}"
         dockerapp_repo: "https://github.com/APtrust/pharos"
         git_version: feature/two_factor #git branch/commit
-        docker_image_name: "aptrust/container-registry/{{dockerapp}}"
-        docker_container_name: pharos
+        #        docker_container_name: pharos
         DOCKER_DOMAIN: docker1.aptrust.org
-        # Docker tag or commit hash to pull correct Docker image.
-        #       docker_tag_name: 17be2ae
-        #        docker_tag_name: d85a94f
-        # docker_tag_name: latest
+        # Docker tag or commit hash to pull specific Docker image.
+        # e.g. docker_tag_name: 17be2ae
 
         # Pharos config
-        virtual_host: twofactor.docker1.aptrust.org
+        #virtual_host: twofactor.docker1.aptrust.org
+        virtual_host: staging.aptrust.org
+
 
         #pharos_db_host: 'pharos-demo-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
         ## Test case 1: local PSQL, from scratch
