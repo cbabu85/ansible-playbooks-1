@@ -40,12 +40,6 @@
   service: name=ntp state=started
   tags: ntp
 
-- name: install emacs packages Ubuntu 14.04LTS
-  become: yes
-  apt: pkg=emacs23-nox state=latest update_cache=true
-  when: ansible_distribution_release == 'trusty'
-  tags: packages
-
 - name: install emacs packages Ubuntu 16.04LTS
   become: yes
   apt: pkg=emacs24-nox  state=latest update_cache=true
@@ -59,9 +53,9 @@
       - awscli
       - boto
 
-# Identify type of server, DPN or APTrust. Default to apt.
-- name: Is this an APT or DPN Server
-  set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
+# Note: DPN is no more so we may want to get rid of orgtype alltogether.
+- name: Set orgtype to APT
+  set_fact: orgtype=apt
   tags: [always, mountdir]
 
 - name: set orgmountdir fact
@@ -132,15 +126,6 @@
     mode=0600
     owner="{{system_default_user}}"
 
-# Removing old user accounts
-#
-- name: Remove old user accounts
-  become: yes
-  user: name="{{ item }}" state=absent remove=yes
-  with_items:
-    - scott.turnbull
-  tags: remove_user
-
 # Message of the day explaining server is under control of Ansible.
 - name: MOTD
   become: yes
@@ -164,7 +149,7 @@
     - "{{mount_dir}}/{{orgtype}}"
     - "{{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}"
     - "{{orgmountdirlogs}}"
-  when: (ansible_bios_version != 'VirtualBox' and (use_efs == True or use_ebs == True) and mount_stat.rc == 0)
+  when: ((use_efs == True or use_ebs == True) and mount_stat.rc == 0)
   tags: [aptmount, mountdir]
 
 - name: Identify my availabiltiy zone
