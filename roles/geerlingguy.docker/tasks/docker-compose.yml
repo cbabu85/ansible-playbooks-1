@@ -21,5 +21,5 @@
 
 - name: Install docker-py and docker Python Libs
   pip:
-    name: [docker-py, docker]
+    name: [docker-py, docker-compose, docker]
   tags: dockpip
