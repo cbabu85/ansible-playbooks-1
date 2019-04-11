@@ -286,6 +286,7 @@ ex_receivingbuckets: [
     'aptrust.receiving.uconn.edu',
     'aptrust.receiving.umd.edu',
     'aptrust.receiving.umich.edu',
+    'aptrust.receiving.fulcrum.org',
     'aptrust.receiving.unc.edu',
     'aptrust.receiving.nd.edu',
     'aptrust.receiving.virginia.edu',
