@@ -224,7 +224,7 @@
              {{item.value.params | default('')}}
              > /dev/null 2>&1"
         state=present
-        disabled=no
+        disabled="{{item.value.disabled | default('no')}}"
   with_dict: "{{ apt_cronjobs }}"
   when: orgtype == 'apt'
   tags: apt_cronjobs

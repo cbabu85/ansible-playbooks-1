@@ -115,6 +115,7 @@ apt_cronjobs:
     minute: "30"
     day: "3"
     month: "*/1"
+    disabled: "yes"
 
 ex_docker: true
 ex_tardirectory: "/mnt/lvm/apt/data"
@@ -293,7 +294,8 @@ ex_receivingbuckets: [
     'aptrust.receiving.viul.virginia.edu',
     'aptrust.receiving.vt.edu',
     'aptrust.receiving.vwu.edu',
-    'aptrust.receiving.test.edu'
+    'aptrust.receiving.test.edu',
+    'aptrust.receiving.wm.edu'
     ]
 
 ## FOR CHANGES ON DPN NODES THIS NEEDS TO BE CHANGED
