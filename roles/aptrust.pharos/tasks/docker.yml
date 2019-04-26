@@ -118,7 +118,7 @@
     tags: makdir
 
   - name: Setup Pharos Cron Jobs
-    # sudo docker run --rm --env-file .env -it aptrust/pharos:32ca2b4 bin/pharos_notify.py -o snapshot
+    # sudo docker run --rm --env-file .env aptrust/pharos:32ca2b4 bin/pharos_notify.py -o snapshot
     # Alternative separate microservice: http://issamben.com/how-to-run-cron-jobs-with-docker/
     # or https://jonathas.com/scheduling-tasks-with-cron-on-docker/
     cron:
