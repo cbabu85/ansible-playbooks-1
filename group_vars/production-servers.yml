@@ -17,6 +17,7 @@ pharos_local_db: False
 pharos_db_host: "{{ vault_pharos_prod_db_host }}"
 pharos_db_user: "{{ vault_pharos_prod_db_user}}"
 pharos_db_pwd: "{{ vault_pharos_prod_db_pwd}}"
+pharos_db_port: "5432"
 
 pharos_devise_key: "{{ vault_pharos_prod_devise_key}}"
 pharos_rails_key: "{{ vault_pharos_prod_rails_key}}"
