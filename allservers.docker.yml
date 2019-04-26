@@ -21,4 +21,6 @@
     roles:
       - {role: aptrust.common.docker, tags: common}
       - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
-      - {role: geerlingguy.docker, tags: docker}
+        #- {role: geerlingguy.docker, tags: docker}
+      - {role: nickjj.docker, tags: docker}
+    tasks:
