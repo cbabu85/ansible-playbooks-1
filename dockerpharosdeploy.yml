@@ -17,6 +17,9 @@
         - "group_vars/vault.yml"
 
     vars:
+        # Workaround for Ansible docker Python modules. https://galaxy.ansible.com/nickjj/docker
+        #        ansible_python_interpreter: "{{ '/usr/bin/env python-docker' if docker__pip_virtualenv | d() else ansible_python.executable }}"
+        ansible_python_interpreter: "/usr/bin/env python-docker"
 
         # Dockerapp config
         dockerapp: 'pharos' #Docker app name
@@ -25,13 +28,12 @@
         dockerapp_repo: "https://github.com/APtrust/pharos"
         git_version: feature/two_factor #git branch/commit
         #        docker_container_name: pharos
-        DOCKER_DOMAIN: docker1.aptrust.org
+        DOCKER_DOMAIN: "{{ ansible_fqdn }}"
         # Docker tag or commit hash to pull specific Docker image.
         # e.g. docker_tag_name: 17be2ae
 
         # Pharos config
-        #virtual_host: twofactor.docker1.aptrust.org
-        virtual_host: staging.aptrust.org
+        #virtual_host: staging.aptrust.org
 
 
         #pharos_db_host: 'pharos-demo-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
@@ -40,32 +42,32 @@
         #        pharos_db_user: 'apt_pharos'
         # pharos_db_password: 'preservationiscool'
         #pharos_branch: "{{dockerapp_version}}"
-        pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
-        pharos_db_port: '5431'
-        pharos_db_name: 'pharos_demo'
-        pharos_db_user: 'apt_pharos'
-        pharos_cronjobs:
-          pharos_notify:
-              hour: "*/10"
-              minute: "*/10"
-              params: ''
-              disabled: "yes"
-          pharos_snapshot:
-              hour: "1"
-              minute: "1"
-              day: "1"
-              params: "-o snapshot"
-              disabled: "yes"
-          pharos_deletion:
-              hour: "1"
-              minute: "2"
-              day: "1"
-              params: "-o deletion"
-              disabled: "yes"
+        #pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
+        #pharos_db_port: '5431'
+        #pharos_db_name: 'pharos_demo'
+        #pharos_db_user: 'apt_pharos'
+        #pharos_cronjobs:
+        #  pharos_notify:
+        #      hour: "*/10"
+        #      minute: "*/10"
+        #      params: ''
+        #      disabled: "yes"
+        #  pharos_snapshot:
+        #      hour: "1"
+        #      minute: "1"
+        #      day: "1"
+        #      params: "-o snapshot"
+        #      disabled: "yes"
+        #  pharos_deletion:
+        #      hour: "1"
+        #      minute: "2"
+        #      day: "1"
+        #      params: "-o deletion"
+        #      disabled: "yes"
 
         pharos_docker: true
     roles:
-      - aptrust.pharos
+      - { role: aptrust.pharos }
     tasks:
 
       - name: whoami
