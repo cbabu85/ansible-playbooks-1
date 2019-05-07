@@ -122,23 +122,24 @@
     # Alternative separate microservice: http://issamben.com/how-to-run-cron-jobs-with-docker/
     # or https://jonathas.com/scheduling-tasks-with-cron-on-docker/
     cron:
-      name: "{{item.key}}"
-      user: "{{system_default_user}}"
-      minute: "{{item.value.minute | default('*')}}"
-      hour: "{{item.value.hour | default('*')}}"
-      day: "{{item.value.day | default('*')}}"
-      month: "{{item.value.month | default('*')}}"
-      job: "sudo docker run --rm --env-file {{docker_app_path}}/.env \
+        name: "{{item.key}}"
+        user: "{{system_default_user}}"
+        minute: "{{item.value.minute | default('*')}}"
+        hour: "{{item.value.hour | default('*')}}"
+        day: "{{item.value.day | default('*')}}"
+        month: "{{item.value.month | default('*')}}"
+        job: "sudo docker run --rm --env-file {{docker_app_path}}/.env \
         {{docker_image_name}}:{{docker_tag_name | default('latest')}} \
          bin/pharos_notify.py {{item.value.params | default('')}}"
-      state: present
-      disabled: "{{item.value.disabled}}"
+        state: present
+        disabled: "{{item.value.disabled}}"
     with_dict: "{{pharos_cronjobs}}"
     tags: pharos_cronjobs
 
   - name: Start docker containers from compose
     docker_service:
         project_src: "{{docker_app_path}}"
-        files: docker-compose.traefik.yml
+        files: docker-compose.yml
         pull: yes
+        #recreate: always
     tags: dockserv
