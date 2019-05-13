@@ -156,6 +156,10 @@ ex_glacier_region_OR: "us-west-2"
 ex_glacier_bucket_VA: "aptrust.preservation.glacier.va"
 ex_glacier_bucket_OH: "aptrust.preservation.glacier.oh"
 ex_glacier_bucket_OR: "aptrust.preservation.glacier.or"
+ex_glacier_deep_bucket_VA: "aptrust.preservation.glacier-deep.va"
+ex_glacier_deep_bucket_OH: "aptrust.preservation.glacier-deep.oh"
+ex_glacier_deep_bucket_OR: "aptrust.preservation.glacier-deep.or"
+
 
 ex_fetchworker: {
     networkconnections: "6",
@@ -259,20 +263,20 @@ ex_fixityworker: {
     readtimeout: "60s",
     writetimeout: "10s",
     messagetimeout: "180m"
-  }
+}
 
 ex_glacierrestoreworker: {
     networkconnections: "8",
     workers: "4",
     nsqtopic: "apt_glacier_restore_topic",
     nsqchannel: "apt_glacier_restore_channel",
-    maxattempts: "12",
+    maxattempts: "8",
     maxinflight: "20",
     heartbeatinterval: "10s",
     readtimeout: "60s",
     writetimeout: "10s",
     messagetimeout: "420m"
-  }
+}
 
 ex_receivingbuckets: [
     'aptrust.receiving.chd.virginia.edu',

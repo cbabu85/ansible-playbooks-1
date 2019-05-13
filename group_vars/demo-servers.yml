@@ -150,6 +150,10 @@ ex_glacier_region_OR: "us-west-2"
 ex_glacier_bucket_VA: "aptrust.test.preservation.glacier.va"
 ex_glacier_bucket_OH: "aptrust.test.preservation.glacier.oh"
 ex_glacier_bucket_OR: "aptrust.test.preservation.glacier.or"
+ex_glacier_deep_bucket_VA: "aptrust.test.preservation.glacier-deep.va"
+ex_glacier_deep_bucket_OH: "aptrust.test.preservation.glacier-deep.oh"
+ex_glacier_deep_bucket_OR: "aptrust.test.preservation.glacier-deep.or"
+
 
 ex_fetchworker: {
         networkconnections: "8",
@@ -260,7 +264,7 @@ ex_glacierrestoreworker: {
     workers: "4",
     nsqtopic: "apt_glacier_restore_topic",
     nsqchannel: "apt_glacier_restore_channel",
-    maxattempts: "12",
+    maxattempts: "8",
     maxinflight: "20",
     heartbeatinterval: "10s",
     readtimeout: "60s",
