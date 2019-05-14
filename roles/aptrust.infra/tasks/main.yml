@@ -1,147 +1,28 @@
 ---
-    - name: Create S3 buckets
-      s3_bucket:
-        name: "aptrust.{{ item }}.{{inst_id}}.{{inst_id_suffix}}"
-        state: present
-        validate_certs: no
-        tags:
-          institution: "{{inst_id}}"
-          institution_name: "{{inst_name}}"
-          institution_type: "{{inst_type}}"
-          institution_member: "{{inst_member}}"
-      with_items:
-        #          - logs
-          - receiving
-          - restore
-          - receiving.test
-          - restore.test
-      register: new_buckets
+    - name: Create S3 Glacier buckets
+      aws_s3:
+        bucket: "{{ item.name }}"
+        encrypt: yes
+        encryption_mode: AES256
+        region: "{{item.region}}"
+        mode: create
+      with_items: "{{s3_glacier_buckets}}"
       tags: new_buckets, justbuckets
 
-      # Bug: https://github.com/boto/boto/issues/2836
-      ## Fixed in boto3 but s3_logging is using boto. May be possible to rewrite but for now using awscli alternative.
-      #    - name: Enable S3 logging
-      # s3_logging:
-      #   name: "{{ item.name }}"
-      #   target_bucket: "aptrust.logs.{{inst_id}}.{{inst_id_suffix}}"
-      #   target_prefix: "{{item.name}}"
-      #   state: present
-      #   region: us-east-1
-      #   validate_certs: no
-      #with_items:
-      # - "{{new_buckets.results}}"
-      #tags: new_buckets
+      #    - name: Setup S3 Logging per awscli (ugly but works)
+      # shell: 'echo { \"LoggingEnabled\": { \"TargetBucket\": \"aptrust.s3.logs\", \"TargetPrefix\": \"{{item.name}}/\"} } > /tmp/logging.json && aws s3api put-bucket-logging --bucket {{item.name}} --bucket-logging-status file:///tmp/logging.json'
+      # with_items: "{{s3_glacier_buckets}}"
+    - name: set policydata
+      set_fact:
+        aptglacierdeep: "{{ lookup( 'template', 'apt_glacier_deep_lifecycle.json.j2') | string }}"
 
-    - name: Setup S3 Logging per awscli (ugly but works)
-      shell: 'echo { \"LoggingEnabled\": { \"TargetBucket\": \"aptrust.s3.logs\", \"TargetPrefix\": \"{{item.name}}/\"} } > /tmp/logging.json && aws s3api put-bucket-logging --bucket {{item.name}} --bucket-logging-status file:///tmp/logging.json'
-      with_items:
-        - "{{new_buckets.results}}"
-
-#       # The s3_lifecyle module is incomplete which is why we revert to use awscli
-#    # version below.
-#    # See https://github.com/ansible/ansible/issues/43434
-#   - name: Set up lifecycle polices for buckets
-#      s3_lifecycle:
-#         name: "aptrust.{{ item.name }}.{{inst_id}}.{{inst_id_suffix}}"
-#         status: enabled
-#         state: present
-#         expiration_days: "{{ item.days }}"
-#         rule_id: "Clear {{item.name}}.{{inst_id}} bucket after {{ item.days}} days"
-#      with_items:
-#        - { name: receiving, days: 60, incomplete: 7 }
-#        - { name: receiving.test, days: 30, incomplete: 7 }
-#        - { name: restore, days: 14, incomplete: 7 }
-#        - { name: restore.test, days: 7, incomplete: 7 }
-#      tags: lcycle
-
-    - name: Setup S3 Lifecycle policies (cli-verision because Ansible module is insufficient.)
+    - name: Setup S3 Lifecycle policies for Deep Glacier
       command: >
            aws s3api put-bucket-lifecycle-configuration
-            --bucket "aptrust.{{ item.name }}.{{inst_id}}.{{inst_id_suffix}}"
-            --lifecycle-configuration '{"Rules":[{"ID":"Expiration {{item.days}} Days","Prefix":"","Status":"Enabled","Expiration":{"Days":{{item.days}}},"AbortIncompleteMultipartUpload":{"DaysAfterInitiation":{{item.incomplete}}}}]}'
-      with_items:
-        - { name: receiving, days: 60, incomplete: 7 }
-        - { name: receiving.test, days: 30, incomplete: 7 }
-        - { name: restore, days: 14, incomplete: 7 }
-        - { name: restore.test, days: 7, incomplete: 7 }
+            --bucket "{{ item.name }}"
+            --lifecycle-configuration '{{ aptglacierdeep }}'
+      with_items: "{{s3_glacier_buckets}}"
       tags: lcyclecli
-
-    - name: Create IAM Group
-      iam:
-        iam_type: group
-        name: "{{ item }}"
-        state: present
-      with_items: "{{inst_groups}}"
-      register: new_groups
-      tags: iamgroups, always
-
-    - name: Add users to created test group
-      iam:
-        iam_type: user
-        name: "{{item.name}}"
-        state: present
-        groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
-      with_items:
-          -  "{{ inst_users }}"
-      when: '"test" in item.name'
-      tags: iamgroups
-
-    - name: Add users to created prod group
-      iam:
-        iam_type: user
-        name: "{{item.name}}"
-        state: present
-        groups: "{{inst_id}}.{{inst_id_suffix}}.users"
-      with_items:
-          -  "{{ inst_users }}"
-      when: '"test" not in item.name'
-      tags: iamgroups
-
-    - name: Remove users from test group
-      iam:
-        iam_type: user
-        name: "{{item}}"
-        state: absent
-        groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
-      with_items:
-          -  "{{ inst_users_remove | default([])}}"
-      when:
-        - '"test" in item'
-        - inst_users_remove not in vars
-      tags: iamgroups, removeuser
-
-    - name: Remove users from prod group
-      iam:
-        iam_type: user
-        name: "{{item}}"
-        state: absent
-        groups: "{{inst_id}}.{{inst_id_suffix}}.users"
-      with_items:
-          -  "{{ inst_users_remove | default([])}}"
-      when:
-        - '"test" not in item'
-        - inst_users_remove not in vars
-      tags: iamgroups, removeuser
-
-
-    - name: Add metadata tags to users
-      command: >
-          aws iam tag-user --user-name "{{item.name}}"
-          --tags Key=email,Value="{{item.email}}" Key=phone,Value="{{item.phone}}" Key=institution,Value="{{inst_name}}"
-          --debug
-      #aws iam create-user --user-name john.wayne --tags Key=CostCenter,Value=1234, Key=EmailID,Value=john@example.com
-      with_items:
-        -  "{{ inst_users }}"
-      tags: iamgroups, taggin
-
-    - name: Add admin metadata tag to users
-      command: >
-          aws iam tag-user --user-name "{{item}}"
-          --tags Key=inst_admin,Value="true"
-      with_items:
-        -  "{{ inst_admin }}"
-      tags: iamgroups, taggin
-
 
       # A bug in the iam_policy module is sending json as dict not as raw text,
       # therefore jinja string filter has to be applied outside of the task.
@@ -149,7 +30,7 @@
       # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
     - name: set policydata
       set_fact:
-         s3policydata: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy.json.j2') | string }}"
+         s3policydata: "{{ lookup( 'template', 's3_policy.json.j2') | string }}"
       tags: iampol
 
       # A bug in the iam_policy module is sending json as dict not as raw text,
@@ -158,21 +39,21 @@
       # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
     - name: set policydata_test
       set_fact:
-         s3policydatatest: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_test.json.j2') | string }}"
+         s3policydatatest: "{{ lookup( 'template', 's3_policy_test.json.j2') | string }}"
       tags: iampol
 
-    - name: Assign IAM policy to user groups
-      iam_policy:
-        iam_type: group
-        iam_name: "{{ item.0 }}"
-        policy_name: "{{inst_id}}-{{inst_id_suffix}}-{{item.2}}-s3policy"
-        state: present
-        policy_json: "{{item.1 }}"
-      with_together:
-        - [ 'test.{{inst_id}}.{{inst_id_suffix}}.users', '{{inst_id}}.{{inst_id_suffix}}.users' ]
-        - [ '{{s3policydatatest}}','{{s3policydata}}' ]
-        - ['test','prod']
-      tags: iampol
+      #    - name: Assign IAM policy to user groups
+      #    iam_policy:
+      #  iam_type: user
+      #  iam_name: "{{ item.0 }}"
+      #  policy_name: "{{inst_id}}-{{inst_id_suffix}}-{{item.2}}-s3policy"
+      #  state: present
+      #  policy_json: "{{item.1 }}"
+      #with_together:
+      #  - ['go-services-demo', 'go-services-prod']
+      #  - ['{{s3policydatatest}}', '{{s3policydata}}']
+      #  - ['test', 'prod']
+      # tags: iampol
 
 # TODO: Create credentials when creating users and print to stdout or put into encrypted var file for initial distribution
 
@@ -187,17 +68,3 @@
 #      with_items:
 #        -  "{{ inst_users }}"
 #      tags: iamcred
-
-#    - debug: var=credentials
-#      tags: iamcred
-
-  # Needs set_fact to results since the fact dict has more than one value
-      #    - debug:
-      #        msg: "{{ credentials.user_meta.access_keys | json_query('[].access_key_id') }}"
-      # tags: iamcred
-# TODO: Support users for test und prod groups. Not all users should be in all groups per default.
-# Test1: Add a user (not in yml) to group, run this play and see if it removes the user.
-# --> Keeps user in group.
-# Test2: Are existing IAM policies removed when running this play?
-
-
