@@ -1,0 +1,10 @@
+---
+# ID without suffix (e.g. 'virginia' not 'virginia.edu')
+inst_id: cd3ef
+inst_suffix: edu
+
+inst_groups:
+    - "{{inst_id}}.{{inst_id_suffix}}.users"
+    - "test.{{inst_id}}.{{inst_id_suffix}}.users"
+
+
