@@ -130,7 +130,7 @@
         month: "{{item.value.month | default('*')}}"
         job: "sudo docker run --rm --env-file {{docker_app_path}}/.env \
         {{docker_image_name}}:{{docker_tag_name | default('latest')}} \
-         bin/pharos_notify.py {{item.value.params | default('')}}"
+         bin/pharos_notify.py {{item.value.params | default('')}} >> {{pharos_app_root}}/log/cron_{{item.key}}.log 2>&1"
         state: present
         disabled: "{{item.value.disabled}}"
     with_dict: "{{pharos_cronjobs}}"
