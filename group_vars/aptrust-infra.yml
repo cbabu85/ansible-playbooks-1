@@ -1,0 +1,22 @@
+# This file is the base for APTrust infrastructure setup. It should be replaced
+# with Terraform at some point.
+#
+
+s3_lifecycle:
+  -
+s3_buckets:
+s3_glacier_buckets:
+  - name: aptrust.preservation.glacier-deep.va
+    region: us-east-1
+  - name: aptrust.preservation.glacier-deep.oh
+    region: us-east-2
+  - name: aptrust.preservation.glacier-deep.or
+    region: us-west-2
+  - name: aptrust.test.preservation.glacier-deep.va
+    region: us-east-1
+  - name: aptrust.test.preservation.glacier-deep.oh
+    region: us-east-2
+  - name: aptrust.test.preservation.glacier-deep.or
+    region: us-west-2
+
+

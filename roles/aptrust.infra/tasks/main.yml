@@ -1,20 +1,46 @@
 ---
+      # A bug in the iam_policy module is sending json as dict not as raw text,
+      # therefore jinja string filter has to be applied outside of the task.
+      # per official workaround:
+      # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
+
+    - name: set facts for cli commands
+      set_fact:
+        aptglacierenc: "{{ lookup( 'template', 's3_bucket_encryption.json.j2') | string }}"
+        aptglacierdeep: "{{ lookup( 'template', 'apt_glacier_deep_lifecycle.json.j2') | string }}"
+        s3policydata: "{{ lookup( 'template', 's3_policy.json.j2') | string }}"
+        s3policydatatest: "{{ lookup( 'template', 's3_policy_test.json.j2') | string }}"
+        s3_bucket_access: "{{ lookup( 'template', 's3_bucket_access.json.j2') | string }}"
+
     - name: Create S3 Glacier buckets
       aws_s3:
         bucket: "{{ item.name }}"
-        encrypt: yes
+        encrypt: true
         encryption_mode: AES256
         region: "{{item.region}}"
         mode: create
       with_items: "{{s3_glacier_buckets}}"
       tags: new_buckets, justbuckets
 
+    - name: Setup S3 default encryption for Deep Glacier
+      command: >
+           aws s3api put-bucket-encryption
+            --bucket "{{ item.name }}"
+            --server-side-encryption-configuration '{{ aptglacierenc }}'
+      with_items: "{{s3_glacier_buckets}}"
+      tags: bucketencryption
+
+    - name: Setup S3 default bucket access
+      command: >
+            aws s3api put-public-access-block
+            --bucket "{{ item.name }}"
+            --public-access-block-configuration '{{ s3_bucket_access }}'
+      with_items: "{{s3_glacier_buckets}}"
+      tags: bucketaccess
+
       #    - name: Setup S3 Logging per awscli (ugly but works)
       # shell: 'echo { \"LoggingEnabled\": { \"TargetBucket\": \"aptrust.s3.logs\", \"TargetPrefix\": \"{{item.name}}/\"} } > /tmp/logging.json && aws s3api put-bucket-logging --bucket {{item.name}} --bucket-logging-status file:///tmp/logging.json'
       # with_items: "{{s3_glacier_buckets}}"
-    - name: set policydata
-      set_fact:
-        aptglacierdeep: "{{ lookup( 'template', 'apt_glacier_deep_lifecycle.json.j2') | string }}"
 
     - name: Setup S3 Lifecycle policies for Deep Glacier
       command: >
@@ -24,23 +50,6 @@
       with_items: "{{s3_glacier_buckets}}"
       tags: lcyclecli
 
-      # A bug in the iam_policy module is sending json as dict not as raw text,
-      # therefore jinja string filter has to be applied outside of the task.
-      # per official workaround:
-      # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
-    - name: set policydata
-      set_fact:
-         s3policydata: "{{ lookup( 'template', 's3_policy.json.j2') | string }}"
-      tags: iampol
-
-      # A bug in the iam_policy module is sending json as dict not as raw text,
-      # therefore jinja string filter has to be applied outside of the task.
-      # per official workaround:
-      # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
-    - name: set policydata_test
-      set_fact:
-         s3policydatatest: "{{ lookup( 'template', 's3_policy_test.json.j2') | string }}"
-      tags: iampol
 
       #    - name: Assign IAM policy to user groups
       #    iam_policy:
