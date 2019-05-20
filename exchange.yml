@@ -17,10 +17,12 @@
 
         # Golang
         golang_workspace_user: "{{system_default_user}}"
-        golang_tarball: go1.10.linux-amd64.tar.gz
-        golang_tarball_checksum: b5a64335f1490277b585832d1f6c7f8c6c11206cba5cd3f771dcb87b98ad1a33
-        #golang_tarball: go1.11.9.linux-amd64.tar.gz
-        #golang_tarball_checksum: e88aa3e39104e3ba6a95a4e05629348b4a1ec82791fb3c941a493ca349730608
+        #golang_tarball: go1.10.linux-amd64.tar.gz
+        #golang_tarball_checksum: b5a64335f1490277b585832d1f6c7f8c6c11206cba5cd3f771dcb87b98ad1a33
+        # golang_tarball: go1.11.9.linux-amd64.tar.gz
+        # golang_tarball_checksum: e88aa3e39104e3ba6a95a4e05629348b4a1ec82791fb3c941a493ca349730608
+        golang_tarball: go1.12.5.linux-amd64.tar.gz
+        golang_tarball_checksum: aea86e3c73495f205929cfebba0d63f1382c8ac59be081b6351681415f4063cf
 
         # Supervisor
         supervisor_user: "{{system_default_user}}"
