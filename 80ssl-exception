@@ -1,2 +1,0 @@
-Acquire::https::packages.icinga.org::Verify-Peer "false";
-
