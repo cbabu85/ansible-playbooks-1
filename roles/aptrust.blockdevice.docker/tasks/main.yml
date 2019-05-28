@@ -32,10 +32,3 @@
     src: "{{ block_device_name }}"
     fstype: ext4
     state: mounted
-
-- name: Update permissions
-  file:
-    path: "{{ mount_point }}//production"
-    state: directory
-    owner: root
-    mode: 0777
