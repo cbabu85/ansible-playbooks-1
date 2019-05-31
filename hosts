@@ -34,6 +34,7 @@ dpn-demo2 hostname=dpn-demo2 hostname_fqdn=dpn-demo2.aptrust.org host_eip=34.195
 dpn-prod2 hostname=dpn-prod2.aptrust.org hostname_fqdn=dpn-prod2.aptrust.org host_eip=34.195.237.213
 dpn-prod3 hostname=dpn-prod3.aptrust.org hostname_fqdn=dpn-prod3.aptrust.org host_eip=34.206.100.82
 docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=docker1.aptrust.org host_eip=34.201.130.220 instance_id=i-0c986eb59c16ae67a
+apt-prod-srv hostname=apt-prod-srv hostname_fqdn=apt-prod-srv.aptrust.org host_eip=54.147.253.108
 
 [dpn-demo-servers]
 dpn-demo2 hostname=dpn-demo2 hostname_fqdn=dpn-demo2.aptrust.org host_eip=34.195.115.140
