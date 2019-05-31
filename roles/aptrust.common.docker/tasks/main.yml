@@ -50,12 +50,6 @@
   service: name=ntp state=started
   tags: ntp
 
-- name: install emacs packages Ubuntu 16.04LTS
-  become: yes
-  apt: pkg=emacs24-nox  state=latest update_cache=true
-  when: ansible_distribution_release == 'xenial'
-  tags: packages
-
 - name: Install AWS CLI tools and Boto
   become: yes
   pip:
@@ -64,28 +58,13 @@
       - boto
 
 # Note: DPN is no more so we may want to get rid of orgtype alltogether.
+# Note: Will keep this around for now until roles are updated
 - name: Set orgtype to APT
   set_fact: orgtype=apt
   tags: [always, mountdir]
 
-- name: set orgmountdir fact
-  set_fact: orgmountdir={{mount_dir}}/{{orgtype}}
-  tags: [always, mountdir]
-
-# This is a dupliacte from group_vars/all.yml to enure portability of role
-- name: set orgmountdirlogs fact
-  set_fact: orgmountdirlogs={{mount_dir}}/logs/{{ansible_hostname}}
-  tags: [always, mountdir]
-
-- name: "check mount point {{ orgmountdir }}"
-  command: mountpoint {{ orgmountdir }}
-  register: mount_stat
-  failed_when: False
-  changed_when: False
-  tags: [always, mountdir]
-
 - name: Create Deploy group
-  become: yes
+  become: true
   group: name=deploy state=present gid=1234
 
 # Adding common users to the system.
@@ -104,7 +83,7 @@
   tags: [createusers, addcommonusers]
 
 - name: add common user public keys
-  become: yes
+  become: true
   authorized_key: user="{{item.name}}" key="{{item.pubkeyfile}}" state=present
   with_items:
 ## Keys can be stored encrypted as a variable in group_vars/vault.yml or directly imported from GitHub
@@ -124,66 +103,15 @@
     - adiamond
     - cd3ef
 
-# TODO: Revisit this. We may not need it since deploy and git operations are
-#       done with Ansible, hence an ansible user.
-- name: add deploy user private key
-  become: yes
-  become_user: "{{ system_default_user }}"
-  no_log: true
-  copy: >
-    content="{{aptdeploy_sshkey_private}}"
-    dest=/home/{{system_default_user}}/.ssh/id_rsa
-    mode=0600
-    owner="{{system_default_user}}"
-
 # Message of the day explaining server is under control of Ansible.
 - name: MOTD
-  become: yes
+  become: true
   template: src=motd.j2 dest=/etc/motd owner=root mode=0644
-  tags: ["common","motd"]
-  when: "'apt' in ansible_hostname"
+  tags: ["common", "motd"]
 
 - name: Adjust /srv permissions.
   become: yes
   file: path=/srv owner="{{system_default_user}}" group="{{deploy_group}}" mode=0775
-
-- name: Create {{mount_dir}}/{apt,dpn} if not mounted already
-  become: yes
-  file:
-    path: "{{item}}"
-    owner: "{{system_default_user}}"
-    group: "{{deploy_group}}"
-    mode: 0775
-    state: directory
-  with_items:
-    - "{{mount_dir}}/{{orgtype}}"
-    - "{{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}"
-    - "{{orgmountdirlogs}}"
-  when: ((use_efs == True or use_ebs == True) and mount_stat.rc == 0)
-  tags: [aptmount, mountdir]
-
-- name: Identify my availabiltiy zone
-  #shell: "curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone"
-  uri:
-    url: http://169.254.169.254/latest/meta-data/placement/availability-zone
-    return_content: yes
-  register: my_aws_az
-  tags: awsaz
-
-- set_fact: my_aws_az="{{my_aws_az.content}}"
-  tags: awsaz
-
-# Obsolete now, remove once nfs is in place.
-# Mount EFS volume.
-- name: Mount EFS volume
-  mount:
-    src: "{{efs_mount_uri}}"
-    name: "/mnt/efs/{{orgtype}}"
-    fstype: nfs
-    opts: nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
-    state: mounted
-  when: use_efs
-  tags: nfsmount
 
 ## Making sure github.com is a known_host
 - name: Ensure github.com is a known host
@@ -195,23 +123,9 @@
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
     regexp: "^github\\.com"
 
-
 # We might want to tighten this. Sudo pwd is helpful and more secure.
 # For ops/stage user ubuntu: could have restrictive settings.
 - name: Modifiy admins so they need no sudo password
-  become: yes
+  become: true
   tags: common
   lineinfile: dest=/etc/sudoers state=present regexp='^%admin ALL\=' line='%admin ALL=(ALL) NOPASSWD:ALL' validate='visudo -cf %s'
-
-##
-# Sendmail aliases workaround
-# This makes sure that root and ubuntu user emails
-# are being sent to ops@aptrust.org
-#
-- name: Check if postfix is installed
-  shell: dpkg-query -W 'postfix'
-  ignore_errors: True
-  register: is_postfix
-  changed_when: "is_postfix.rc != 0"
-  failed_when: >
-        is_postfix.rc != 0 and ('already exists' not in is_postfix.stderr)
