@@ -27,6 +27,7 @@
      - iotop
      - bmon
      - vim-tiny
+     - emacs-nox
      - unzip
      - tar
      - python-pip
