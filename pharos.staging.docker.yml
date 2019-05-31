@@ -1,0 +1,83 @@
+---
+#   - a .env file in the code root (with sensible defaults)
+# The instance to deploy to requires to be internet reachable on 80/443.
+# Pharos:
+# All required changes should be env vars in the .env var for deploys in
+# different environemnts.
+#
+##  - Base dir for docker apps is /srv/docker/<appname>
+#     The base directory is used to clone the git repository into.
+#     The data directory is used for storing persistent data if volume
+#     bind-mounts are used.
+#
+-   hosts:
+      - docker1
+    vars_files:
+        - "group_vars/vault.yml"
+
+    vars:
+        # Workaround for Ansible docker Python modules. https://galaxy.ansible.com/nickjj/docker
+        #ansible_python_interpreter: "{{ '/usr/bin/env python-docker' if docker__pip_virtualenv | d() else ansible_python.executable }}"
+        #        ansible_python_interpreter: "/usr/bin/env python-docker"
+
+        # Dockerapp config
+        dockerapp: 'pharos' #Docker app name
+        dockerapp_path: "/srv/docker/{{dockerapp}}"
+        dockerapp_data_path: "/data/{{dockerapp}}"
+        dockerapp_repo: "https://github.com/APtrust/pharos"
+        git_version: feature/two_factor #git branch/commit
+        DOCKER_DOMAIN: "{{ ansible_fqdn }}"
+        # Docker tag or commit hash to pull specific Docker image.
+        # e.g. docker_tag_name: 17be2ae
+
+        # Pharos config
+        #virtual_host: staging.aptrust.org
+
+
+        pharos_db_host: 'pharos-demo-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
+        ## Test case 1: local PSQL, from scratch
+        #        pharos_db_host: 'db'
+        #        pharos_db_user: 'apt_pharos'
+        # pharos_db_password: 'preservationiscool'
+        #pharos_branch: "{{dockerapp_version}}"
+        pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
+        pharos_db_port: '5431'
+        pharos_db_name: 'pharos_demo'
+        pharos_db_user: 'apt_pharos'
+        pharos_cronjobs:
+          pharos_notify:
+              hour: "*/10"
+              minute: "*/10"
+              params: ''
+              disabled: "yes"
+          pharos_snapshot:
+              hour: "1"
+              minute: "1"
+              day: "1"
+              params: "-o snapshot"
+              disabled: "yes"
+          pharos_deletion:
+              hour: "1"
+              minute: "2"
+              day: "1"
+              params: "-o deletion"
+              disabled: "yes"
+
+        pharos_docker: true
+    roles:
+      - { role: aptrust.pharos }
+    tasks:
+
+      - name: whoami
+        become: no
+        local_action: shell whoami
+        register: whobrokeit
+        tags: [pharos,slack,deploy]
+
+      - name: Slack to all
+        slack:
+          token: "{{slack_token}}"
+          msg: "Pharos Docker Deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
+          icon_emoji: ":dog:"
+          channel: 'ops'
+        tags: [pharos,slack, deploy]
