@@ -26,7 +26,7 @@ docker__systemd_override: ""
 docker__cron_jobs_prune_flags: "af"
 docker__cron_jobs:
   - name: "Docker disk clean up"
-    job: "docker system prune -{{ docker__cron_jobs_prune_flags }} > /dev/null 2>&1"
+    job: "docker system prune -{{ docker__cron_jobs_prune_flags }} --filter until=168h > /dev/null 2>&1"
     schedule: ["0", "0", "*", "*", "0"]
     cron_file: "docker-disk-clean-up"
     user: "{{ (docker__users | first) | d('root') }}"
