@@ -37,6 +37,12 @@
       with_items:
         - "{{new_buckets.results}}"
 
+    - name: Block public bucket access
+      shell: aws s3api put-public-access-block --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true --bucket {{item.name}}
+      with_items:
+        - "{{new_buckets.results}}"
+      tags:
+        - blockaccess
 #       # The s3_lifecyle module is incomplete which is why we revert to use awscli
 #    # version below.
 #    # See https://github.com/ansible/ansible/issues/43434
