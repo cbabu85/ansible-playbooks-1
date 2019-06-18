@@ -1,6 +1,7 @@
 ---
   - hosts:
       - apt-demo-docker
+      - apt-demo-docker-new
       - docker1
       - apt-prod-srv
     gather_facts: true
