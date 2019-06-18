@@ -66,11 +66,15 @@
     when: docker_tag_name is defined and docker_tag_name != 'latest'
     tags: gitclone
 
+  - stat: path={{docker_app_path}}/.git
+    register: gitrepo
+
     # https://github.com/ansible/ansible/issues/19809
   - name: Reset repo for Ansible bug
     command: git reset --hard
     args:
         chdir: "{{docker_app_path}}"
+    when: gitrepo.stat.isdir is defined
     tags: gitclone
 
   - name: Git clone Pharos repo
