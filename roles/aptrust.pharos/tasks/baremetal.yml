@@ -5,18 +5,11 @@
 
   - name: install required packages
     become: yes
-    apt: pkg={{item}} state=present update_cache=yes
-    with_items:
-        - sqlite3
-        - libssl-dev
-        - postgresql-client
-        - libpq5
-        - libpqxx-dev
-        - libxrender1 #Required for PDF report generation
-        - libsqlite3-dev
-        - nodejs
-        - zip
-        - mailutils
+    apt:
+      pkg: ['sqlite3', 'libssl-dev', 'postgresql-client', 'libpq5', 'libpqxx-dev', 'libxrender1', 'libsqlite3-dev', 'nodejs',
+'zip', 'mailutils']
+      state: present
+      update_cache: yes
     environment:
        DEBIAN_FRONTEND: noninteractive
     tags:

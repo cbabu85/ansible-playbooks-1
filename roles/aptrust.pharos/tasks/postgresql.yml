@@ -3,11 +3,9 @@
 #
 
 - name: Install postgresql
-  apt: name="{{item}}" update_cache=yes
-  with_items:
-    - postgresql
-    - postgresql-contrib
-    - libpq-dev
+  apt:
+    name: ['postgresql', 'postgresql-contrib', 'libpq-dev']
+    update_cache: yes
 
 - name: Startup PGSQL
   service: name=postgresql state=started
