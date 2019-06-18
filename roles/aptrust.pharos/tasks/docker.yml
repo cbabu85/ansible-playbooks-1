@@ -84,9 +84,9 @@
       version: "{{git_version}}"
       accept_hostkey: yes
       clone: yes
-      force: yes
+      force: true
       update: yes
-      umask: '0022'
+      #      umask: '00022'
     when: pharos_repo is defined
     tags: gitclone
 
@@ -147,18 +147,6 @@
         disabled: "{{item.value.disabled}}"
     with_dict: "{{pharos_cronjobs}}"
     tags: pharos_cronjobs
-
-# Primarily to remov Docker asset volume with every deploy to ensure it's being
-# recreated with every compose up. If this doesn't happen the assets are not
-# updated and nginx-proxy may use an outdated asset volume.
-# TODO: This is a workaround, find a better solution.
-  - name: Stop docker containers compose
-    docker_service:
-        project_src: "{{docker_app_path}}"
-        files: docker-compose.yml
-        remove_volumes: true
-        state: absent
-    tags: dockserv
 
   - name: Start docker containers from compose
     docker_service:
