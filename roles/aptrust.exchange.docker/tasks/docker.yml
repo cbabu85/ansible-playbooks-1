@@ -56,28 +56,11 @@
     - { regexp: 'nsq_max_msg_timeout=', line: 'nsq_max_msg_timeout={{ex_nsq_max_msg_timeout}}' }
 #    - { regexp: 'nsq_max_msg_size=', line: 'nsq_max_msg_size={{ex_nsq_max_msg_size}}' }
     - { regexp: 'nsq_tcp_address=', line: 'nsq_tcp_address={{ex_nsq_tcp_address}}' }
-  tags: dotenv
-
-
-# TODO: pass in ENV vars into container runs
-# TODO: Refactor to source .env before services are started. also supervisor can
-# read environment files
-# Set AWS Credentials as ENV
-- name: Set AWS Credentials, GoPath, ExchangeHome
-  no_log: true
-  lineinfile: >
-    dest="/home/{{system_default_user}}/.profile"
-    state=present
-    regexp="{{item.name}}=.*"
-    line="export {{item.name}}={{item.value}}"
-  with_items:
-    - { name: "AWS_ACCESS_KEY_ID", value: "{{aws_go_user}}"}
-    - { name: "AWS_SECRET_ACCESS_KEY", value: "{{aws_go_pwd}}"}
-    - { name: "GOPATH", value: "{{go_env.GOPATH}}"}
-    - { name: "EXCHANGE_HOME", value: "{{goapp_src_path}}"}
-    - { name: "PHAROS_API_USER", value: "{{pharos_api_user}}"}
-    - { name: "PHAROS_API_KEY", value: "{{pharos_api_key}}"}
-  tags: envvars
+    - { regexp: "AWS_ACCESS_KEY", line: "AWS_ACCESS_KEY={{aws_go_user}}"}
+    - { regexp: "AWS_SECRET_ACCESS_KEY", line: "AWS_SECRET_ACCESS_KEY={{aws_go_pwd}}"}
+    - { regexp: "PHAROS_API_USER", line: "PHAROS_API_USER={{pharos_api_user}}"}
+    - { regexp: "PHAROS_API_KEY", line: "PHAROS_API_KEY={{pharos_api_key}}"}
+   tags: dotenv
 
 # Note: Commmon role creates and mounts external filesystems like EFS/EBS.
 #       Applying permissions recursively to avoid Supervisor bug that creates
