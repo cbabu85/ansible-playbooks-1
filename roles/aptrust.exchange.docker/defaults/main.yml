@@ -12,7 +12,7 @@ buildgo: true
 # Usually uses external filesystems EBS, NFS
 # Setting default here which will create subdirectories
 # regardless if any external filesystem is mounted there or not
-mount_dir: /mnt
+mount_dir: /data
 
 #Git branch to deploy
 ex_git_branch: master

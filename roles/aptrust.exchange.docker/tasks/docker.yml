@@ -1,12 +1,8 @@
 # These tasks are meant for an alternative Docker only install and
 # may repeat some of the baremental.yml steps.
-## TODO:  Need to reinable once refactored for DPN use.
-  # - include: dpn.yml
-  # when: orgtype == 'dpn'
-
 # NOTE: Former home of repo was /home/ubuntu/go/src/github.com/APTrust/exchange, new home is
 # /srv/docker/exchange
-# TODO: Define dockerhub (wherever that may be) in defaults. Default to hub.docker.com
+#
 # TODO: Need to create volume directories to mount config and data volumes
 # TODO: Need to ensure to pass in ENV Vars to docker containers, like AWS, pharos api key,...
 ## - use .env file with option to overwrite with cli params.
