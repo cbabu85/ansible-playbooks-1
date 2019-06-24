@@ -1,0 +1,70 @@
+- name: "Create {{mount_dir}} volume directories"
+  become: yes
+  file:
+    path: "{{mount_dir}}/{{item.0}}/{{item.1}}"
+    owner: "{{system_default_user}}"
+    group: "{{deploy_group}}"
+    mode: 0775
+    recurse: yes
+    state: directory
+  with_nested:
+    - ['dpn']
+    - ['staging','logs','restoration']
+  tags: exchange_folders
+
+# Create symlink outbound directories for each DPN node user on the system.
+- name: Create and symlink outbound directories to EBS staging dir
+  become: yes
+  file:
+    src: "{{mount_dir}}/{{orgtype}}/staging"
+    dest: "/home/{{item}}/outbound"
+    owner: "{{item}}"
+    group: "{{deploy_group}}"
+    mode: 0775
+    state: link
+  with_items:
+    - dpn.hathi
+    - dpn.chron
+    - dpn.sdr
+    - dpn.tdr
+  tags: outboundsymlink
+
+- name: Set dpn exchange services fact to configure supervisor
+  set_fact:
+      exchangeservices: "{{ex_dpn_services}}"
+  when: orgtype == 'dpn'
+  tags: lsfiles
+
+- name: Add DPN cronjobs
+  cron: name="{{item.name}}"
+        user="{{system_default_user}}"
+        minute="{{item.minute | default('*/1')}}"
+        hour="{{item.hour | default('*/1')}}"
+        job=". $HOME/.profile; {{goapp_bin_path}}/{{item.name}}
+             -config={{goapp_cfg_path}}/{{GO_ENV}}.json
+             {{item.params | default ()}}
+             >> {{goapp_log_path}}/cron_{{item.name}}.log 2>&1"
+        state=present
+        disabled=no
+  with_items:
+        - { name: dpn_sync, hour: "*/2", minute: "5"}
+        - { name: dpn_queue, hour: "*/1", minute: "10", params: "-hours=24"}
+        - { name: dpn_cleanup, hour: "*/4", minute: "20"}
+        - { name: dpn_pharos_sync, hour: "*/1", minute: "25"}
+  when: orgtype == 'dpn'
+  tags: dpn_cronjobs
+
+- set_fact:
+      supervisor_apps:
+        - 'exchange:'
+  when: orgtype == 'dpn'
+
+- name: Set Supervisor config for Exchange and NSQ Services
+  template: src="{{item.name}}"
+            dest="/etc/supervisor/conf.d/{{item.dest}}"
+  register: supervisor_config_files
+  with_items:
+    - { name: 'exchange_supervisor.conf.j2', dest: 'exchange.conf'}
+  tags: listfiles
+
+
