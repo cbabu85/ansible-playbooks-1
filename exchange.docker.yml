@@ -1,0 +1,39 @@
+---
+# Deploy on all exchange servers:
+#  ansible-playbook exchange.yml -t deploy --diff
+# Deploy on a specific exchange server:
+#  ansible-playbook exchange.yml -t deploy --diff -l dpn-demo2
+# Deploy a specific branch of exchange:
+#  ansible-playbook exchange.yml -t deploy --diff -e ex_git_branch=<specific_branchname>
+# Only rebuild go binaries, does not restart services.
+#  ansible-playbook exchange.yml -t gobuild --diff
+-   hosts: docker1
+    vars_files:
+        - "group_vars/vault.yml"
+
+    environment: "{{go_env}}"
+    vars:
+        playbook_name: exchange
+
+        # DOCKER
+        docker_version: 18.06.1-ce
+
+    roles:
+      - {role: aptrust.common.docker, tags: common}
+      - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
+      - {role: aptrust.exchange.docker, tags: [exchange, deploy]}
+    tasks:
+
+    - name: whoami
+      become: no
+      local_action: shell whoami
+      register: whobrokeit
+      tags: [exchange,slack,deploy]
+
+    - name: Slack to all
+      slack:
+        token: "{{slack_token}}"
+        msg: "{{playbook_name}} deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
+        icon_emoji: ":dog:"
+        channel: 'ops'
+      tags: [exchange,slack,deploy]
