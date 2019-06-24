@@ -15,16 +15,15 @@ buildgo: true
 mount_dir: /data
 
 #Git branch to deploy
-ex_git_branch: master
-
+ex_git_version: master
 
 # Flag to deploy docker-only environment
 ex_docker: false
 
 # Docker related settings
 docker_app_path: "/srv/docker/exchange"
-docker_data_path: "/srv/docker/exchange/data"
-
+docker_data_path: "/data/exchange"
+docker_registry_key: registry.gitlab.com/aptrust/container-registry/
 
 # Used to determine which services to deploy on server.
 # Demo server will have ingeste and restore, prod will

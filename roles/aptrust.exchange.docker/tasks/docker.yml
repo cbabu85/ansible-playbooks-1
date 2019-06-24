@@ -24,19 +24,18 @@
     mode: 0755
     state: directory
   with_items:
-      - "{{dockerapp_path}}"
-      - "{{dockerapp_repo_path}}"
-      - "{{dockerapp_data_path}}"
+      - "{{docker_app_path}}"
+      - "{{docker_data_path}}"
   tags: makdir
 
 - name: Clone exchange repo
   git: repo="git@github.com:APTrust/exchange.git"
-      dest="{{ dockerapp_repo_path }}"
+      dest="{{ docker_app_path }}"
       accept_hostkey=yes
       clone=yes
       update=yes
       force=yes
-      version="{{ ex_git_branch | default(master)}}"
+      version="{{ ex_git_version | default(master)}}"
   become_user: "{{system_default_user}}"
   become: true
   register: gitclone
@@ -46,7 +45,7 @@
 # https://docs.docker.com/compose/environment-variables/#the-env-file
 - name: Update env vars in .env
   lineinfile:
-    dest: "{{dockerapp_repo_path }}/.env"
+    dest: "{{docker_app_path }}/.env"
     regexp: "^{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
