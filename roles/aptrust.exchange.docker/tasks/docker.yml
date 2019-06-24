@@ -76,13 +76,13 @@
     owner: "{{system_default_user}}"
     group: "{{deploy_group}}"
     mode: 0775
-    recurse: yes
+    recurse: true
     state: directory
-    unsafe_writes: yes
-    follow: no
+    unsafe_writes: true
+    follow: false
   with_nested:
-    - ['apt']
-    - ['data','logs','restore','replication']
+    - ['exchange']
+    - ['data', 'logs', 'restore', 'replication']
   tags: exchange_ebs
   when: orgtype == 'apt'
 
