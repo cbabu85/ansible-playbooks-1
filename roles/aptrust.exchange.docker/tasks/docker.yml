@@ -84,58 +84,9 @@
     - ['exchange']
     - ['data', 'logs', 'restore', 'replication']
   tags: exchange_ebs
-  when: orgtype == 'apt'
 
 ##### TEMP HYBRID SETUP START ####
 ##### THIS IS ONLY TEMPORARY TO RUN baremetal exchange and docker NSQ #######
-- name: clone exchange repository
-  git: repo="git@github.com:APTrust/exchange.git"
-      dest="{{ goapp_src_path }}"
-      accept_hostkey=yes
-      clone=yes
-      update=yes
-      force=yes
-      version="{{ ex_git_branch | default(master)}}"
-  become_user: "{{system_default_user}}"
-  become: true
-  register: gitclone
-  tags:
-    - buildgo
-    - gitclone
-
-# Checkout Exchange repo
-- name: Go get exchange repo docker
-  become_user: "{{system_default_user}}"
-  become: true
-  shell: "go get -u -f -d github.com/APTrust/exchange/..."
-  environment: "{{go_env}}"
-  register: checkout
-  #  when: gitclone is changed
-  tags:
-    - buildgo
-    - gitclone
-
-- debug: var=checkout
-
-# go install exchange binaries.
-- name: Build and install go binaries docker
-  shell: "go install -a $(glide novendor)"
-  args:
-    chdir: "{{goapp_src_path}}"
-  environment: "{{go_env}}"
-  become_user: "{{system_default_user}}"
-  become: true
-  #  when: checkout.changed|bool == true or buildgo|bool == true
-  register: go_build_result
-  #  failed_when: "'no non-test Go files' not in go_build_result.stderr"
-  #  Note: This failed_when only applies to older Go <1.10  versions.
-  #  failed_when: "'no buildable Go source files' not in go_build_result.stderr"
-  # Note: even if status is sucessful this will be a changed task.?
-  changed_when: "'no buildable Go source files' not in go_build_result.stderr"
-  tags:
-    - buildgo
-    - gitclone
-
 - name: Update Exchange config file in {{goapp_cfg_path}}
   become_user: "{{system_default_user}}"
   become: true
@@ -145,48 +96,6 @@
     - buildgo
     - gitclone
     - exchangetemplate
-
-- name: Set apt exchange services fact to configure supervisor
-  set_fact:
-      exchangeservices: "{{ex_apt_services}}"
-  when: orgtype == 'apt'
-  tags: lsfiles
-
-- name: Set Supervisor config for Exchange and NSQ Services
-  template: src="{{item.name}}"
-            dest="/etc/supervisor/conf.d/{{item.dest}}"
-  register: supervisor_config_files
-  with_items:
-    - { name: 'exchange_supervisor.conf.j2', dest: 'exchange.conf'}
-  tags: listfiles
-
-- name: Remove nsq.conf for supervisor to ensure docker
-  file:
-    dest: /etc/supervisor/conf.d/nsq.conf
-    state: absent
-  tags: rmnsqconf
-
-# When state = present, the module will call supervisorctl reread then
-# supervisorctl add if the program/group does not exist
-- name: Reread/Add supervisor app config files
-  supervisorctl: name="exchange:" state=present
-  register: supervisor_config_update
-  when: supervisor_config_files.changed or go_build_result.changed or checkout.changed
-  tags: reread_supervisor
-
-# When state = restarted, the module will call supervisorctl update then
-# call supervisorctl restart.
-- name: Update and restart supervisor processes
-  supervisorctl: name="exchange:" state=restarted
-  when: restartapps is defined or supervisor_config_files.changed or go_build_result.changed or checkout.changed
-  tags: restartapps
-
-# Note: exchange is the program group used in supervisor config.
-- name: Ensure Exchange services are running
-  supervisorctl: name="exchange:" state=started
-
-
-
 
 #### TEMP HYBRID SETUP END ####
 
