@@ -154,4 +154,6 @@
         files: docker-compose.yml
         pull: true
         #        recreate: always
+    vars:
+        ansible_python_interpreter: "/usr/bin/env python-docker"
     tags: dockserv
