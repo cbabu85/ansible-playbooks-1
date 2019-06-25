@@ -1,3 +1,5 @@
+[local]
+localhost ansible_python_interpreter="/usr/bin/python"
 
 [monitoring_servers]
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
