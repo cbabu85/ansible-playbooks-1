@@ -95,7 +95,15 @@
     register: revision
     tags: revs, update_env
 
+  - name: get branch
+    shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --abbrev-ref HEAD"
+    register: pharos_branch
+    tags: revs, update_env
+
   - set_fact: pharos_release="{{revision.stdout}}"
+    tags: revs, update_env
+
+  - set_fact: pharos_branch="{{pharos_branch.stdout}}"
     tags: revs, update_env
 
   - name: Update .env vars
