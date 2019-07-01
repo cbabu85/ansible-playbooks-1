@@ -91,7 +91,7 @@
     tags: gitclone
 
   - name: get revision
-    shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --short HEAD"
+    shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --short=7 HEAD"
     register: revision
     tags: revs, update_env
 
