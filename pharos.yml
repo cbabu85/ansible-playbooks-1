@@ -6,8 +6,7 @@
 # Deploy a specific branch of pharos:
 #  ansible-playbook pharos.yml -t deploy --diff -e ansistrano_git_branch=<specific_branchname>
 -   hosts:
-     - pharos-servers
-     - docker1
+     - apt-prod-repo2
 
     vars_files:
         - "group_vars/vault.yml"
