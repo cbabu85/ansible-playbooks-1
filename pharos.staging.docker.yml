@@ -33,13 +33,6 @@
         # Pharos config
         #virtual_host: staging.aptrust.org
 
-
-        pharos_db_host: 'pharos-demo-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
-        ## Test case 1: local PSQL, from scratch
-        #        pharos_db_host: 'db'
-        #        pharos_db_user: 'apt_pharos'
-        # pharos_db_password: 'preservationiscool'
-        #pharos_branch: "{{dockerapp_version}}"
         pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
         pharos_db_port: '5431'
         pharos_db_name: 'pharos_demo'
