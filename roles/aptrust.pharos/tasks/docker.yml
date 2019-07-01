@@ -103,8 +103,12 @@
   - set_fact: pharos_release="{{revision.stdout}}"
     tags: revs, update_env
 
-  - set_fact: pharos_branch="{{pharos_branch.stdout}}"
+  # Note: Replacing / for _ for docker_tag_name construct that's used in env
+  # to get the correct image
+  - set_fact: pharos_branch="{{pharos_branch.stdout | replace('/','_')}}"
     tags: revs, update_env
+
+  - debug: msg={{pharos_branch}}
 
   - name: Update .env vars
     template:
