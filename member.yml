@@ -41,11 +41,13 @@
 - name: Setting up AWS buckets and groups
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: True
   become: no
 
   vars:
     # Set in role defaults. Only pass in `-e inst_id=abc` and '-e inst_suffix=edu` to run this role.
+
+    ansible_python_interpreter: "/usr/bin/python"
   vars_files:
     - "group_vars/members/{{inst_id}}.{{inst_suffix}}.yml"
 
