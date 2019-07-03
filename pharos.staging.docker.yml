@@ -17,8 +17,8 @@
 
     vars:
         # Workaround for Ansible docker Python modules. https://galaxy.ansible.com/nickjj/docker
-        #ansible_python_interpreter: "{{ '/usr/bin/env python-docker' if docker__pip_virtualenv | d() else ansible_python.executable }}"
-        #        ansible_python_interpreter: "/usr/bin/env python-docker"
+        # ansible_python_interpreter: "{{ '/usr/bin/env python-docker' if docker__pip_virtualenv | d() else ansible_python.executable }}"
+        ansible_python_interpreter: "python"
 
         # Dockerapp config
         dockerapp: 'pharos' #Docker app name
@@ -59,6 +59,7 @@
         pharos_docker: true
     roles:
       - { role: aptrust.pharos }
+      - {role: nickjj.docker, tags: docker}
     tasks:
 
       - name: whoami
