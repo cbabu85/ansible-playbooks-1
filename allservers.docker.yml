@@ -2,7 +2,7 @@
   - hosts:
       - apt-demo-docker
       - apt-demo-docker-new
-      - docker1
+      - docker*
       - apt-prod-srv
     gather_facts: true
 
@@ -16,6 +16,7 @@
       docker_users: "{{system_default_user}}"
     roles:
       - {role: aptrust.common.docker, tags: common}
+      - {role: stouts.hostname, tags: common, hostname}
       - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
         #- {role: geerlingguy.docker, tags: docker}
       - {role: nickjj.docker, tags: docker}
