@@ -1,6 +1,0 @@
----
-
-use_efs: true
-
-efs_mount_uri: "fs-2a1ead63.efs.us-east-1.amazonaws.com:/"
-system_default_user: 'adiamond'
