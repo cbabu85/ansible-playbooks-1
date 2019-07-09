@@ -9,8 +9,9 @@ apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.
 [nfs_server]
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 
-# APTrust 2.0 world
-# All new servers have '2' suffix in their hostname except demo, since it's a new 'namespace'
+[staging]
+docker4 hostname_name=docker4 hostname_fqdn=staging.aptrust.org host_eip=52.0.177.244 instance_id=i-0d2ae613c9c8c4eed
+
 [demo-servers]
 apt-demo-docker hostname_name=apt-demo-docker hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
 apt-demo-docker-new hostname_name=apt-demo-docker-new hostname_fqdn=demo.aptrust.org host_eip=52.90.43.198 # Pharos Demo2
@@ -18,7 +19,6 @@ apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.ap
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 #apt-util hostname_name=apt-util hostname_fqdn=nfs.aptrust.org  host_eip=54.175.28.251 # NFS Server
 docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=docker1.aptrust.org host_eip=34.201.130.220 instance_id=i-0c986eb59c16ae67a
-#apt-demo-docker ansible_ssh_user=ubuntu hostname_name=apt-demo-docker hostname_fqdn=apt-demo-docker.aptrust.org host_eip=34.206.100.82 instance_id=i-079b927590d4df8e0
 
 [pharos-servers]
 apt-demo-repo2 hostname_name=apt-demo-repo2 hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos Demo2
