@@ -16,10 +16,16 @@
     instance: "{{ansible_ec2_instance_id}}"
     region: "{{ansible_ec2_placement_region}}"
     name: "{{ ansible_hostname }}_data"
+    volume_type: gp2
     volume_size: 5
+    encrypted: yes
     aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
     aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
   register: blockdevice
+  tags: makeblock
+
+- debug: msg="{{blockdevice}}"
+  tags: makeblock
 
 - name: Create filesystem
   filesystem:
