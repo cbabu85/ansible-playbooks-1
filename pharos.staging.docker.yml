@@ -11,7 +11,7 @@
 #     bind-mounts are used.
 #
 -   hosts:
-      - docker1
+      - docker4
     vars_files:
         - "group_vars/vault.yml"
 
@@ -29,37 +29,9 @@
         DOCKER_DOMAIN: "{{ ansible_fqdn }}"
         # Docker tag or commit hash to pull specific Docker image.
         # e.g. docker_tag_name: 17be2ae
-
-        # Pharos config
-        #virtual_host: staging.aptrust.org
-
-        pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
-        pharos_db_port: '5431'
-        pharos_db_name: 'pharos_demo'
-        pharos_db_user: 'apt_pharos'
-        pharos_cronjobs:
-          pharos_notify:
-              hour: "*/10"
-              minute: "*/10"
-              params: ''
-              disabled: "yes"
-          pharos_snapshot:
-              hour: "1"
-              minute: "1"
-              day: "1"
-              params: "-o snapshot"
-              disabled: "yes"
-          pharos_deletion:
-              hour: "1"
-              minute: "2"
-              day: "1"
-              params: "-o deletion"
-              disabled: "yes"
-
-        pharos_docker: true
     roles:
       - { role: aptrust.pharos }
-      - {role: nickjj.docker, tags: docker}
+        #      - { role: nickjj.docker, tags: docker}
     tasks:
 
       - name: whoami
@@ -71,7 +43,7 @@
       - name: Slack to all
         slack:
           token: "{{slack_token}}"
-          msg: "Pharos Docker Deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
+          msg: "Pharos {{RAILS_ENV}} Docker Deployment on {{ inventory_hostname }} by user {{whobrokeit.stdout}} completed"
           icon_emoji: ":dog:"
           channel: 'ops'
         tags: [pharos,slack, deploy]
