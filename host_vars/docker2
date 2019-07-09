@@ -1,4 +1,4 @@
-vg_disk_size: 20
+vg_disk_size: 250
 
 APP_ENV: demo
 orgtype: "APT"
