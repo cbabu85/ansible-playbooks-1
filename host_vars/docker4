@@ -10,7 +10,7 @@ pharos_db_host: 'pharos-demo-demo2.cbtzcfmydoc1.us-east-1.rds.amazonaws.com'
 pharos_db_port: '5431'
 pharos_db_name: 'pharos_demo'
 pharos_db_user: 'apt_pharos'
-pharos_db_pwd: "{{ vault_pharos_dev_db_pwd}}"
+pharos_db_pwd: "{{ vault_pharos_demo_db_pwd}}"
 # Pharos System user for API access
 pharos_system_user: "system@aptrust.org"
 pharos_system_user_pwd: "{{vault_pharos_demo_system_user_pwd}}"
