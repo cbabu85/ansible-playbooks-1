@@ -12,14 +12,14 @@
 #
 -   hosts:
       - apt-demo-docker
-      - apt-demo-docker-new
+      #      - apt-demo-docker-new
     vars_files:
         - "group_vars/vault.yml"
 
     vars:
         # Workaround for Ansible docker Python modules. https://galaxy.ansible.com/nickjj/docker
-        #        ansible_python_interpreter: "{{ '/usr/bin/env python-docker' if docker__pip_virtualenv | d() else ansible_python.executable }}"
-        #ansible_python_interpreter: "/usr/bin/env python-docker"
+        #ansible_python_interpreter: "{{ '/usr/bin/env python-docker' if docker__pip_virtualenv | d() else ansible_python.executable }}"
+        # ansible_python_interpreter: "/usr/bin/env python-docker"
 
         # Dockerapp config
         dockerapp: 'pharos' #Docker app name
@@ -27,6 +27,7 @@
         dockerapp_data_path: "/data/{{dockerapp}}"
         dockerapp_repo: "https://github.com/APtrust/pharos"
         git_version: feature/two_factor #git branch/commit
+
         #        docker_container_name: pharos
         DOCKER_DOMAIN: "{{ ansible_fqdn }}"
         # Docker tag or commit hash to pull specific Docker image.
@@ -49,7 +50,7 @@
       - name: Slack to all
         slack:
           token: "{{slack_token}}"
-          msg: "Pharos Docker Deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
+          msg: "Pharos Docker Deployment of {{pharos_release }} on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
           icon_emoji: ":dog:"
           channel: 'ops'
         tags: [pharos,slack, deploy]
