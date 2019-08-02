@@ -1,1 +1,6 @@
 ---
+RAILS_ENV: 'staging'
+
+PHAROS_DB_HOST: db
+PHAROS_DB_PORT: 5432
+
