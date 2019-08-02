@@ -46,16 +46,17 @@
   - name: Create DB and User permissions
     command: sudo docker-compose exec -u postgres db psql -c "{{item}}"
     with_items:
-       - "CREATE USER {{pharos_db_user}} WITH PASSWORD '{{pharos_db_pwd}}' CREATEDB"
+       - "CREATE USER {{pharos_db_user}} WITH PASSWORD '{{pharos_db_pwd}}' SUPERUSER"
        - "ALTER DATABASE pharos_demo RENAME TO pharos_staging"
-       - "GRANT ALL PRIVILEGES ON DATABASE pharos_staging to {{pharos_db_user}};"
-       - "GRANT ALL PRIVILEGES ON SCHEMA public to {{pharos_db_user}};"
        - "ALTER DATABASE pharos_staging OWNER TO {{pharos_db_user}};"
-       - "GRANT ALL ON ALL TABLES IN SCHEMA public TO {{pharos_db_user}};"
+       # - "GRANT ALL PRIVILEGES ON DATABASE pharos_staging to {{pharos_db_user}};"
+       # - "GRANT ALL PRIVILEGES ON SCHEMA public to {{pharos_db_user}};"
+       # - "GRANT ALL PRIVILEGES ON SCHEMA public to public;"
+       # - "GRANT ALL ON ALL TABLES IN SCHEMA public TO {{pharos_db_user}};"
+       # - "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO {{pharos_db_user}};"
     args:
-      chdir: "{{docker_app_path}}"
-    tags: dbdumprestore
-
+       chdir: "{{docker_app_path}}"
+    tags: dbdump
 
 # Next should startup all services again.
   - name: Start docker containers from compose
