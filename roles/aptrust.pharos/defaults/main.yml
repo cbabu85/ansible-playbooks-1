@@ -58,3 +58,11 @@ docker_image_name: "registry.gitlab.com/aptrust/container-registry/pharos"
 docker_tag_name: 'latest'
 docker_app_path: "/srv/docker/pharos"
 docker_data_path: "/data/pharos"
+
+## STAGING vars
+rdsdate: "{{ ansible_date_time.year }}-{{ ansible_date_time.month }}-{{ ansible_date_time.day }}-{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"
+source_db_name: "{{ SOURCE_DB }}" # stagingdb
+new_db_name: "{{ NEW_DB  }}" # stagingdb2
+snapshot_name: "snapshot-{{ source_db_name }}--{{ date }}"
+# Source environemnt to get the DB snapshot from.
+source_env: demo
