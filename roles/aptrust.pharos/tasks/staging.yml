@@ -1,67 +1,64 @@
 ---
 # Staging environment deployment
 # Every new deploy for the staging environment should
-# - Destroy running Docker containers if exists (DOES IT ALREADY in docker.yml)
+# - Destroy running Docker containers if exists (DOES THIS ALREADY in docker.yml)
 # - Destroy old Staging DB, if exists
 # - Recreate Staging DB from latest demo/prod db backup (env should be passed in as variable but may default to demo)
 # - Recreate/Deploy Pharos Docker containers.
 #
-## Create DB on RDS if it doesn't exist.
-
-  - name: Ensure botocore and boto3 modules are installed
-    pip:
-       name: ["boto3", "botocore"]
-       extra_args: "--user"
-    delegate_to: "{{ inventory_hostname }}"
-    tags: dbstat
-
-# Task: Destroy old StagingDB
-# Ensure compose services are stopped
   - name: Make sure Docker services are shutdown and volumes removed.
     command: sudo docker-compose down -v
     args:
        chdir: "{{docker_app_path}}"
     tags: dockserv
 
-    #  - name: Install pg module dependencies
-    #apt:
-    #  name: ['postgresql', 'libpq-dev', 'python3-psycopg2']
-    #  state: present
-    #tags: dbdump
-  #pg_dump -h <rds host> -p 5432 -F c -O -U <rds user> <db name> > db.dump
-  # https://gist.github.com/herval/0839e3acc6f63ae2496a
-  # Restore: docker run --rm --interactive --link <postgres container id>:postgres --volume $PWD/:/tmp/ postgres:latest /bin/bash -c 'pg_restore --verbose --clean --no-acl --no-owner -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres -d <db name> /tmp/db.dump'0
-  #  - name: Make a pg_dump from current demo db
-  #  postgresql_db:
-  #    name: pharos_demo
-  #    login_host: "{{ vault_pharos_demo_db_host}}"
-  #    login_user: "{{ vault_pharos_demo_db_user }}"
-  #    login_password: "{{ vault_pharos_demo_db_pwd }}"
-  #     state: dump
-  #    target: "{{docker_data_path}}/pharos_demo.dump"
-  #    target_opts: "-F c -O"
-  #  tags: dbdump
   - name: Start Postgres container with initdb
-    command: sudo docker-compose up -d db
+    command: sudo docker-compose up -d  db
     args:
        chdir: "{{docker_app_path}}"
     tags: dbdump
 
   - name: Docker pg_dump
-    shell: sudo docker-compose run --rm -e PGPASSWORD={{vault_pharos_demo_db_pwd}} -v /data/pharos/pgdata:/var/lib/postgresql/data db bash -c "pg_dump --verbose -h {{vault_pharos_demo_db_host}} -p 5432 -Fc -O -U {{vault_pharos_demo_db_user}} pharos_demo > /var/lib/postgresql/data/pharos_demo.dump"
+    shell: sudo docker-compose run --rm -e PGPASSWORD={{vault_pharos_demo_db_pwd}} -v /data/pharos/pgdata:/pgdata db bash -c "pg_dump --verbose -h {{vault_pharos_demo_db_host}} -p 5432 -Fc -C -O -U {{vault_pharos_demo_db_user}} pharos_demo > /pgdata/pharos_demo.dump"
     become: true
     args:
        chdir: "{{docker_app_path}}"
        executable: /bin/bash
     tags: dbdump2
 
-
-  # Restore: docker run --rm --interactive --link <postgres container id>:postgres --volume $PWD/:/tmp/ postgres:latest /bin/bash -c 'pg_restore --verbose --clean --no-acl --no-owner -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres -d <db name> /tmp/db.dump'0
-  - name: Restore pharos_demo.dump to local psql db service
-    #command: sudo docker-compose exec db bash -c 'pg_restore --verbose --clean --no-acl --no-owner -U postgres -d pharos_staging /var/lib/postgresql/data/pharos_demo.dump'
-    command: sudo docker-compose exec db  pg_restore --verbose --clean --no-acl --no-owner -U postgres -d pharos_staging /var/lib/postgresql/data/pharos_demo.dump
+  - name: Create DB
+    #command: sudo docker-compose exec db bash -lc "createdb -U postgres pharos_staging && createuser -U {{pharos_db_user}} -d -E "
+    command: sudo docker-compose exec -u postgres db psql -c "{{item}}"
+    with_items:
+       - "CREATE DATABASE pharos_demo;"
     args:
        chdir: "{{docker_app_path}}"
-    tags: dbdump
+    tags: dbdumprestore
+
+  - name: Restore pharos_demo.dump to local psql db service
+    command: sudo docker-compose exec db bash -lc "pg_restore --verbose --clean  --no-acl --no-owner -U postgres -C -d postgres /pgdata/pharos_demo.dump"
+    args:
+       chdir: "{{docker_app_path}}"
+    tags: dbdumprestore
+
+  - name: Create DB and User
+    #command: sudo docker-compose exec db bash -lc "createdb -U postgres pharos_staging && createuser -U {{pharos_db_user}} -d -E "
+    command: sudo docker-compose exec -u postgres db psql -c "{{item}}"
+    with_items:
+       - "CREATE USER {{pharos_db_user}} WITH PASSWORD '{{pharos_db_pwd}}' CREATEDB"
+       - "ALTER DATABASE pharos_demo RENAME TO pharos_staging"
+       - "GRANT ALL PRIVILEGES ON DATABASE pharos_staging to {{pharos_db_user}};"
+       - "GRANT ALL PRIVILEGES ON SCHEMA public to {{pharos_db_user}};"
+       - "ALTER DATABASE pharos_staging OWNER TO {{pharos_db_user}};"
+       - "GRANT ALL ON ALL TABLES IN SCHEMA public TO {{pharos_db_user}};"
+    args:
+      chdir: "{{docker_app_path}}"
+    tags: dbdumprestore
+
 
 # Next should startup all services again.
+  - name: Start docker containers from compose
+    command: docker-compose up -d chdir="{{docker_app_path}}"
+    tags: dockserv2
+
+
