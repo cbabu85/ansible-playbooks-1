@@ -18,7 +18,8 @@
             fields:
               environment: "{{APP_ENV}}"
               app_group: "Exchange"
-            exclude_files: ['apt_fixity_check.log']
+              #            exclude_files: ['apt_fixity_check.log']
+            tail_files: true
 #          - input_type: log
 #            paths:
 #              - "/mnt/lvm/apt/logs/apt_bucket_reader_stats.json"
