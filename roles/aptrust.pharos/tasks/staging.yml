@@ -35,13 +35,15 @@
     tags: dbdumprestore
 
   - name: Restore pharos_demo.dump to local psql db service
-    command: sudo docker-compose exec db bash -lc "pg_restore --verbose --clean  --no-acl --no-owner -U postgres -C -d postgres /pgdata/pharos_demo.dump"
+    command: sudo docker-compose exec db bash -lc "sleep 2 && pg_restore --verbose --no-acl --no-owner -U postgres -d pharos_demo /pgdata/pharos_demo.dump"
     args:
        chdir: "{{docker_app_path}}"
     tags: dbdumprestore
 
-  - name: Create DB and User
-    #command: sudo docker-compose exec db bash -lc "createdb -U postgres pharos_staging && createuser -U {{pharos_db_user}} -d -E "
+    # Defining user as superuser since finding and setting correct privileges
+    # on schema and tables is a pain. Won't matter as much anyways since psql
+    # will only have pharos staging db.
+  - name: Create DB and User permissions
     command: sudo docker-compose exec -u postgres db psql -c "{{item}}"
     with_items:
        - "CREATE USER {{pharos_db_user}} WITH PASSWORD '{{pharos_db_pwd}}' CREATEDB"
