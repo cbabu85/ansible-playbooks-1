@@ -59,8 +59,6 @@
     tags: dbdump
 
 # Next should startup all services again.
-  - name: Start docker containers from compose
-    command: docker-compose up -d chdir="{{docker_app_path}}"
-    tags: dockserv2
-
-
+#  - name: Start docker containers from compose
+#    command: docker-compose up -d chdir="{{docker_app_path}}"
+#    tags: dockserv2
