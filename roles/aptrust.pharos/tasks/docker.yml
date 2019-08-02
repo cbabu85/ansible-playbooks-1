@@ -141,6 +141,13 @@
 #      - traefik.toml
 #    tags: makdir
 
+  - include: staging.yml
+    when: RAILS_ENV == 'staging'
+    tags: stagingworkflow
+    vars:
+        ansible_python_interpreter: "/usr/bin/python3"
+
+
   - name: Setup Pharos Cron Jobs
     # sudo docker run --rm --env-file .env aptrust/pharos:32ca2b4 bin/pharos_notify.py -o snapshot
     # Alternative separate microservice: http://issamben.com/how-to-run-cron-jobs-with-docker/
@@ -169,3 +176,4 @@
     vars:
         ansible_python_interpreter: "/usr/bin/env python-docker"
     tags: dockserv
+    #  when: RAILS_ENV == 'staging'
