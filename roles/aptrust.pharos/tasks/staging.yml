@@ -5,7 +5,7 @@
 # - Destroy old Staging DB, if exists
 # - Recreate Staging DB from latest demo/prod db backup (env should be passed in as variable but may default to demo)
 # - Recreate/Deploy Pharos Docker containers.
-#
+
   - name: Make sure Docker services are shutdown and volumes removed.
     command: sudo docker-compose down -v
     args:
@@ -18,16 +18,15 @@
        chdir: "{{docker_app_path}}"
     tags: dbdump
 
-  - name: Docker pg_dump
-    shell: sudo docker-compose run --rm -e PGPASSWORD={{vault_pharos_demo_db_pwd}} -v /data/pharos/pgdata:/pgdata db bash -c "pg_dump --verbose -h {{vault_pharos_demo_db_host}} -p 5432 -Fc -C -O -U {{vault_pharos_demo_db_user}} pharos_demo > /pgdata/pharos_demo.dump"
+  - name: Docker pg_dump RDS database
+    shell: sudo docker-compose run --rm -e PGPASSWORD={{vault_pharos_demo_db_pwd}} -v /data/pharos/pgdata:/pgdata db bash -c "pg_dump -h {{vault_pharos_demo_db_host}} -p 5432 -Fc -C -O -U {{vault_pharos_demo_db_user}} pharos_demo > /pgdata/pharos_demo.dump"
     become: true
     args:
        chdir: "{{docker_app_path}}"
        executable: /bin/bash
     tags: dbdump2
 
-  - name: Create DB
-    #command: sudo docker-compose exec db bash -lc "createdb -U postgres pharos_staging && createuser -U {{pharos_db_user}} -d -E "
+  - name: Create pharos_demo DB to connect to later
     command: sudo docker-compose exec -u postgres db psql -c "{{item}}"
     with_items:
        - "CREATE DATABASE pharos_demo;"
