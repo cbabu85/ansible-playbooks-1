@@ -49,7 +49,7 @@
 
     ansible_python_interpreter: "/usr/bin/python"
   vars_files:
-    - "group_vars/members/{{inst_id}}.{{inst_suffix}}.yml"
+    - "group_vars/members/{{inst_id}}.{{inst_suffix|default('edu')}}.yml"
 
   roles:
     - {role: aptrust.member}
