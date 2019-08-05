@@ -10,11 +10,10 @@
           institution_type: "{{inst_type}}"
           institution_member: "{{inst_member}}"
       with_items:
-        #          - logs
-          - receiving
-          - restore
-          - receiving.test
-          - restore.test
+          - 'receiving'
+          - 'restore'
+          - 'receiving.test'
+          - 'restore.test'
       register: new_buckets
       tags: new_buckets, justbuckets
 
