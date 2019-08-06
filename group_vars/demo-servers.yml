@@ -30,6 +30,7 @@ pharos_db_port: "5432"
 pharos_devise_key: "{{ vault_pharos_dev_devise_key}}"
 pharos_rails_key: "{{ vault_pharos_dev_rails_key}}"
 pharos_two_factor_key: "{{vault_pharos_demo_two_factor_key}}"
+pharos_2fa_grace_period: "{{vault_pharos_2fa_grace_period}}"
 pharos_authy_api_key: "{{vault_pharos_authy_api_key}}"
 
 pharos_url: "https://demo.aptrust.org"
