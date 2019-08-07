@@ -17,6 +17,10 @@ pharos_system_user: "system@aptrust.org"
 pharos_system_user_pwd: "{{vault_pharos_demo_system_user_pwd}}"
 pharos_system_user_key: "{{vault_pharos_demo_api_pwd}}"
 #
+pharos_logserver: logs.aptrust.org
+pharos_logserver_port: 12219
+pharos_log_level: debug
+
 pharos_aws_sns_region: "us-east-1"
 pharos_aws_sns_user: "{{vault_pharos_demo_aws_sns_user}}"
 pharos_aws_sns_pwd: "{{vault_pharos_demo_aws_sns_pwd}}"
