@@ -26,6 +26,7 @@
        pharos_src_db_user: "{{vault_pharos_demo_db_user}}"
        pharos_src_db: pharos_demo
     when: source_env | search("demo")
+    tags: always
 
   - set_fact:
        pharos_src_db_host: "{{vault_pharos_prod_db_host}}"
@@ -33,6 +34,7 @@
        pharos_src_db_pwd: "{{vault_pharos_prod_db_pwd}}"
        pharos_src_db: pharos_production
     when: source_env | search("prod")
+    tags: always
 
   - name: Docker pg_dump RDS database
     shell: sudo docker-compose run --rm -e PGPASSWORD={{pharos_src_db_pwd}} -v /data/pharos/pgdata:/pgdata db bash -c "pg_dump -h {{pharos_src_db_host}} -p 5432 -Fc -C -O -U {{pharos_src_db_user}} {{pharos_src_db}} > /pgdata/{{pharos_src_db}}.dump"
@@ -42,10 +44,11 @@
        executable: /bin/bash
     tags: dbdump2
 
-  - name: Create pharos_demo DB to connect to later
-    command: sudo docker-compose exec -u postgres db psql -c "{{item}}"
+  - name: Create pharos src db DB to connect to later
+    shell: sudo docker-compose exec -u postgres db psql -c "{{item}}"
     with_items:
        - "CREATE DATABASE {{pharos_src_db}};"
+    #   - "SELECT 'CREATE DATABASE {{pharos_src_db}}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{{pharos_src_db}}')"
     args:
        chdir: "{{docker_app_path}}"
     tags: dbdumprestore
