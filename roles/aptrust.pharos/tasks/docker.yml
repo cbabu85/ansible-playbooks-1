@@ -61,13 +61,22 @@
       - "{{docker_data_path}}/log"
     tags: makdir
 
-  - name: Set commit-version fact
-    set_fact: git_version="{{docker_tag_name}}"
-    when: docker_tag_name is defined and docker_tag_name != 'latest'
-    tags: gitclone
+  - name: Set commit-version fact to git hash
+    set_fact: gitversion="{{git_version}}"
+    when: git_version is defined
+    tags: gitclone, gitversion
+
+  - name: Set commit-version fact to branch
+    set_fact: gitversion="{{git_branch}}"
+    when: git_version is undefined
+    tags: gitclone, gitversion
 
   - stat: path={{docker_app_path}}/.git
     register: gitrepo
+    tags: gitclone, gitversion
+
+  - debug: var=gitversion
+    tags: gitclone, gitversion
 
     # https://github.com/ansible/ansible/issues/19809
   - name: Reset repo for Ansible bug
@@ -77,11 +86,16 @@
     when: gitrepo.stat.isdir is defined
     tags: gitclone
 
+    #    when git branch defined, use branch head
+    #    when git branch is undefined, error
+    #    when git branch and git version is defined, git clone, git checkout
+    #    when git version defined but git branch undefined, error
+
   - name: Git clone Pharos repo
     git:
       repo: "{{pharos_repo}}"
       dest: "{{docker_app_path}}"
-      version: "{{git_version}}"
+      version: "{{gitversion}}"
       accept_hostkey: yes
       clone: yes
       force: true
@@ -90,22 +104,27 @@
     when: pharos_repo is defined
     tags: gitclone
 
+    # NOTE: Revision should be set by play.
+    # If git_version is set this will result in the same, if it's unset it
+    # uses the HEAD/latest of the git repo.
   - name: get revision
     shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --short=7 HEAD"
     register: revision
-    tags: revs, update_env
+    tags: revs, update_env, gitclone
 
-  - name: get branch
-    shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --abbrev-ref HEAD"
-    register: pharos_branch
-    tags: revs, update_env
+    # NOTE: Branch should be set by play.
+    # only works if using HEAD of branch.
+    #  - name: get branch
+    # shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --abbrev-ref HEAD"
+    # register: pharos_branch
+    # tags: revs, update_env, gitclone
 
   - set_fact: pharos_release="{{revision.stdout}}"
     tags: revs, update_env
 
   # Note: Replacing / for _ for docker_tag_name construct that's used in env
   # to get the correct image
-  - set_fact: pharos_branch="{{pharos_branch.stdout | replace('/','_')}}"
+  - set_fact: pharos_branch="{{git_branch | replace('/','_')}}"
     tags: revs, update_env
 
   - debug: msg={{pharos_branch}}

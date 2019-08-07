@@ -1,6 +1,5 @@
 ---
 #   - a .env file in the code root (with sensible defaults)
-# The instance to deploy to requires to be internet reachable on 80/443.
 # Pharos:
 # All required changes should be env vars in the .env var for deploys in
 # different environemnts.
@@ -25,10 +24,15 @@
         dockerapp_path: "/srv/docker/{{dockerapp}}"
         dockerapp_data_path: "/data/{{dockerapp}}"
         dockerapp_repo: "https://github.com/APtrust/pharos"
-        git_version: feature/two_factor #git branch/commit
+
+        # Note: If latest HEAD of branch, just provide branch. If a custom git
+        # hash, both branch and hash need to be defined.
+        #git_branch: feature/two_factor #git branch/commit
+        #git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
+        git_branch: feature/two_factor
+        # Note: hash will use the correct Docker image tag automatically
+        git_version: e2c8c44
         DOCKER_DOMAIN: "{{ ansible_fqdn }}"
-        # Docker tag or commit hash to pull specific Docker image.
-        # e.g. docker_tag_name: 17be2ae
     roles:
       - { role: aptrust.pharos }
         #      - { role: nickjj.docker, tags: docker}
