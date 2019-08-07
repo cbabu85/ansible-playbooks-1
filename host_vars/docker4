@@ -1,6 +1,6 @@
 vg_disk_size: 1
 
-RAILS_ENV: demo
+RAILS_ENV: staging
 pharos_docker: true
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
 pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
