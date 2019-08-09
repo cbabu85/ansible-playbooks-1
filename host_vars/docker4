@@ -34,8 +34,6 @@ pharos_google_api_key: "{{vault_pharos_google_api_key}}"
 pharos_google_client_id: "{{vault_pharos_google_client_id}}"
 pharos_google_client_secret: "{{vault_pharos_google_client_secret}}"
 
-pharos_logserver: logs.aptrust.org
-pharos_logserver_port: 12219
 pharos_cronjobs:
     pharos_notify:
         hour: "*/10"
