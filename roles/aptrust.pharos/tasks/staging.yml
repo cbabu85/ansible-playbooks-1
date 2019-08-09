@@ -37,7 +37,8 @@
     tags: always
 
   - name: Docker pg_dump RDS database
-    shell: sudo docker-compose run --rm -e PGPASSWORD={{pharos_src_db_pwd}} -v /data/pharos/pgdata:/pgdata db bash -c "pg_dump -h {{pharos_src_db_host}} -p 5432 -Fc -C -O -U {{pharos_src_db_user}} {{pharos_src_db}} > /pgdata/{{pharos_src_db}}.dump"
+    #    shell: sudo docker-compose run --rm -e PGPASSWORD={{pharos_src_db_pwd}} -v /data/pharos/pgdata:/pgdata db bash -c "pg_dump -h {{pharos_src_db_host}} -p 5432 -Fc -C -O -U {{pharos_src_db_user}} {{pharos_src_db}} > /pgdata/{{pharos_src_db}}.dump"
+    shell: sudo docker-compose exec db bash -lc "PGPASSWORD={{pharos_src_db_pwd}} pg_dump -h {{pharos_src_db_host}} -p 5432 -Fc -C -O -U {{pharos_src_db_user}} {{pharos_src_db}} > /{{pharos_src_db}}.dump"
     become: true
     args:
        chdir: "{{docker_app_path}}"
@@ -53,8 +54,8 @@
        chdir: "{{docker_app_path}}"
     tags: dbdumprestore
 
-  - name: Restore pharos_demo.dump to local psql db service
-    command: sudo docker-compose exec db bash -lc "sleep 2 && pg_restore --verbose --no-acl --no-owner -U postgres -d {{pharos_src_db}} /pgdata/{{pharos_src_db}}.dump"
+  - name: Restore pharos_demo.dump to local psql container
+    command: sudo docker-compose exec db bash -lc "sleep 2 && pg_restore --verbose --no-acl --no-owner -U postgres -d {{pharos_src_db}} /{{pharos_src_db}}.dump"
     args:
        chdir: "{{docker_app_path}}"
     tags: dbdumprestore
