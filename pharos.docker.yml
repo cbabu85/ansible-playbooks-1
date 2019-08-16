@@ -26,16 +26,13 @@
         dockerapp_path: "/srv/docker/{{dockerapp}}"
         dockerapp_data_path: "/data/{{dockerapp}}"
         dockerapp_repo: "https://github.com/APtrust/pharos"
-        git_version: feature/two_factor #git branch/commit
-
-        #        docker_container_name: pharos
+        # Note: If latest HEAD of branch, only provide branchname. If a custom git
+        # hash, both branch and hash need to be defined. e.g.:
+        #  git_branch: feature/two_factor #git branch/commit
+        #  git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
+        git_branch: feature/two_factor
+        #        git_version: e2c8c44
         DOCKER_DOMAIN: "{{ ansible_fqdn }}"
-        # Docker tag or commit hash to pull specific Docker image.
-        # e.g. docker_tag_name: 17be2ae
-
-        # Pharos config
-        #virtual_host: staging.aptrust.org
-
         pharos_docker: true
     roles:
       - { role: aptrust.pharos }
