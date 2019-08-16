@@ -47,7 +47,7 @@
       - name: Slack to all
         slack:
           token: "{{slack_token}}"
-          msg: "Pharos {{RAILS_ENV}} Docker Deployment on {{ inventory_hostname }} by user {{whobrokeit.stdout}} completed"
+          msg: "Deployment of Pharos {{RAILS_ENV}} Release: {{pharos_release}} Branch: {{pharos_branch}} on {{ inventory_hostname }} by user {{whobrokeit.stdout}} completed"
           icon_emoji: ":dog:"
           channel: 'ops'
         tags: [pharos,slack, deploy]
