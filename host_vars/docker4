@@ -5,7 +5,7 @@ pharos_docker: true
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
 pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
 pharos_two_factor_key: "{{vault_pharos_staging_two_factor_key}}"
-pharos_authy_api_key: "{{vault_pharos_staging_authy_api_key}}"
+pharos_authy_api_key: "{{vault_pharos_demo_authy_api_key}}"
 pharos_2fa_grace_period: "20"
 pharos_db_host: 'db'
 pharos_db_port: '5432'
