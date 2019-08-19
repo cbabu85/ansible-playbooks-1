@@ -18,6 +18,7 @@
        chdir: "{{docker_app_path}}"
     tags: dbdump
 
+    # Note: hardcoded for now. Should be passed in at deploytime
   - set_fact: source_env=demo
 
   - set_fact:
@@ -25,6 +26,7 @@
        pharos_src_db_host: "{{vault_pharos_demo_db_host}}"
        pharos_src_db_user: "{{vault_pharos_demo_db_user}}"
        pharos_src_db: pharos_demo
+       pharos_two_factor_key: "{{vault_pharos_demo_two_factor_key}}"
     when: source_env | search("demo")
     tags: always
 
@@ -33,8 +35,15 @@
        pharos_src_db_user: "{{vault_pharos_prod_db_user}}"
        pharos_src_db_pwd: "{{vault_pharos_prod_db_pwd}}"
        pharos_src_db: pharos_production
+       pharos_two_factor_key: "{{vault_pharos_prod_two_factor_key}}"
     when: source_env | search("prod")
     tags: always
+
+  - name: Update 2fA key according to source_env
+    lineinfile:
+       path: "{{docker_app_path}}/.env"
+       regexp: '^TWO_FACTOR_KEY='
+       line: TWO_FACTOR_KEY={{pharos_two_factor_key}}
 
   - name: Docker pg_dump RDS database
     #    shell: sudo docker-compose run --rm -e PGPASSWORD={{pharos_src_db_pwd}} -v /data/pharos/pgdata:/pgdata db bash -c "pg_dump -h {{pharos_src_db_host}} -p 5432 -Fc -C -O -U {{pharos_src_db_user}} {{pharos_src_db}} > /pgdata/{{pharos_src_db}}.dump"

@@ -129,13 +129,21 @@
 
   - debug: msg={{pharos_branch}}
 
+
+  - include: staging.yml
+    when: RAILS_ENV == 'staging'
+    tags: stagingworkflow
+    vars:
+        ansible_python_interpreter: "/usr/bin/python3"
+
+
   - name: Update .env vars
     template:
-      src: .env.j2
-      dest: "{{docker_app_path}}/.env"
-      owner: "{{system_default_user}}"
-      group: "{{system_default_group}}"
-      mode: 0644
+        src: .env.j2
+        dest: "{{docker_app_path}}/.env"
+        owner: "{{system_default_user}}"
+        group: "{{system_default_group}}"
+        mode: 0644
     tags: update_env
 
     #  - name: Update traefik.toml
@@ -159,12 +167,6 @@
 #      - acme.json
 #      - traefik.toml
 #    tags: makdir
-
-  - include: staging.yml
-    when: RAILS_ENV == 'staging'
-    tags: stagingworkflow
-    vars:
-        ansible_python_interpreter: "/usr/bin/python3"
 
 
   - name: Setup Pharos Cron Jobs
