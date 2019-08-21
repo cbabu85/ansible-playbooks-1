@@ -110,7 +110,7 @@
   - name: get revision
     shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --short=7 HEAD"
     register: revision
-    tags: revs, update_env, gitclone
+    tags: revs, update_env, gitclone, always
 
     # NOTE: Branch should be set by play.
     # only works if using HEAD of branch.
@@ -120,12 +120,12 @@
     # tags: revs, update_env, gitclone
 
   - set_fact: pharos_release="{{revision.stdout}}"
-    tags: revs, update_env
+    tags: revs, update_env, always
 
   # Note: Replacing / for _ for docker_tag_name construct that's used in env
   # to get the correct image
   - set_fact: pharos_branch="{{git_branch | replace('/','_')}}"
-    tags: revs, update_env
+    tags: revs, update_env, always
 
   - debug: msg={{pharos_branch}}
 
@@ -181,7 +181,7 @@
         day: "{{item.value.day | default('*')}}"
         month: "{{item.value.month | default('*')}}"
         job: "sudo docker run --rm --env-file {{docker_app_path}}/.env \
-        {{docker_image_name}}:{{docker_tag_name | default('latest')}} \
+        {{docker_image_name}}:{{pharos_release}}-{{pharos_branch}} \
          bin/pharos_notify.py {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
         state: present
         disabled: "{{item.value.disabled}}"
