@@ -15,16 +15,48 @@
   with_items:
       - "{{docker_app_path}}"
       - "{{docker_data_path}}"
+      - "{{docker_data_path}}/log"
   tags: makdir
 
+- name: Set commit-version fact to git hash
+  set_fact: gitversion="{{git_version}}"
+  when: git_version is defined
+  tags: gitclone, gitversion
+
+- name: Set commit-version fact to branch
+  set_fact: gitversion="{{git_branch}}"
+  when: git_version is undefined
+  tags: gitclone, gitversion
+
+- stat: path={{docker_app_path}}/.git
+  register: gitrepo
+  tags: gitclone, gitversion
+
+- debug: var=gitversion
+  tags: gitclone, gitversion
+
+    # https://github.com/ansible/ansible/issues/19809
+- name: Reset repo for Ansible bug
+  command: git reset --hard
+  args:
+      chdir: "{{docker_app_path}}"
+  when: gitrepo.stat.isdir is defined
+  tags: gitclone
+
+    #    when git branch defined, use branch head
+    #    when git branch is undefined, error
+    #    when git branch and git version is defined, git clone, git checkout
+    #    when git version defined but git branch undefined, error
+
 - name: Clone exchange repo
-  git: repo="git@github.com:APTrust/exchange.git"
-      dest="{{ docker_app_path }}"
-      accept_hostkey=yes
-      clone=yes
-      update=yes
-      force=yes
-      version="{{ ex_git_version | default(master)}}"
+  git:
+    repo: "git@github.com:APTrust/exchange.git"
+    dest:"{{ docker_app_path }}"
+    accept_hostkey: yes
+    clone: yes
+    update: yes
+    force: yes
+    version: "{{ gitversion | default(master)}}"
   become_user: "{{system_default_user}}"
   become: true
   register: gitclone
