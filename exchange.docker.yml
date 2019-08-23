@@ -38,7 +38,7 @@
     - name: Slack to all
       slack:
         token: "{{slack_token}}"
-        msg: "{{playbook_name}} deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
+        msg: "{{playbook_name}} (Branch: {{git_branch}}, Commit: {{git_version}}) deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
         icon_emoji: ":dog:"
         channel: 'ops'
       tags: [exchange,slack,deploy]
