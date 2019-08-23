@@ -1,17 +1,6 @@
-# These tasks are meant for an alternative Docker only install and
-# may repeat some of the baremental.yml steps.
 # NOTE: Former home of repo was /home/ubuntu/go/src/github.com/APTrust/exchange, new home is
 # /srv/docker/exchange
 #
-# TODO: Need to create volume directories to mount config and data volumes
-# TODO: Need to ensure to pass in ENV Vars to docker containers, like AWS, pharos api key,...
-## - use .env file with option to overwrite with cli params.
-# TODO: Run and start containers. Stop. Update config in volume mounts. Restart containers
-
-# TODO: Refactor this as it will clone the repo on every run and overwrite the
-#      config files everytime. Consider moving config files in ~/go/bin/config
-# Checking if repo has been updated. Does not clone since 'go get' below will
-# Note: This will go away once all services are containerized. It may only update config files and just pull the latest containers from dockerhub.
 - name: Ensure dockerd is installed and running
   command: docker --version
   tags: checkdock
