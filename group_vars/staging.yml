@@ -3,4 +3,450 @@ RAILS_ENV: 'staging'
 
 PHAROS_DB_HOST: db
 PHAROS_DB_PORT: 5432
+pharos_url: "https://staging.aptrust.org"
+virtual_host: "staging.aptrust.org"
+
+vg_disk_size: 1
+
+RAILS_ENV: staging
+pharos_docker: true
+pharos_api_user: "{{vault_pharos_demo_api_user}}"
+pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
+pharos_two_factor_key: "{{vault_pharos_staging_two_factor_key}}"
+pharos_authy_api_key: "{{vault_pharos_demo_authy_api_key}}"
+pharos_2fa_grace_period: "20"
+pharos_db_host: 'db'
+pharos_db_port: '5432'
+pharos_db_name: 'pharos_staging'
+pharos_db_user: 'apt_pharos'
+pharos_db_pwd: "{{ vault_pharos_demo_db_pwd}}"
+# Pharos System user for API access
+pharos_system_user: "system@aptrust.org"
+pharos_system_user_pwd: "{{vault_pharos_demo_system_user_pwd}}"
+pharos_system_user_key: "{{vault_pharos_demo_api_pwd}}"
+#
+pharos_logserver: logs.aptrust.org
+pharos_logserver_port: 12219
+pharos_log_level: debug
+
+pharos_aws_sns_region: "us-east-1"
+pharos_aws_sns_user: "{{vault_pharos_demo_aws_sns_user}}"
+pharos_aws_sns_pwd: "{{vault_pharos_demo_aws_sns_pwd}}"
+pharos_aws_ses_user: "{{vault_pharos_demo_aws_ses_user}}"
+pharos_aws_ses_pwd: "{{vault_pharos_demo_aws_ses_pwd}}"
+
+pharos_nsq_base_url: "http://staging.aptrust.org:4151"
+#
+virtual_host: staging.aptrust.org
+pharos_google_api_key: "{{vault_pharos_google_api_key}}"
+pharos_google_client_id: "{{vault_pharos_google_client_id}}"
+pharos_google_client_secret: "{{vault_pharos_google_client_secret}}"
+
+pharos_cronjobs:
+    pharos_notify:
+        hour: "*/10"
+        minute: "*"
+        params: ''
+        disabled: 'yes'
+    pharos_snapshot:
+        hour: "1"
+        minute: "1"
+        day: "1"
+        params: '-o snapshot'
+        disabled: 'yes'
+    pharos_deletion:
+        hour: "1"
+        minute: "2"
+        day: "1"
+        params: '-o deletion'
+        disabled: 'yes'
+
+ex_docker: true
+ex_tardirectory: "/data/exchange"
+ex_restoredirectory: "/data/exchange/restore"
+ex_logdirectory: "/data/exchange/logs"
+ex_replicationdirectory: "/data/exchange/replication"
+ex_maxfilesize: "5368709120"
+ex_skipalreadyprocessed: "true"
+ex_deleteonsuccess: "true"
+ex_logtostderr: "false"
+ex_usevolumeservice: "false"
+ex_volumeserviceport: 8898
+ex_loglevel: 4
+ex_bucketreadercachehours: 24
+ex_bagvalidationconfigfile: "config/aptrust_bag_validation_config.json"
+ex_bagitversion: "0.97"
+ex_bagitencoding: "UTF-8"
+
+ex_pharosurl: "{{pharos_url}}"
+ex_pharosapiversion: "v2"
+
+ex_nsqdhttpaddress: "http://staging.aptrust.org:4151"
+ex_nsqlookupd: "staging.aptrust.org:4161"
+
+ex_aptrusts3region: "us-east-1"
+ex_aptrustglacierregion: "us-west-2"
+
+ex_preservationbucket: "aptrust.test.preservation"
+ex_replicationbucket: "aptrust.test.preservation.oregon"
+
+ex_restoretotestbuckets: "true"
+ex_maxdayssincefixitycheck: 90
+
+ex_glacier_region_VA: "us-east-1"
+ex_glacier_region_OH: "us-east-2"
+ex_glacier_region_OR: "us-west-2"
+ex_glacier_bucket_VA: "aptrust.test.preservation.glacier.va"
+ex_glacier_bucket_OH: "aptrust.test.preservation.glacier.oh"
+ex_glacier_bucket_OR: "aptrust.test.preservation.glacier.or"
+ex_glacier_deep_bucket_VA: "aptrust.test.preservation.glacier-deep.va"
+ex_glacier_deep_bucket_OH: "aptrust.test.preservation.glacier-deep.oh"
+ex_glacier_deep_bucket_OR: "aptrust.test.preservation.glacier-deep.or"
+
+
+ex_fetchworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_fetch_topic",
+    nsqchannel: "apt_fetch_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_storeworker: {
+    networkconnections: 16,
+    workers: 8,
+    nsqtopic: "apt_store_topic",
+    nsqchannel: "apt_store_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_recordworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_record_topic",
+    nsqchannel: "apt_record_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_replicationworker: {
+    networkconnections: "4",
+    workers: "8",
+    nsqtopic: "apt_replication_topic",
+    nsqchannel: "apt_replication_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_restoreworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_restore_topic",
+    nsqchannel: "apt_restore_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_filerestoreworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_file_restore_topic",
+    nsqchannel: "apt_file_restore_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_filedeleteworker: {
+    networkconnections: "12",
+    workers: "4",
+    nsqtopic: "apt_file_delete_topic",
+    nsqchannel: "apt_file_delete_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "30m"
+}
+
+ex_fixityworker: {
+    networkconnections: "4",
+    workers: "4",
+    nsqtopic: "apt_fixity_topic",
+    nsqchannel: "apt_fixity_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_glacierrestoreworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_glacier_restore_topic",
+    nsqchannel: "apt_glacier_restore_channel",
+    maxattempts: "8",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "420m"
+}
+
+ex_receivingbuckets: [
+    'aptrust.receiving.test.chd.virginia.edu',
+    'aptrust.receiving.test.columbia.edu',
+    'aptrust.receiving.test.georgetown.edu',
+    'aptrust.receiving.test.indiana.edu',
+    'aptrust.receiving.test.jhu.edu',
+    'aptrust.receiving.test.miami.edu',
+    'aptrust.receiving.test.ncsu.edu',
+    'aptrust.receiving.test.nd.edu',
+    'aptrust.receiving.test.psu.edu',
+    'aptrust.receiving.test.syr.edu',
+    'aptrust.receiving.test.test.edu',
+    'aptrust.receiving.test.uc.edu',
+    'aptrust.receiving.test.uconn.edu',
+    'aptrust.receiving.test.umd.edu',
+    'aptrust.receiving.test.umich.edu',
+    'aptrust.receiving.test.fulcrum.org',
+    'aptrust.receiving.test.unc.edu',
+    'aptrust.receiving.test.virginia.edu',
+    'aptrust.receiving.test.viul.virginia.edu',
+    'aptrust.receiving.test.vt.edu',
+    'aptrust.receiving.test.vcu.edu',
+    'aptrust.receiving.test.vwu.edu',
+    'aptrust.receiving.test.wm.edu',
+    'aptrust.receiving.test.case.edu'
+]
+
+ex_dpn: {
+    localnode: "aptrust",
+    logdirectory: "/mnt/lvm/dpn/logs",
+    stagingdirectory: "/mnt/lvm/dpn/staging",
+    remotenodehomedirectory: "/home",
+    dpnrestorationdirectory: "/mnt/lvm/dpn/restoration",
+    loglevel: "4",
+    logtostderr: "false",
+    replicatetonumnodes: "2",
+    dpnapiversion: "api-v2",
+    dpnpreservationbucket: "aptrust.dpn.test",
+    dpnrestorationbucket: "aptrust.dpn.restoration.test",
+    acceptinvalidsslcerts: "false",
+    usesshwithrsync: "true",
+    dpnglacierregion: "us-east-1",
+# TODO: Is this relative or absolute to the go bin or go src directory?
+#       We may want to move configs in the bin directory anyways. and only
+#       update them if the repo has updated.
+    bagvalidationconfigfile: "config/dpn_bag_validation_config.json",
+}
+
+ex_dpn_restclient: {
+    comment: "Settings for our local DPN REST API server. Load LocalAuthToken from environment!",
+    localserviceurl: "https://dpn-demo2.aptrust.org/",
+    localapiroot: "api-v2",
+    localauthtoken: ""
+}
+
+ex_dpn_defaultmetadata: {
+  comment: "Config settings for common DPN bagit metadata",
+  bagitversion: "0.97",
+  bagitencoding: "UTF-8",
+  ingestnodename: "APTrust",
+  ingestnodeaddress: "160 McCormick Rd., Charlottesville, VA 22904",
+  ingestnodecontactname: "APTrust Administrator",
+  ingestnodecontactemail: "help@aptrust.org"
+}
+
+# comment: "remote node admin tokens are ignored in this config.",
+ex_dpn_remotenodeadmintokensfortesting: {
+  chron: "",
+  hathi: "",
+  sdr:   "",
+  tdr:   ""
+}
+
+# comment: set these in the environment, not here. export dpn_<node>_token.,
+ex_dpn_remotenodetokens: {
+  chron: "",
+  hathi: "",
+  sdr:   "",
+  tdr:   ""
+}
+
+# comment: "remote node urls in demo come from node records in the local rest service.",
+ex_dpn_remotenodeurls: {
+  chron: "",
+  hathi: "",
+  sdr:   "",
+  tdr:   ""
+}
+
+ex_dpn_dpnpackageworker: {
+  networkconnections: "8",
+  workers: "4",
+  nsqtopic: "dpn_package_topic",
+  nsqchannel: "dpn_package_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpnvalidationworker: {
+  networkconnections: "8",
+  workers: "4",
+  nsqtopic: "dpn_validation_topic",
+  nsqchannel: "dpn_validation_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpncopyworker: {
+  networkconnections: "8",
+  workers: "4",
+  nsqtopic: "dpn_copy_topic",
+  nsqchannel: "dpn_copy_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpningeststoreworker: {
+  networkconnections: "4",
+  workers: "4",
+  nsqtopic: "dpn_ingest_store_topic",
+  nsqchannel: "dpn_ingest_store_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpningestrecordworker: {
+  networkconnections: "4",
+  workers: "4",
+  nsqtopic: "dpn_record_topic",
+  nsqchannel: "dpn_record_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpnreplicationstoreworker: {
+  networkconnections: "4",
+  workers: "4",
+  nsqtopic: "dpn_replication_store_topic",
+  nsqchannel: "dpn_replication_store_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpnrestoreworker: {
+  networkconnections: "4",
+  workers: "4",
+  nsqtopic: "dpn_restore_topic",
+  nsqchannel: "dpn_restore_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpnglacierrestoreworker: {
+  networkconnections: "4",
+  workers: "4",
+  nsqtopic: "dpn_glacier_restore_topic",
+  nsqchannel: "dpn_glacier_restore_channel",
+  maxattempts: "10",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "180m"
+}
+
+ex_dpn_dpns3downloadworker: {
+  networkconnections: "8",
+  workers: "4",
+  nsqtopic: "dpn_s3_download_topic",
+  nsqchannel: "dpn_s3_download_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "360m"
+}
+ex_dpn_dpnfixityworker: {
+  networkconnections: "8",
+  workers: "4",
+  nsqtopic: "dpn_fixity_topic",
+  nsqchannel: "dpn_fixity_channel",
+  maxattempts: "3",
+  maxinflight: "20",
+  heartbeatinterval: "10s",
+  readtimeout: "60s",
+  writetimeout: "10s",
+  messagetimeout: "360m"
+}
+
+# NSQ services config
+ex_nsq_mem_queue_size: "0"
+ex_nsq_data_path: "{{ex_tardirectory}}"
+ex_nsq_tcp_address: "0.0.0.0:4150"
+ex_nsq_broadcast_address: "{{hostname_fqdn}}"
+ex_nsq_nsqlookupd_tcp_addresses: "127.0.0.1:4160"
+ex_nsq_msg_timeout: "360m0s"
+ex_nsq_max_msg_timeout: "720m0s"
+ex_nsq_max_req_timeout: "180m"
+
 
