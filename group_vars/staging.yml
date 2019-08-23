@@ -447,3 +447,4 @@ ex_nsq_max_req_timeout: "180m"
 
 ## EBS Autoscale
 vg_disk_size: 2
+nsq_address: ''

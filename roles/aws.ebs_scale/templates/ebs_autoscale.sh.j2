@@ -114,9 +114,11 @@ MAX_DISKS="{{vg_max_disks}}"
 # base AWS CLI command
 AWS_EC2="/usr/local/bin/aws ec2"
 
+# Note: NSQ stats curl disabled in favor of querying Pharos for PIDs
+# see function check_airtraffic for full justification.
 # NSQ Address
 # e.g. demo-services.aptrust.org:4151
-NSQ_ADDRESS="{{nsq_address}}"
+#NSQ_ADDRESS="{{nsq_address}}"
 
 # Pharos API creds to check running processes before shrinking
 PHAROS_URL="{{pharos_url}}"
