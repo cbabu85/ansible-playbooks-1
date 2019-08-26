@@ -1,9 +1,0 @@
----
-# group_vars/repository.aptrust.org
-
-hostname: repository.aptrust.org
-
-# Does not deploy until explicity set by command line args
-newdeploy: False
-
-webserver: True
