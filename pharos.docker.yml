@@ -12,6 +12,7 @@
 #
 -   hosts:
       - apt-demo-docker
+      - apt-demo
       #      - apt-demo-docker-new
     vars_files:
         - "group_vars/vault.yml"
