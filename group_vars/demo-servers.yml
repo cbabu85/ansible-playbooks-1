@@ -298,7 +298,8 @@ ex_receivingbuckets: [
         'aptrust.receiving.test.vwu.edu',
         'aptrust.receiving.test.wm.edu',
         'aptrust.receiving.test.case.edu',
-        'aptrust.receiving.test.bc.edu'
+        'aptrust.receiving.test.bc.edu',
+        'aptrust.receiving.test.lafayette.edu'
     ]
 
 ex_dpn: {
