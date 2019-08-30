@@ -76,6 +76,13 @@ pharos_cronjobs:
         day: "1"
         params: '-o deletion'
         disabled: 'no'
+    pharos_stale_users:
+        hour: "5"
+        minute: "5"
+        day: "1"
+        params: '-o stale_users'
+        disabled: 'no'
+
 
 # AWS EFS/DBS
 # External Filesystems
