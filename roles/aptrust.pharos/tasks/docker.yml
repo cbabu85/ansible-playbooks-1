@@ -129,14 +129,6 @@
 
   - debug: msg={{pharos_branch}}
 
-
-  - include: staging.yml
-    when: RAILS_ENV == 'staging'
-    tags: stagingworkflow
-    vars:
-        ansible_python_interpreter: "/usr/bin/python3"
-
-
   - name: Update .env vars
     template:
         src: .env.j2
@@ -144,7 +136,14 @@
         owner: "{{system_default_user}}"
         group: "{{system_default_group}}"
         mode: 0644
-    tags: update_env
+    tags: update_env, always
+
+
+  - include: staging.yml
+    when: RAILS_ENV == 'staging'
+    tags: stagingworkflow, resetdatabase
+    vars:
+        ansible_python_interpreter: "/usr/bin/python3"
 
     #  - name: Update traefik.toml
     #    template:
