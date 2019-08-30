@@ -89,6 +89,13 @@
     ignore_errors: True
     tags: dbdump
 
+  - name: Update environment in db
+    command: sudo docker-compose run --rm migration bin/rails db:environment:set
+    args:
+       chdir: "{{docker_app_path}}"
+    tags: dbdump
+
+
 # Next should startup all services again.
 #  - name: Start docker containers from compose
 #    command: docker-compose up -d chdir="{{docker_app_path}}"
