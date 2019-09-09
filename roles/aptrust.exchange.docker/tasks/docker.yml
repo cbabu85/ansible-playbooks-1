@@ -83,14 +83,21 @@
     - { regexp: "PHAROS_API_KEY", line: "PHAROS_API_KEY={{pharos_api_key}}"}
    tags: dotenv
 
-# Note: Commmon role creates and mounts external filesystems like EFS/EBS.
-#       Applying permissions recursively to avoid Supervisor bug that creates
-#       logfiles only with root:root rw access.
-#       https://github.com/Supervisor/supervisor/issues/114
-# Note: Normally this module uses atomic operations to prevent data corruption or inconsistent reads from the target files, sometimes systems are configured or just broken in ways that prevent this. One example are docker mounted files, they cannot be updated atomically and can only be done in an unsafe manner.
-# This boolean option allows ansible to fall back to unsafe methods of updating files for those cases in which you do not have any other choice. Be aware that this is subject to race conditions and can lead to data corruption.
-#
-- name: "Create {{mount_dir}} volume directories (dockerapp)"
+- name: Setup dockerapp directory structure
+  file:
+    path: "{{item}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0775
+    recurse: true
+    state: directory
+   with_items:
+     - "{{docker_app_path}}"
+     - "{{docker_data_path}}"
+     - "{{docker_data_path}}/log"
+   tags: makedir
+
+- name: "Create elastic EBS volume directories (dockerapp)"
   become: yes
   file:
     path: "{{mount_dir}}/{{item.0}}/{{item.1}}"
@@ -103,7 +110,7 @@
     follow: false
   with_nested:
     - ['exchange']
-    - ['data', 'logs', 'restore', 'replication']
+    - ['data', 'restore', 'replication']
   tags: exchange_ebs
 
 ##### TEMP HYBRID SETUP START ####
@@ -111,8 +118,9 @@
 - name: Update Exchange config file in {{goapp_cfg_path}}
   become_user: "{{system_default_user}}"
   become: true
-  template: src=exchange.json.j2
-            dest="/{{goapp_cfg_path}}/{{GO_ENV}}.json"
+  template:
+     src: exchange.json.j2
+     dest: "/{{goapp_cfg_path}}/{{GO_ENV}}.json"
   tags:
     - buildgo
     - gitclone
@@ -125,9 +133,9 @@
 - name: Update Exchange config file
   become_user: "{{system_default_user}}"
   become: true
-  template: src=exchange.json.j2
-            dest="{{docker_app_path}}/config/{{GO_ENV}}.json"
-  tags: buildgo, exchangetemplate
+  template:
+    src: exchange.json.j2
+    dest: "{{docker_app_path}}/config/{{GO_ENV}}.json"
 
 - name: Add APTrust cronjobs
   cron:
