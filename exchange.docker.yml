@@ -26,6 +26,7 @@
     roles:
       - {role: aptrust.common.docker, tags: common}
       - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
+      - {role: aws.ebs_scale.docker, tags: ebs_scale_docker}
       - {role: aptrust.exchange.docker, tags: [exchange, deploy]}
     tasks:
 
