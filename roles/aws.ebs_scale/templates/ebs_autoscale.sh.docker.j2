@@ -73,10 +73,6 @@ fi
 # LV = lv_$NAME
 NAME="{{vg_name}}_lvm"
 
-# Orgtype
-# Describes the orgtype (APT,DPN) for resource tags
-ORGTYPE="{{orgtype|default('apt')}}"
-
 # Environment
 # Describes the environment (prod,demo,dev,test)
 ENVIRONMENT="{{envtype|default('demo')}}"
@@ -256,7 +252,6 @@ add_disk() {
       --region $REGION \
       --tag-specifications "ResourceType=volume,
                             Tags=[{Key=Name,Value=ebsscale_${NAME}_disk_${DISK_LETTER}},
-                            {Key=Organisation_type,Value=${ORGTYPE}},
                             {Key=Environment,Value=${ENVIRONMENT}}]" > /etc/ebs_volume_info
     volume_id=$(jq -r '.VolumeId' /etc/ebs_volume_info)
 
