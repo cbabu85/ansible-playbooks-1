@@ -1,0 +1,26 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EBSautoscale",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AttachVolume",
+                "ec2:CreateVolume",
+                "ec2:DeleteVolume",
+                "ec2:DescribeInstanceAttribute",
+                "ec2:DescribeInstances",
+                "ec2:DescribeVolumeAttribute",
+                "ec2:DescribeVolumeStatus",
+                "ec2:DescribeVolumes",
+                "ec2:DetachVolume",
+                "ec2:EnableVolumeIO",
+                "ec2:ModifyInstanceAttribute",
+                "ec2:ModifyVolumeAttribute"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+## INSTALL reference https://gist.githubusercontent.com/mrlesmithjr/1da992b648771b9afd50/raw/33a9e42c4148553fc73fefbf33b97b3d1ea35495/confg_lvm.yml
+# vg_name: Volume group and Logical volume name
+# vg_disk_size: Logical volume size
+# vg_filesystem: FS, ext4
+
+
+- name: Create new LVM volume group
+  lvg: vg={{ vg_name }} pvs=/dev/xvdf state=present
+
+- name: Create new LVM logical volume
+  lvol: vg={{ vg_name }} lv={{ vg_name }} size={{ vg_disk_size }}
+  # when: create and config_lvm
+
+- name: Create new filesystem on new LVM logical volume
+  filesystem: fstype={{ vg_filesystem }} dev=/dev/{{ vg_name }}/{{ vg_name }}
+  register: fsstats
+ # when: create and config_lvm
+
+# TODO: Mount dest should be a variable.
+- name: Mount EBS data drive
+  mount:
+    src: /dev/{{vg_name}}/{{vg_name}}
+    path: /mnt/ebs
+    fstype: ext4
+    state: mounted

@@ -1,0 +1,163 @@
+---
+
+# Get local git ref for script versioning
+- name: Get git hash
+  become: false
+  command: git log --pretty=format:"%h" -n 1
+  delegate_to: localhost
+  register: githash
+  tags: gitts, copyebsscript
+
+- set_fact: githash={{ githash.stdout }}
+  tags: gitts, copyebsscript
+
+- debug: msg="{{ githash}}"
+  tags: gitts
+
+# Set facts for EBS resource tagging
+-  set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
+-  set_fact: environment="{% if 'prod' in ansible_hostname%}prod{%else%}demo{%endif%}"
+
+- name: Setup EBS_AutoScaling IAM Role
+  iam:
+    iam_type: role
+    name: "{{iam_policy_name}}"
+    state: present
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    trust_policy:
+      Version: '2012-10-17'
+      Statement:
+      - Action: sts:AssumeRole
+        Effect: Allow
+        Principal:
+          Service: ec2.amazonaws.com
+
+- name: Add inline policy to EBS_AutoScaling Role
+  iam_policy:
+    iam_type: role
+    iam_name: "{{iam_policy_name}}"
+    policy_name: "{{iam_policy_name}}"
+    policy_json: "{{ lookup( 'template', 'ebs_autoscale_role.json.j2') }}"
+    state: present
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+
+- name: Gimme non-alternative facts
+  ec2_metadata_facts:
+
+# Need to use aws cli since function doesn't exist yet in Ansible
+- name: Apply IAM policy to instance
+  delegate_to: localhost
+  command: "aws ec2 associate-iam-instance-profile --instance-id {{ansible_ec2_instance_id}} --iam-instance-profile Name={{iam_policy_name}} --region {{ansible_ec2_placement_region}}"
+  become: False
+  register: iam_pol_result
+  when: instance_name is defined
+  # This is stupid but there is currently no other sane way.
+  ignore_errors: yes
+
+- name: Install LVM packages
+  apt: name=lvm2 state=latest
+
+# TODO: Once some functions of the ebs_scale script are factored out, this may
+# be enabled again. For now its just for documentation reasons. It is working
+# and tested but includes redundant functions as long as the scaling script
+# takes care of them.
+# - include: lvm_setup.yml
+
+- name: Install jq for json queries and bc for bash arithmetic
+  apt: name={{item}} state=present
+  with_items:
+    - jq
+    - bc
+
+# Install ebsnvme-id script and udev rules to symlink nvme block devices to
+# regular /dev/xvdX names. This applies to all Linux version's above Kernel 4.2
+# and to AWS c5 instances
+# https://www.logicworks.com/blog/2018/03/manage-aws-ebs-volumes-c5-m5-puppet-chef-ansible/
+- name: Copy ebsnvme-id script
+  copy:
+    src: ebsnvme-id.py
+    dest: /sbin
+    owner: root
+    group: root
+    mode: 0774
+  tags: nvmfix
+
+# Add udev rule to create symlinks from nvme devices to xvdX
+- name: Copy udev rule
+  copy:
+    src: 70-ec2-nvme-devices.rules
+    dest: /etc/udev/rules.d
+    owner: root
+    group: root
+    mode: 0774
+  tags: nvmfix
+
+- name: Reload udev rules
+  become: true
+  shell: /bin/bash -lc "udevadm control --reload-rules && udevadm trigger"
+  tags: nvmfix
+
+- set_fact: ebs_autoscale_script='ebs_autoscale.sh.xenial.j2'
+  when: ansible_distribution_release == 'xenial'
+  tags: copyebsscript
+
+# TODO: Consider using root as owner and executor or limit sudo to the lvm commands
+#       currently system_default_user has pwdless sudo privileges which is not ideal.
+- name: Copy EBS_Scale script
+  template:
+    #  src: "ebs_autoscale.sh.j2"
+    src: "{{ebs_autoscale_script}}"
+    dest: "{{ebs_autoscale_script_dest}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0750
+  tags: copyebsscript
+
+- name: Touch logfile
+  file:
+    dest: "{{ebs_logfile}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0644
+    state: touch
+
+#TODO: Cron interval is set low for testing reasons. Interval size depends on
+# base drive size and performance. 25% of a 100G drive could be filled in
+# about 2.5 hrs
+- name: Add ebs_autoscale as cronjob
+  cron:
+    name: "EBS Autoscaling"
+    user: "{{system_default_user}}"
+    minute: "{{ebs_cron_minute | default('15')}}"
+    hour: "{{ebs_cron_hour | default('*')}}"
+    job: "sudo {{ebs_autoscale_script_dest}} >> /var/log/ebs_autoscale.log 2>&1"
+    state: present
+    disabled: no
+  tags: ebsscalecron
+
+- name: "Add logrotation for {{ebs_logfile}}"
+  template:
+      src: logrotation.yml.j2
+      dest: "/etc/logrotate.d/ebs_autoscale"
+      owner: "root"
+      group: "{{deploy_group}}"
+      mode: 0644
+  tags: ebs_logrotation
+
+
+- name: Execute initial EBS_Autoscale if it hasn't run yet
+  become_user: "{{system_default_user}}"
+  become: true
+  shell: sudo "{{ebs_autoscale_script_dest}}"
+  tags: initebsrun
+
+- name: Update permissions to lvm mount dir
+  file:
+    dest: "/mnt/lvm"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0775
+    state: directory
+
