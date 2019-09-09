@@ -4,8 +4,8 @@
 # Allows to attach and remove EBS volumes managed under LVM to
 # have a dynamically sized partition attached to an EC2 instance
 #
-# Intance needs either to be launched with a role able to access to relevant AWS API endpoints
-# or the credentials can be hardcoded in the config.
+# Intance needs either to be launched with a role able to access to relevant
+# AWS API endpoints or the credentials can be hardcoded in the config.
 #
 # Minimal IAM Role:
 # {
@@ -75,6 +75,7 @@ NAME="{{vg_name}}_lvm"
 
 # Environment
 # Describes the environment (prod,demo,dev,test)
+# For EBS Tagging only
 ENVIRONMENT="{{envtype|default('demo')}}"
 
 # Volume Type
@@ -88,6 +89,7 @@ MOUNT_POINT="{{vg_mount_point}}"
 # Size of each disk in GB
 # Maximum EBS size is 1024GB
 DISK_SIZE="{{vg_disk_size}}"
+
 # %age of free space (relative to disk size) before adding a new disk
 SPACE_UP="{{vg_space_up}}"
 
@@ -196,7 +198,8 @@ add_to_fstab(){
     # Workaround to get the device name since Ubuntu thinks its funny to double
     # dash the vg.
     MOUNT_DEVICE=$(grep $MOUNT_POINT /proc/mounts | awk '{print $1}')
-    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. exit here." && send_msg "LVM not mounted. Running init LVM" && initialize_lv; }
+    [ -z "$MOUNT_DEVICE" ] && { echo "No mounts. Empty. exit here." &&
+			send_msg "LVM not mounted. Running init LVM" && initialize_lv; }
 
 
     fstab_entry="$MOUNT_DEVICE $MOUNT_POINT ext4 rw,nofail,x-systemd.device-timeout=1 0 0"
@@ -405,13 +408,18 @@ check_inflight(){
     # may hit timeout in NSQ and won't show up there anymore. This leads to
     # premature shutdown of services and interrupting running processes.
     # airtraffic=$(timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n")
-    airtraffic=$(curl -H "Content-Type: application/json" -H "Accept: application/json" -H "X-Pharos-API-User: $PHAROS_API_USER" -H "X-Pharos-API-Key: $PHAROS_API_KEY" -G "$PHAROS_URL/api/v2/items?node_not_empty=true&pid_not_empty=true" | jq .count)
+    airtraffic=$(curl -H "Content-Type: application/json" \
+					  -H "Accept: application/json" \
+					  -H "X-Pharos-API-User: $PHAROS_API_USER" \
+					  -H "X-Pharos-API-Key: $PHAROS_API_KEY" \
+					  -G "$PHAROS_URL/api/v2/items?node_not_empty=true&pid_not_empty=true" | jq .count)
 
 # Check for Rsync jobs on when script is run on DPN node.
     rsyncing=$(ps axu |pgrep rsync | wc -l)
 
      if [[ "$airtraffic" -gt "0" || "$rsyncing" -gt "0" ]]; then
-       log "Seeing some air traffic: $airtraffic and/or rsyncs $rsyncing. Please stand by. "
+       log "Seeing some air traffic: $airtraffic and/or rsyncs $rsyncing.
+	   		Please stand by. "
        inflight_result="standby"
      else
        log "Nobody is flying. Good to go."
