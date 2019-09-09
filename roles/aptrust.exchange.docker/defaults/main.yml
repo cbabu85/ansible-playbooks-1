@@ -12,13 +12,13 @@ buildgo: true
 # Usually uses external filesystems EBS, NFS
 # Setting default here which will create subdirectories
 # regardless if any external filesystem is mounted there or not
-mount_dir: /data
+mount_dir: /mnt/lvm
 
 #Git branch to deploy
 ex_git_version: master
 
 # Flag to deploy docker-only environment
-ex_docker: false
+ex_docker: true
 
 # Docker related settings
 docker_app_path: "/srv/docker/exchange"
@@ -26,8 +26,6 @@ docker_data_path: "/data/exchange"
 docker_registry_key: registry.gitlab.com/aptrust/container-registry/
 
 # Used to determine which services to deploy on server.
-# Demo server will have ingeste and restore, prod will
-# have either on a different server
 ex_services: all # values: all, ingest, restore
 
 ex_apt_services:
