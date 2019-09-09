@@ -49,16 +49,16 @@
 
   - name: Setup dockerapp directory structure
     file:
-      path: "{{item}}"
-      owner: "{{system_default_user}}"
-      group: "{{system_default_user}}"
-      mode: 0775
-      recurse: true
-      state: directory
+        path: "{{item}}"
+        owner: "{{system_default_user}}"
+        group: "{{system_default_user}}"
+        mode: 0775
+        recurse: true
+        state: directory
     with_items:
-      - "{{docker_app_path}}"
-      - "{{docker_data_path}}"
-      - "{{docker_data_path}}/log"
+        - "{{docker_app_path}}"
+        - "{{docker_data_path}}"
+        - "{{docker_data_path}}/log"
     tags: makdir
 
   - name: Set commit-version fact to git hash
@@ -93,14 +93,13 @@
 
   - name: Git clone Pharos repo
     git:
-      repo: "{{pharos_repo}}"
-      dest: "{{docker_app_path}}"
-      version: "{{gitversion}}"
-      accept_hostkey: yes
-      clone: yes
-      force: true
-      update: yes
-      #      umask: '00022'
+        repo: "{{pharos_repo}}"
+        dest: "{{docker_app_path}}"
+        version: "{{gitversion}}"
+        accept_hostkey: true
+        clone: true
+        force: true
+        update: true
     when: pharos_repo is defined
     tags: gitclone
 
