@@ -3,7 +3,7 @@ goapp_name: exchange
 goapp_bin_path: "{{ go_env.GOPATH }}/bin"
 goapp_src_path: "{{ go_env.GOPATH }}/src/github.com/APTrust/{{goapp_name}}"
 goapp_cfg_path: "{{ goapp_src_path }}/config"
-goapp_log_path: "/mnt/ebs/{{orgtype}}/logs"
+goapp_log_path: "/data/exchange/log"
 
 # Build Go binaries.
 buildgo: true
