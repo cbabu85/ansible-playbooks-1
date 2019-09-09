@@ -4,8 +4,6 @@ iam_policy_name: "EBS_AutoScaling"
 ebs_autoscale_script_dest: "/usr/local/bin/ebs_autoscale.sh"
 ebs_logfile: "/var/log/ebs_autoscale.log"
 
-lvm_for_docker: false
-
 ebs_autoscale_script: ebs_autoscale.sh.j2
 
 #Cronjob
@@ -13,13 +11,9 @@ ebs_cron_minute: '*/10'
 ebs_cron_hour: '*'
 vg_filesystem: ext4
 
-#TODO: ADJUST VARS BELOW. CHECK FOR SANITY VALUES. RUN MANUAL EBS TESTS ON INSTANCE
+# TODO: ADJUST VARS BELOW. CHECK FOR SANITY VALUES. RUN MANUAL EBS TESTS ON INSTANCE
 # ALSO SETUP UBUNTU AWS CREDENTIALS TO USE FOR EBS OPS# Write readme about whats needed.
 # PHASE 2: define EBS shrinking process and find a safe trigger. probably during downtime window once a week?
-
-# Vars for resource tagging on AWS
-orgtype: 'apt'
-envtype: 'dev'
 
 # Volume type
 volume_type: 'gp2'
@@ -28,7 +22,7 @@ volume_type: 'gp2'
 # LV = lv_$NAME
 vg_name: "{{ansible_nodename}}"
 
-#Where to mount it
+# Where to mount it
 vg_mount_point: "/mnt/lvm"
 
 # Size of each disk in GB
@@ -53,5 +47,3 @@ vg_min_disks: 1
 
 # Maximum number of disks to use
 vg_max_disks: 10
-
-nsq_address: "127.0.0.1:4151"

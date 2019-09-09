@@ -15,8 +15,7 @@
   tags: gitts
 
 # Set facts for EBS resource tagging
--  set_fact: orgtype="{% if 'dpn' in ansible_hostname%}dpn{%else%}apt{%endif%}"
--  set_fact: environment="{% if 'prod' in ansible_hostname%}prod{%else%}demo{%endif%}"
+- set_fact: environment="{% if 'prod' in ansible_hostname%}prod{%else%}demo{%endif%}"
 
 - name: Setup EBS_AutoScaling IAM Role
   iam:
@@ -99,15 +98,10 @@
   shell: /bin/bash -lc "udevadm control --reload-rules && udevadm trigger"
   tags: nvmfix
 
-- set_fact: ebs_autoscale_script='ebs_autoscale.sh.xenial.j2'
-  when: ansible_distribution_release == 'xenial'
-  tags: copyebsscript
-
 # TODO: Consider using root as owner and executor or limit sudo to the lvm commands
 #       currently system_default_user has pwdless sudo privileges which is not ideal.
 - name: Copy EBS_Scale script
   template:
-    #  src: "ebs_autoscale.sh.j2"
     src: "{{ebs_autoscale_script}}"
     dest: "{{ebs_autoscale_script_dest}}"
     owner: "{{system_default_user}}"
@@ -134,16 +128,16 @@
     hour: "{{ebs_cron_hour | default('*')}}"
     job: "sudo {{ebs_autoscale_script_dest}} >> /var/log/ebs_autoscale.log 2>&1"
     state: present
-    disabled: no
+    disabled: false
   tags: ebsscalecron
 
 - name: "Add logrotation for {{ebs_logfile}}"
   template:
-      src: logrotation.yml.j2
-      dest: "/etc/logrotate.d/ebs_autoscale"
-      owner: "root"
-      group: "{{deploy_group}}"
-      mode: 0644
+    src: logrotation.yml.j2
+    dest: "/etc/logrotate.d/ebs_autoscale"
+    owner: "root"
+    group: "{{deploy_group}}"
+    mode: 0644
   tags: ebs_logrotation
 
 
@@ -155,9 +149,8 @@
 
 - name: Update permissions to lvm mount dir
   file:
-    dest: "/mnt/lvm"
+    dest: "{{vg_mount_point}}"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
     mode: 0775
     state: directory
-
