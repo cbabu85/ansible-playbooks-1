@@ -110,10 +110,10 @@ class ebs_nvme_device:
         self.ctrl_identify()
 
     def _nvme_ioctl(self, id_response, id_len):
-        admin_cmd = nvme_admin_command(opcode = NVME_ADMIN_IDENTIFY,
-                                       addr = id_response,
-                                       alen = id_len,
-                                       cdw10 = 1)
+        admin_cmd = nvme_admin_command(opcode=NVME_ADMIN_IDENTIFY,
+                                       addr=id_response,
+                                       alen=id_len,
+                                       cdw10=1)
 
         with open(self.device, "rw") as nvme:
             ioctl(nvme, NVME_IOCTL_ADMIN_CMD, admin_cmd)
@@ -144,10 +144,10 @@ class ebs_nvme_device:
     def get_oldblock_device(self, stripped=False):
         dev = self.id_ctrl.vs.bdev
 
-       if dev.startswith('sd'):
-                dev = 'xv' + dev[1:]
-       if dev.startswith("/dev/"):
-                dev = 'xv' + dev[6:]
+        if dev.startswith('sd'):
+            dev = 'xv' + dev[1:]
+        if dev.startswith("/dev/"):
+            dev = 'xv' + dev[6:]
 
         return dev
 
@@ -157,13 +157,13 @@ if __name__ == "__main__":
 
     display = parser.add_argument_group("Display Options")
     display.add_argument("-v", "--volume", action="store_true",
-            help="Return volume-id")
+                         help="Return volume-id")
     display.add_argument("-b", "--block-dev", action="store_true",
-            help="Return block device mapping")
+                         help="Return block device mapping")
     display.add_argument("-o", "--oldblock-dev", action="store_true",
-            help="Return block device mapping")
+                         help="Return block device mapping")
     display.add_argument("-u", "--udev", action="store_true",
-            help="Output data in format suitable for udev rules")
+                         help="Output data in format suitable for udev rules")
 
     if len(sys.argv) < 2:
         parser.print_help()
@@ -185,4 +185,3 @@ if __name__ == "__main__":
         print dev.get_block_device(args.udev)
     if args.oldblock_dev:
         print dev.get_oldblock_device(args.udev)
-
