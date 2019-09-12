@@ -1,9 +1,8 @@
 ---
-RAILS_ENV: 'staging'
+RAILS_ENV: staging
 pharos_url: "https://staging.aptrust.org"
 virtual_host: "staging.aptrust.org"
 
-RAILS_ENV: staging
 pharos_docker: true
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
 pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
@@ -31,8 +30,7 @@ pharos_aws_ses_user: "{{vault_pharos_demo_aws_ses_user}}"
 pharos_aws_ses_pwd: "{{vault_pharos_demo_aws_ses_pwd}}"
 
 pharos_nsq_base_url: "http://staging.aptrust.org:4151"
-#
-virtual_host: staging.aptrust.org
+
 pharos_google_api_key: "{{vault_pharos_google_api_key}}"
 pharos_google_client_id: "{{vault_pharos_google_client_id}}"
 pharos_google_client_secret: "{{vault_pharos_google_client_secret}}"
