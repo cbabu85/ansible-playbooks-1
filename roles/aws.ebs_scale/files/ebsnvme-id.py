@@ -142,14 +142,14 @@ class ebs_nvme_device:
         return dev
 
     def get_oldblock_device(self, stripped=False):
-        dev = self.id_ctrl.vs.bdev
+       dev = self.id_ctrl.vs.bdev
 
        if dev.startswith('sd'):
                 dev = 'xv' + dev[1:]
        if dev.startswith("/dev/"):
                 dev = 'xv' + dev[6:]
 
-        return dev
+       return dev
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reads EBS information from NVMe devices.")
