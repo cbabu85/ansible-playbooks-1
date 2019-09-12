@@ -20,8 +20,8 @@
         aws_secret_access_key: "{{aws_secret_access_key_ubuntu}}"
 
         # DOCKER
-        docker_version: 18.06.1-ce
-        dockerapp: 'exchange' #Docker app name
+        #        docker_version: 18.06.1-ce
+        # dockerapp: 'exchange' #Docker app name
 
         # Note: If latest HEAD of branch, only provide branchname. If a custom git
         # hash, both branch and hash need to be defined. e.g.:
