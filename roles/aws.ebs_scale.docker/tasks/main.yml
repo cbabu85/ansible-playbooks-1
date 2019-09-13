@@ -156,7 +156,7 @@
 - name: Execute initial EBS_Autoscale if it hasn't run yet
   become_user: "{{system_default_user}}"
   become: true
-  shell: sudo "{{ebs_autoscale_script_dest}}"
+  shell: "sudo {{ebs_autoscale_script_dest}} >> {{ebs_autoscale_log}}"
   tags: initebsrun
 
 - name: Update permissions to lvm mount dir
