@@ -2,7 +2,7 @@
 # Create EBS volume
 # Attach EBS volume to instance
 # Create filessystem
-#
+# Add ebvnvme-id stuff
 
 - name: Gather facts from new server
   setup:
@@ -10,6 +10,13 @@
 
 - name: Get EC2 instance facts
   ec2_metadata_facts:
+
+- name: Determine the AWS Supervisor
+  set_fact:
+    supervisor: "{{ (ansible_ec2_instance_type.startswith('t3') or ansible_ec2_instance_type.startswith('c5') or ansible_ec2_instance_type.startswith('m5') or ansible_ec2_instance_type.startswith('r5')) | ternary('nitro','legacy') }}"
+
+- include: ebsnvme-id.yml
+  when: supervisor == 'nitro'
 
 - name: Create blockdevice
   ec2_vol:
@@ -26,15 +33,25 @@
 
 - debug: msg="{{blockdevice}}"
   tags: makeblock
+  # {'changed': False, 'volume_type': 'standard', 'volume': {'status': 'in-use', 'zone': 'us-east-1a', 'tags': {'Name': 'docker4_data'}, 'encrypted': False, 'iops': None, 'create_time': '2019-07-08T05:54:54.431Z', 'snapshot_id': '', 'attachment_set': {'device': '/dev/sdf', 'instance_id': 'i-0d2ae613c9c8c4eed', 'deleteOnTermination': 'false', 'status': 'attached', 'attach_time': '2019-07-08T08:28:55.000Z'}, 'type': 'standard', 'id': 'vol-0b59b1fbde9c59bf4', 'size': 5}, 'device': '/dev/sdf', 'volume_id': 'vol-0b59b1fbde9c59bf4', 'failed': False}
+
+# TODO: Take blockdevice.device and transform sdf to xvdf
+- name: Transform blockdevice name
+  set_fact: blockdevicename="/dev/xv{{blockdevice.device [-2:]}}"
+  tags: makeblock
+
+- debug: msg="{{blockdevicename}}"
+  tags: makeblock
 
 - name: Create filesystem
   filesystem:
     fstype: ext4
-    dev: "{{block_device_name}}"
+    dev: "{{blockdevicename}}"
 
 - name: mount the persistent block device
   mount:
     path: "{{ mount_point }}"
-    src: "{{ block_device_name }}"
+    src: "{{ blockdevicename }}"
     fstype: ext4
+    opts: nofail
     state: mounted
