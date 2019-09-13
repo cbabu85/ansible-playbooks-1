@@ -1,4 +1,7 @@
 ---
+- name: Ensure botocore and boto3 modules are installed
+  pip:
+    name: ["boto", "boto3", "botocore", "awscli"]
 
 # Get local git ref for script versioning
 - name: Get git hash
@@ -51,7 +54,7 @@
   command: "aws ec2 associate-iam-instance-profile --instance-id {{ansible_ec2_instance_id}} --iam-instance-profile Name={{iam_policy_name}} --region {{ansible_ec2_placement_region}}"
   become: False
   register: iam_pol_result
-  when: instance_name is defined
+  # when: instance_name is defined
   # This is stupid but there is currently no other sane way.
   ignore_errors: yes
 
@@ -65,10 +68,9 @@
 # - include: lvm_setup.yml
 
 - name: Install jq for json queries and bc for bash arithmetic
-  apt: name={{item}} state=present
-  with_items:
-    - jq
-    - bc
+  package:
+    name: ['jq', 'bc']
+    state: present
 
 # Install ebsnvme-id script and udev rules to symlink nvme block devices to
 # regular /dev/xvdX names. This applies to all Linux version's above Kernel 4.2
