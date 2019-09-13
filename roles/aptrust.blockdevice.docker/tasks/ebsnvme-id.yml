@@ -1,0 +1,30 @@
+---
+- name: Copy ebsnvme-id script
+  copy:
+    src: ebsnvme-id.py
+    dest: /sbin
+    owner: root
+    group: root
+    mode: 0774
+  tags: nvmfix
+  when: supervisor == 'nitro'
+
+# Add udev rule to create symlinks from nvme devices to xvdX
+- name: Copy udev rule
+  copy:
+    src: 70-ec2-nvme-devices.rules
+    dest: /etc/udev/rules.d
+    owner: root
+    group: root
+    mode: 0774
+  tags: nvmfix
+  when: supervisor == 'nitro'
+
+- name: Reload udev rules and trigger kernel events
+  become: true
+  shell: /bin/bash -lc "udevadm control --reload && udevadm trigger"
+  tags: nvmfix
+  when: supervisor == 'nitro'
+
+
+
