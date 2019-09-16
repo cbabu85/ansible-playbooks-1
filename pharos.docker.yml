@@ -11,7 +11,6 @@
 #     bind-mounts are used.
 #
 -   hosts:
-      - apt-demo-docker
       - apt-demo
       #      - apt-demo-docker-new
     vars_files:
