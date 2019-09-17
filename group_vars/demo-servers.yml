@@ -107,18 +107,18 @@ pharos_api_user: "{{vault_pharos_demo_api_user}}"
 pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
 
 apt_cronjobs:
-  apt_bucket_reader:
-    hour: "*"
-    minute: "*/16"
-    params: "-stats={{goapp_log_path}}/apt_bucket_reader_stats.json"
-  apt_queue:
-    hour: "*/1"
-    minute: "30"
-    params: "-stats={{goapp_log_path}}/apt_queue_stats.json"
-  apt_queue_fixity:
-    hour: "*"
-    minute: "*/30"
-    params: "-maxfiles=2500"
+    apt_bucket_reader:
+        minute: "*/10"
+        hour: "*"
+        params: "-stats={{goapp_log_path}}/apt_bucket_reader_stats.json"
+    apt_queue:
+        minute: "*/11"
+        hour: "*"
+        params: "-stats={{goapp_log_path}}/apt_queue_stats.json"
+    apt_queue_fixity:
+        minute: "*/30"
+        hour: "*"
+        params: "-maxfiles=2500"
 
 ex_docker: true
 ex_tardirectory: "/mnt/lvm/apt/data"
