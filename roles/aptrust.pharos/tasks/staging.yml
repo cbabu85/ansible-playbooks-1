@@ -9,13 +9,13 @@
   - name: Make sure Docker services are shutdown and volumes removed.
     command: sudo docker-compose down --remove-orphans -v
     args:
-       chdir: "{{docker_app_path}}"
+       chdir: "{{dockerapp_path}}"
     tags: dockserv
 
   - name: Start Postgres container with initdb
     command: sudo docker-compose up -d  db
     args:
-       chdir: "{{docker_app_path}}"
+       chdir: "{{dockerapp_path}}"
     tags: dbdump
 
     # Note: hardcoded for now. Should be passed in at deploytime
@@ -41,7 +41,7 @@
 
   - name: Update 2fA key according to source_env
     lineinfile:
-       path: "{{docker_app_path}}/.env"
+       path: "{{dockerapp_path}}/.env"
        regexp: '^TWO_FACTOR_KEY='
        line: TWO_FACTOR_KEY={{pharos_two_factor_key}}
 
@@ -50,7 +50,7 @@
     shell: sudo docker-compose exec db bash -lc "PGPASSWORD={{pharos_src_db_pwd}} pg_dump -h {{pharos_src_db_host}} -p 5432 -Fc -C -O -U {{pharos_src_db_user}} {{pharos_src_db}} > /{{pharos_src_db}}.dump"
     become: true
     args:
-       chdir: "{{docker_app_path}}"
+       chdir: "{{dockerapp_path}}"
        executable: /bin/bash
     tags: dbdump2
 
@@ -61,13 +61,13 @@
        - "DROP DATABASE IF EXISTS {{pharos_src_db}};"
        - "CREATE DATABASE {{pharos_src_db}};"
     args:
-       chdir: "{{docker_app_path}}"
+       chdir: "{{dockerapp_path}}"
     tags: dbdumprestore
 
   - name: Restore pharos_demo.dump to local psql container
     command: sudo docker-compose exec db bash -lc "sleep 2 && pg_restore --verbose --no-acl --no-owner -U postgres -d {{pharos_src_db}} /{{pharos_src_db}}.dump"
     args:
-       chdir: "{{docker_app_path}}"
+       chdir: "{{dockerapp_path}}"
     tags: dbdumprestore
 
     # Defining user as superuser since finding and setting correct privileges
@@ -85,18 +85,18 @@
        # - "GRANT ALL ON ALL TABLES IN SCHEMA public TO {{pharos_db_user}};"
        # - "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO {{pharos_db_user}};"
     args:
-       chdir: "{{docker_app_path}}"
+       chdir: "{{dockerapp_path}}"
     ignore_errors: True
     tags: dbdump
 
   - name: Update environment in db
     command: sudo docker-compose run --rm migration bin/rails db:environment:set
     args:
-       chdir: "{{docker_app_path}}"
+       chdir: "{{dockerapp_path}}"
     tags: dbdump
 
 
 # Next should startup all services again.
 #  - name: Start docker containers from compose
-#    command: docker-compose up -d chdir="{{docker_app_path}}"
+#    command: docker-compose up -d chdir="{{dockerapp_path}}"
 #    tags: dockserv2

@@ -56,9 +56,9 @@
         recurse: true
         state: directory
     with_items:
-        - "{{docker_app_path}}"
-        - "{{docker_data_path}}"
-        - "{{docker_data_path}}/log"
+        - "{{dockerapp_path}}"
+        - "{{dockerdata_path}}"
+        - "{{dockerdata_path}}/log"
     tags: makdir
 
   - name: Set commit-version fact to git hash
@@ -71,7 +71,7 @@
     when: git_version is undefined
     tags: gitclone, gitversion
 
-  - stat: path={{docker_app_path}}/.git
+  - stat: path={{dockerapp_path}}/.git
     register: gitrepo
     tags: gitclone, gitversion
 
@@ -82,7 +82,7 @@
   - name: Reset repo for Ansible bug
     command: git reset --hard
     args:
-        chdir: "{{docker_app_path}}"
+        chdir: "{{dockerapp_path}}"
     when: gitrepo.stat.isdir is defined
     tags: gitclone
 
@@ -93,28 +93,28 @@
 
   - name: Git clone Pharos repo
     git:
-        repo: "{{pharos_repo}}"
-        dest: "{{docker_app_path}}"
+        repo: "{{dockerapp_repo}}"
+        dest: "{{dockerapp_path}}"
         version: "{{gitversion}}"
         accept_hostkey: true
         clone: true
         force: true
         update: true
-    when: pharos_repo is defined
+    when: dockerapp_repo is defined
     tags: gitclone
 
     # NOTE: Revision should be set by play.
     # If git_version is set this will result in the same, if it's unset it
     # uses the HEAD/latest of the git repo.
   - name: get revision
-    shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --short=7 HEAD"
+    shell: /bin/bash -c "cd {{dockerapp_path}} && git rev-parse --short=7 HEAD"
     register: revision
     tags: revs, update_env, gitclone, always
 
     # NOTE: Branch should be set by play.
     # only works if using HEAD of branch.
     #  - name: get branch
-    # shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --abbrev-ref HEAD"
+    # shell: /bin/bash -c "cd {{dockerapp_path}} && git rev-parse --abbrev-ref HEAD"
     # register: pharos_branch
     # tags: revs, update_env, gitclone
 
@@ -131,7 +131,7 @@
   - name: Update .env vars
     template:
         src: .env.j2
-        dest: "{{docker_app_path}}/.env"
+        dest: "{{dockerapp_path}}/.env"
         owner: "{{system_default_user}}"
         group: "{{system_default_group}}"
         mode: 0644
@@ -147,7 +147,7 @@
     #  - name: Update traefik.toml
     #    template:
     #      src: traefik.toml.j2
-    #      dest: "{{docker_data_path}}/traefik.toml"
+    #      dest: "{{dockerdata_path}}/traefik.toml"
     #      owner: "{{system_default_user}}"
     #      group: "{{system_default_group}}"
     #      mode: 0664
@@ -156,7 +156,7 @@
 # TODO: traefik.toml should be templatized. acme. json touch is ok since its generated
 #  - name: Touch traefik/acme files if non-existent
 #    file:
-#      path: "{{docker_data_path}}/{{item}}"
+#      path: "{{dockerdata_path}}/{{item}}"
 #      owner: "{{system_default_user}}"
 #      group: "{{system_default_user}}"
 #      mode: 0600
@@ -178,9 +178,9 @@
         hour: "{{item.value.hour | default('*')}}"
         day: "{{item.value.day | default('*')}}"
         month: "{{item.value.month | default('*')}}"
-        job: "sudo docker run --rm --env-file {{docker_app_path}}/.env \
+        job: "sudo docker run --rm --env-file {{dockerapp_path}}/.env \
         {{docker_image_name}}:{{pharos_release}}-{{pharos_branch}} \
-         bin/pharos_notify.py {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
+         bin/pharos_notify.py {{item.value.params | default('')}} >> {{dockerdata_path}}/log/cron_{{item.key}}.log 2>&1"
         state: present
         disabled: "{{item.value.disabled}}"
     with_dict: "{{pharos_cronjobs}}"
@@ -188,7 +188,7 @@
 
   - name: Start docker containers from compose
     docker_service:
-        project_src: "{{docker_app_path}}"
+        project_src: "{{dockerapp_path}}"
         files: docker-compose.yml
         pull: true
         #        recreate: always
