@@ -227,7 +227,7 @@
         hour="{{item.value.hour | default('*')}}"
         day="{{item.value.day | default('*')}}"
         month="{{item.value.month | default('*')}}"
-        job=". $HOME/.profile; {{goapp_bin_path}}/{{item.key}}
+        job=". $HOME/.profile; run-one {{goapp_bin_path}}/{{item.key}}
              -config={{goapp_cfg_path}}/{{GO_ENV}}.json
              {{item.value.params | default('')}}
              > /dev/null 2>&1"

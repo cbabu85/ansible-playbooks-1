@@ -145,7 +145,7 @@
     hour: "{{item.value.hour | default('*')}}"
     day: "{{item.value.day | default('*')}}"
     month: "{{item.value.month | default('*')}}"
-    job: "sudo docker run --rm --env-file {{docker_app_path}}/.env \
+    job: "sudo run-one docker run --rm --env-file {{docker_app_path}}/.env \
      {{docker_registry_key}}exchange_{{item.key}}:{{exchange_release}}-{{exchange_branch}} \
           {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
     state: present
