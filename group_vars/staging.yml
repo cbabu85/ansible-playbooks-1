@@ -55,10 +55,10 @@ pharos_cronjobs:
         disabled: 'yes'
 
 ex_docker: true
-ex_tardirectory: "/data/exchange"
-ex_restoredirectory: "/data/exchange/restore"
+ex_tardirectory: "/mnt/lvm/exchange"
+ex_restoredirectory: "/mnt/lvm/exchange/restore"
 ex_logdirectory: "/data/exchange/logs"
-ex_replicationdirectory: "/data/exchange/replication"
+ex_replicationdirectory: "/mnt/lvm/exchange/replication"
 ex_maxfilesize: "5368709120"
 ex_skipalreadyprocessed: "true"
 ex_deleteonsuccess: "true"
