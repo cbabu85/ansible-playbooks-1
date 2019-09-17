@@ -4,6 +4,7 @@
       - apt-demo
       - docker*
       - apt-prod-srv
+      - apt-prod-docker
     gather_facts: true
 
     vars_files:
