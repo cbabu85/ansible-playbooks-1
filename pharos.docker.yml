@@ -12,7 +12,7 @@
 #
 -   hosts:
       - apt-demo
-      #      - apt-demo-docker-new
+      - apt-prod-docker
     vars_files:
         - "group_vars/vault.yml"
 
@@ -22,10 +22,12 @@
         # ansible_python_interpreter: "/usr/bin/env python-docker"
 
         # Dockerapp config
-        dockerapp: 'pharos' #Docker app name
-        dockerapp_path: "/srv/docker/{{dockerapp}}"
-        dockerapp_data_path: "/data/{{dockerapp}}"
-        dockerapp_repo: "https://github.com/APtrust/pharos"
+        # defined in pharos role defaults.
+        # dockerapp: 'pharos' #Docker app name
+        # dockerapp_path: "/srv/docker/{{dockerapp}}"
+        # dockerapp_data_path: "/data/{{dockerapp}}"
+        # dockerapp_repo: "https://github.com/APtrust/pharos"
+
         # Note: If latest HEAD of branch, only provide branchname. If a custom git
         # hash, both branch and hash need to be defined. e.g.:
         #  git_branch: feature/two_factor #git branch/commit
@@ -33,6 +35,7 @@
         git_branch: feature/two_factor
         #        git_version: e2c8c44
         DOCKER_DOMAIN: "{{ ansible_fqdn }}"
+        # Note: Once production has pharos 2fa/docker this can be removed and the defaults in the role can be set to true.
         pharos_docker: true
     roles:
       - { role: aptrust.pharos }
