@@ -6,6 +6,7 @@ APP_ENV: 'production'
 GO_ENV: 'production'
 RAILS_ENV: 'production'
 
+# Note: This can be retired when all Pharos servers are running Docker
 ruby_version: '2.4.2'
 
 # AWS Tags
@@ -13,6 +14,7 @@ orgtype: 'APT'
 envtype: "{{APP_ENV}}"
 
 # Pharos
+# Note: This can be retired when all Pharos servers are running Docker
 pharos_local_db: False
 pharos_db_host: "{{ vault_pharos_prod_db_host }}"
 pharos_db_user: "{{ vault_pharos_prod_db_user}}"
@@ -23,11 +25,15 @@ pharos_devise_key: "{{ vault_pharos_prod_devise_key}}"
 pharos_rails_key: "{{ vault_pharos_prod_rails_key}}"
 pharos_two_factor_key: "{{vault_pharos_prod_two_factor_key}}"
 pharos_2fa_grace_period: "{{vault_pharos_prod_2fa_grace_period}}"
-pharos_authy_api_key: "{{vault_pharos_authy_api_key}}"
+pharos_authy_api_key: "{{vault_pharos_prod_authy_api_key}}"
 
 pharos_url: "https://repo.aptrust.org"
+virtual_host: apt-prod-docker.aptrust.org
 pharos_nsq_base_url: "http://prod-services.aptrust.org:4151"
+
 pharos_logserver: logs.aptrust.org
+pharos_logserver_port: 12219
+pharos_loglevel: warn
 
 pharos_aws_sns_region: "us-east-1"
 pharos_aws_sns_user: "{{vault_pharos_prod_aws_sns_user}}"
