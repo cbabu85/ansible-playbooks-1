@@ -101,7 +101,7 @@ pharos_api_key: "{{vault_pharos_prod_api_pwd}}"
 
 apt_cronjobs:
     apt_bucket_reader:
-        minute: "*/10"
+        minute: "*/20"
         hour: "*"
         params: "-stats={{goapp_log_path}}/apt_bucket_reader_stats.json"
     apt_queue:
