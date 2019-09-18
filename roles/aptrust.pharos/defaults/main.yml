@@ -57,7 +57,7 @@ docker_image_name: "registry.gitlab.com/aptrust/container-registry/pharos"
 dockerapp: pharos
 dockerapp_repo: "https://github.com/APTrust/pharos"
 dockerapp_path: "/srv/docker/{{dockerapp}}"
-dockerdata_path: "/data/{{dockerapp}}"
+dockerapp_data_path: "/data/{{dockerapp}}"
 
 ## STAGING vars
 rdsdate: "{{ ansible_date_time.year }}-{{ ansible_date_time.month }}-{{ ansible_date_time.day }}-{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"

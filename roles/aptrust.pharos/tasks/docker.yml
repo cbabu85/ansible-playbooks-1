@@ -57,8 +57,8 @@
         state: directory
     with_items:
         - "{{dockerapp_path}}"
-        - "{{dockerdata_path}}"
-        - "{{dockerdata_path}}/log"
+        - "{{dockerapp_data_path}}"
+        - "{{dockerapp_data_path}}/log"
     tags: makdir
 
   - name: Set commit-version fact to git hash
@@ -147,7 +147,7 @@
     #  - name: Update traefik.toml
     #    template:
     #      src: traefik.toml.j2
-    #      dest: "{{dockerdata_path}}/traefik.toml"
+    #      dest: "{{dockerapp_data_path}}/traefik.toml"
     #      owner: "{{system_default_user}}"
     #      group: "{{system_default_group}}"
     #      mode: 0664
@@ -156,7 +156,7 @@
 # TODO: traefik.toml should be templatized. acme. json touch is ok since its generated
 #  - name: Touch traefik/acme files if non-existent
 #    file:
-#      path: "{{dockerdata_path}}/{{item}}"
+#      path: "{{dockerapp_data_path}}/{{item}}"
 #      owner: "{{system_default_user}}"
 #      group: "{{system_default_user}}"
 #      mode: 0600
@@ -180,7 +180,7 @@
         month: "{{item.value.month | default('*')}}"
         job: "sudo docker run --rm --env-file {{dockerapp_path}}/.env \
         {{docker_image_name}}:{{pharos_release}}-{{pharos_branch}} \
-         bin/pharos_notify.py {{item.value.params | default('')}} >> {{dockerdata_path}}/log/cron_{{item.key}}.log 2>&1"
+         bin/pharos_notify.py {{item.value.params | default('')}} >> {{dockerapp_data_path}}/log/cron_{{item.key}}.log 2>&1"
         state: present
         disabled: "{{item.value.disabled}}"
     with_dict: "{{pharos_cronjobs}}"
@@ -194,5 +194,7 @@
         #        recreate: always
     vars:
         ansible_python_interpreter: "/usr/bin/env python-docker"
-    tags: dockserv
+    tags:
+        - dockserv
+        - pharos_start
     #  when: RAILS_ENV == 'staging'
