@@ -1,0 +1,42 @@
+location /assets/ {
+    alias /etc/share/nginx/html/pharos/assets/;
+}
+
+location /api/ {
+        rewrite ^ $request_uri;
+        rewrite ^/api/(.*) $1 break;
+        return 400; #if the second rewrite won't match
+        proxy_pass http://{{virtual_host}}/$uri;
+ }
+
+set $cors '';
+if ($http_origin ~ '^https?://(localhost|demo\.aptrust\.org|aptrust\.github\.io)') {
+		set $cors 'true';
+}
+
+if ($cors = 'true') {
+		add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+		add_header 'Access-Control-Allow-Credentials' 'true' always;
+		add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+		add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With,X-Pharos-API-KEY,X-Pharos-API-User, api_key' always;
+		# required to be able to read Authorization header in frontend
+		#add_header 'Access-Control-Expose-Headers' 'Authorization' always;
+}
+
+if ($request_method = 'OPTIONS') {
+		# Tell client that this pre-flight info is valid for 20 days
+		add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+		add_header 'Access-Control-Max-Age' 1728000;
+		add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With,X-Pharos-API-KEY,X-Pharos-API-User, api_key' always;
+		add_header 'Content-Type' 'text/plain charset=UTF-8';
+		add_header 'Content-Length' 0;
+		return 204;
+}
+
+access_log "{{dockerapp_data_path}}/log/{{ansible_fqdn}}_access.log"
+error_log  "{{dockerapp_data_path}}/log/{{ansible_fqdn}}_error.log warn"
+
+access_log syslog:server={{graylog_dns}}:12301 graylog2_json;
+error_log syslog:server={{graylog_dns}}:12302 warn;
+
+

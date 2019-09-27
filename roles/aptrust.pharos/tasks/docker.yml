@@ -137,6 +137,14 @@
         mode: 0644
     tags: update_env, always
 
+  - name: Update pharosstatic_location with Graylog logging
+    template:
+        src: pharosstatic_location.j2
+        dest: "{{dockerapp_path}}/docker/nginx-proxy/pharosstatic_location"
+        group: "{{system_default_group}}"
+        mode: 0644
+    tags: update_env, always
+
 
   - include: staging.yml
     when: RAILS_ENV == 'staging'
