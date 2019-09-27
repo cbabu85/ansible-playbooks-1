@@ -28,7 +28,7 @@ pharos_2fa_grace_period: "{{vault_pharos_prod_2fa_grace_period}}"
 pharos_authy_api_key: "{{vault_pharos_prod_authy_api_key}}"
 
 pharos_url: "https://repo.aptrust.org"
-virtual_host: apt-prod-docker.aptrust.org
+virtual_host: repo.aptrust.org
 pharos_nsq_base_url: "http://prod-services.aptrust.org:4151"
 
 pharos_logserver: logs.aptrust.org
