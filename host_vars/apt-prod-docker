@@ -1,3 +1,2 @@
-pharos_db_host: pharos-production-test.cbtzcfmydoc1.us-east-1.rds.amazonaws.com
-
+#pharos_db_host: pharos-production-test.cbtzcfmydoc1.us-east-1.rds.amazonaws.com
 pharos_docker: true
