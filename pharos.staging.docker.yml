@@ -29,7 +29,7 @@
         # hash, both branch and hash need to be defined. e.g.:
         #  git_branch: feature/two_factor #git branch/commit
         #  git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
-        git_branch: feature/two_factor
+        git_branch: develop
         #        git_version: e2c8c44
         #        git_version: 5385600c983e3d07e5825731b809fd62011e332b
         DOCKER_DOMAIN: "{{ ansible_fqdn }}"
