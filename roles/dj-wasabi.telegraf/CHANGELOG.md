@@ -5,6 +5,47 @@ Below an overview of all changes in the releases.
 
 Version (Release date)
 
+0.12.0 (2019-03-12)
+
+  * Add support for extra win_perf_counters and prevent python u'' strings #76 (By pull request: jdivy (Thanks!))
+  * Fix to work with Fedora Linux #78 (By pull request: ikke-t (Thanks!))
+  * Add Yum repo support for Amazon Linux #79 (By pull request: anthonysr-mc (Thanks!))
+  * Updating Telegraf default to 1.9.2 #80 (and some to other versions as well) (By pull request: sdurrheimer (Thanks!))
+  * [bug] debian - add cache_valid_time #81 (By pull request: pad92 (Thanks!))
+  * Fix tagpass and tagdrop #83 (By pull request: jgeusebroek (Thanks!))
+  * Remove legacy options #84 (By pull request: jgeusebroek (Thanks!))
+  * Add Docker container support #85 (By pull request: jgeusebroek (Thanks!))
+  * Added register for installation of packages #86
+  * Docker enhancements #88 (By pull request: jgeusebroek (Thanks!))
+  * Updated to Telegraf 1.10.0;Different installation methods #93
+  * Add processors section in Telegraf config #94 (By pull request: ph4r5h4d (Thanks!))
+
+0.11.0 (2018-12-11)
+
+  * Added support for plugins being managed exclusively by this playbook #60 (By pull request: gaizeror (Thanks!))
+  * Pin apt key ID #61 (By pull request: tszym (Thanks!))
+  * Wen copying/removing plugins show only plugin name #62 (By pull request: mprasil (Thanks!))
+  * Using base ci requirements.txt #64
+  * telegraf-extra-plugin.conf.j2: fix template typo #65 (By pull request: gaelL (Thanks!))
+  * Some small improvements #66
+  * Want to use latest #67
+  * Added Windows as OS #68
+  * Added support for (Open)Suse #69
+  * Added default pluging if nothing is configured #70
+  * Replace 'ec2_facts' with 'ec2_metadata_facts' to fix a deprecation warning #72 (By pull request: Rylon (Thanks!))
+  * A few enhancements and fixes to windows support #73 (By pull request: jdivy (Thanks!))
+  * Renamed the tojson to to_json #74
+
+0.10.0 (2018-08-12)
+
+  * Updating to telegraf 1.7.3
+  * Fix Deprecation warnings #54
+  * Changed 'include' to 'include_tasks' to remove deprecation warning #53 (By pull request: tjend (Thanks!))
+  * Add option to remove extra plugin config files #52 (By pull request: tjend (Thanks!))
+  * Plugins extra hash allow multiple inputs same type #50 (By pull request: tjend (Thanks!))
+  * Using specific version for tests
+  * Update minimum Ansible version to 2.4
+
 0.9.0 (2018-05-06)
 
   * plugins: be able to specify the filename of extra plugings #40 (By pull request: gaelL (Thanks!))

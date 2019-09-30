@@ -2,9 +2,9 @@
 galaxy_info:
   author: Werner Dijkerman
   description: Installing and configuring Telegraf
-  company:
-  license: license BSD
-  min_ansible_version: 1.2
+  company: myCompany.Dotcom
+  license: MIT
+  min_ansible_version: 2.4
   platforms:
     - name: EL
       versions:
@@ -15,6 +15,14 @@ galaxy_info:
     - name: Debian
       versions:
         - all
-  categories:
+    - name: opensuse
+      versions:
+        - all
+    - name: Windows
+      versions:
+        - all
+
+  galaxy_tags:
     - monitoring
+
 dependencies: []

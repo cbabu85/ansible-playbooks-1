@@ -5,7 +5,8 @@ services:
   - docker
 
 install:
-  - pip install molecule ansible docker==2.7.0
+  - curl -sSlo requirements.txt https://raw.githubusercontent.com/dj-wasabi/ansible-ci-base/master/requirements.txt
+  - pip install -r requirements.txt
 
 script:
   - molecule --version
