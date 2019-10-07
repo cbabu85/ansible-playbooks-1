@@ -5,7 +5,3 @@ telegraf_plugins_extra:
     config:
      - urls =  [ "http://localhost/server_status" ]
      - insecure_skip_verify = true
-  passenger:
-    config:
-     - command = "sudo passenger-status -v --show=xml"
-

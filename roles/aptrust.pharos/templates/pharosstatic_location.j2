@@ -38,5 +38,3 @@ error_log  "{{dockerapp_data_path}}/log/{{ansible_fqdn}}_error.log warn"
 
 access_log syslog:server={{graylog_dns}}:12301 graylog2_json;
 error_log syslog:server={{graylog_dns}}:12302 warn;
-
-
