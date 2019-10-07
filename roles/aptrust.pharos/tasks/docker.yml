@@ -138,13 +138,13 @@
     tags: update_env, always
 
   - name: Update pharosstatic_location with Graylog logging
-    template:
-        src: pharosstatic_location.j2
+    blockinfile:
         dest: "{{dockerapp_path}}/docker/nginx-proxy/pharosstatic_location"
-        group: "{{system_default_group}}"
-        mode: 0644
+        content: |
+          access_log syslog:server={{graylog_dns}}:12301 graylog2_json;
+          error_log syslog:server={{graylog_dns}}:12302 error;
+        insertafter: "# Logging Settings "
     tags: update_env, always
-
 
   - include: staging.yml
     when: RAILS_ENV == 'staging'
