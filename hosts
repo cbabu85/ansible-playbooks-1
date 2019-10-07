@@ -34,5 +34,4 @@ apt-prod-docker hostname_name=apt-prod-docker hostname_fqdn=repo.aptrust.org hos
 [exchange-servers]
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
-docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=docker1.aptrust.org host_eip=34.201.130.220 instance_id=i-0c986eb59c16ae67a
 apt-prod-srv hostname=apt-prod-srv hostname_fqdn=apt-prod-srv.aptrust.org host_eip=54.147.253.108
