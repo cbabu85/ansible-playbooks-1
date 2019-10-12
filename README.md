@@ -184,6 +184,10 @@ Deploy exchange to production:
 
 `ansible-playbook exchange.yml --diff -t exchange -b -l apt-prod-services`
 
+Deploy a custom branch of exchange to production:
+
+`ansible-playbook exchange.yml --diff -t exchange -b -l apt-prod-services -e ex_git_branch=custom-branch`
+
 Deploy exchange to production without restarting services:
 
 `ansible-playbook exchange.yml -t buildgo -l apt-prod-services`
