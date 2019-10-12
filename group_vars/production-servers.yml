@@ -194,7 +194,7 @@ ex_storeworker: {
     nsqtopic: "apt_store_topic",
     nsqchannel: "apt_store_channel",
     maxattempts: "6",
-    maxinflight: "4",
+    maxinflight: "12",
     heartbeatinterval: "10s",
     readtimeout: "60s",
     writetimeout: "10s",
