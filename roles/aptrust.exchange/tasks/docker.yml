@@ -139,7 +139,8 @@
 
 # go install exchange binaries.
 - name: Build and install go binaries docker
-  shell: "go install -a $(glide novendor)"
+  shell: "go build ./..."
+  #  shell: "go install -a $(glide novendor)"
   args:
     chdir: "{{goapp_src_path}}"
   environment: "{{go_env}}"

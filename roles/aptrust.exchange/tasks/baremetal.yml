@@ -82,8 +82,9 @@
   tags: ['buildgo', 'gitclone', 'goget']
 
 # go install exchange binaries.
-- name: Build and install go binaries
-  shell: "go install $(glide novendor)"
+- name: Get and install go binaries
+  shell: "go build ./..."
+  #  shell: "go install $(glide novendor)"
   args:
     chdir: "{{goapp_src_path}}"
   environment: "{{go_env}}"
