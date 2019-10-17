@@ -16,6 +16,8 @@
         playbook_name: exchange
 
         # Golang
+        # Installs from official golang page. Find Filenames + checksums
+        # here: https://golang.org/dl/
         golang_workspace_user: "{{system_default_user}}"
         #        golang_tarball: go1.12.5.linux-amd64.tar.gz
         # golang_tarball_checksum: aea86e3c73495f205929cfebba0d63f1382c8ac59be081b6351681415f4063cf
