@@ -139,11 +139,11 @@
 
   - name: Update pharosstatic_location with Graylog logging
     blockinfile:
-        dest: "{{dockerapp_path}}/docker/nginx-proxy/pharosstatic_location"
+        dest: "{{dockerapp_path}}/docker/nginx-proxy/proxy_settings.conf"
         content: |
           access_log syslog:server={{graylog_dns}}:12301 graylog2_json;
           error_log syslog:server={{graylog_dns}}:12302 error;
-        insertafter: "# Logging Settings "
+        insertafter: "# Logging Settings"
     tags: update_env, always
 
   - include: staging.yml
