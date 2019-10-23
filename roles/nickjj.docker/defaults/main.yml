@@ -29,7 +29,8 @@ docker__cron_jobs:
     job: "docker system prune -{{ docker__cron_jobs_prune_flags }} --filter until=168h > /dev/null 2>&1"
     schedule: ["0", "0", "*", "*", "0"]
     cron_file: "docker-disk-clean-up"
-    user: "{{ (docker__users | first) | d('root') }}"
+    #    user: root
+    #user: "{{ (docker__users | first) | d('root') }}"
 
 docker__package_dependencies:
   - "apt-transport-https"

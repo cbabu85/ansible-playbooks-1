@@ -184,7 +184,7 @@
     day: "{{ item.schedule[2] }}"
     month: "{{ item.schedule[3] }}"
     weekday: "{{ item.schedule[4] }}"
-    cron_file: "{{ item.cron_file }}"
+    # cron_file: "{{ item.cron_file }}"
     user: "{{ item.user | d('root') }}"
   loop: "{{ docker__cron_jobs }}"
   when:
