@@ -43,6 +43,8 @@
         - plugin: swap
         - plugin: netstat
           #        - plugin: nginx
+          #config:
+          # - urls = ['https://repo.aptrust.org/nginx_status']
         - plugin: processes
         - plugin: docker
           config:
