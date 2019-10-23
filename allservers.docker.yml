@@ -1,6 +1,5 @@
 ---
   - hosts:
-      - apt-demo-docker
       - apt-demo
       - docker*
       - apt-prod-srv
