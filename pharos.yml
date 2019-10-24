@@ -50,7 +50,7 @@
       - name: Slack to all
         slack:
           token: "{{slack_token}}"
-          msg: "Deployment of Pharos Release: {{pharos_release}}-{{pharos_branch}} with Environment: {{RAILS_ENV}} on {{ inventory_hostname }} by user {{whobrokeit.stdout}} completed"
+          msg: "Deployment of Pharos Release: *{{pharos_release}}-{{pharos_branch}}* in Environment: *{{RAILS_ENV}}* on {{ inventory_hostname }} by user {{whobrokeit.stdout}} completed"
           icon_emoji: ":dog:"
           channel: 'ops'
         tags: [pharos,slack, deploy]
