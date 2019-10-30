@@ -14,7 +14,6 @@ docker4 hostname_name=docker4 hostname_fqdn=staging.aptrust.org host_eip=52.0.17
 [demo-servers]
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
-docker1 ansible_ssh_user=ubuntu hostname_name=docker1 hostname_fqdn=docker1.aptrust.org host_eip=34.201.130.220 instance_id=i-0c986eb59c16ae67a
 apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.90.164.9 # Pharos+Exchange Demo
 
 [pharos-servers]
