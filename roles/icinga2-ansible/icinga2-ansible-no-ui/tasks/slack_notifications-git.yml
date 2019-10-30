@@ -3,13 +3,14 @@
 
 - name: Install slack-notification files
   git:
-    repo: git@github.com:nisabek/icinga2-slack-notifications.git
+    #    repo: git@github.com:nisabek/icinga2-slack-notifications.git
+    repo: https://github.com/nisabek/icinga2-slack-notifications.git
     dest: /tmp/slacktmp
     clone: yes
     force: yes
     accept_hostkey: yes
   become_user: "{{system_default_user}}"
-  become: true
+  #  become: true
   tags: slacknotify
 
 - name: Move files to the right place
