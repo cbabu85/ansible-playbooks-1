@@ -17,7 +17,10 @@
   apt: pkg={{ item.package }}
        update_cache=yes
        state=latest
+       force_apt_get=yes
+       allow_unauthenticated=yes
        install_recommends=no
+  #shell: apt-get install {{item.package}} --no-install-recommends
   with_items: '{{ icinga2_pkg }}'
 
 - name: Start Icinga2
