@@ -3,6 +3,7 @@
 - name: Checking if sendmail is installed.
   shell: dpkg-query -l 'sendmail*'
   ignore_errors: True
+  no_log: True
   tags: sendmail
   register: sendmail_installed
   changed_when: False
