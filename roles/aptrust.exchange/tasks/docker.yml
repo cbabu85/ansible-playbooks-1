@@ -1,8 +1,5 @@
 # These tasks are meant for an alternative Docker only install and
 # may repeat some of the baremental.yml steps.
-## TODO:  Need to reinable once refactored for DPN use.
-  # - include: dpn.yml
-  # when: orgtype == 'dpn'
 
 # NOTE: Former home of repo was /home/ubuntu/go/src/github.com/APTrust/exchange, new home is
 # /srv/docker/exchange/repo
@@ -139,8 +136,7 @@
 
 # go install exchange binaries.
 - name: Build and install go binaries docker
-  shell: "go build ./..."
-  #  shell: "go install -a $(glide novendor)"
+  shell: "go install ./..."
   args:
     chdir: "{{goapp_src_path}}"
   environment: "{{go_env}}"
