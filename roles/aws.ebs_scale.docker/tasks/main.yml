@@ -47,6 +47,7 @@
 
 - name: Gimme non-alternative facts
   ec2_metadata_facts:
+  tags: always
 
 # Need to use aws cli since function doesn't exist yet in Ansible
 - name: Apply IAM policy to instance
@@ -80,7 +81,22 @@
 # Ref: https://hangarau.space/automatically-mounting-an-ebs-volume-using-ansible/
 - name: Determine the AWS Supervisor
   set_fact:
-    supervisor: "{{ (ansible_ec2_instance_type.startswith('t3') or ansible_ec2_instance_type.startswith('c5') or ansible_ec2_instance_type.startswith('m5') or ansible_ec2_instance_type.startswith('r5')) | ternary('nitro','legacy') }}"
+    supervisor: "{{ (ansible_ec2_instance_type.startswith('a1') or
+                     ansible_ec2_instance_type.startswith('c5') or
+                     ansible_ec2_instance_type.startswith('m5') or
+                     ansible_ec2_instance_type.startswith('i3') or
+                     ansible_ec2_instance_type.startswith('t3') or
+                     ansible_ec2_instance_type.startswith('p3dn') or
+                     ansible_ec2_instance_type.startswith('z1d') or
+                     ansible_ec2_instance_type.startswith('r5')) | \
+                     ternary('nitro','legacy') }}"
+  tags: setnitro
+
+- debug: var=supervisor
+  tags: setnitro
+
+- debug: var=ansible_ec2_instance_type
+  tags: setnitro
 
 - name: Copy ebsnvme-id script
   copy:
