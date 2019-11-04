@@ -15,7 +15,14 @@
 
 - name: Move files to the right place
   become: true
-  shell: mv /tmp/slacktmp/src/slack-notifications /etc/icinga2/conf.d
+  #  shell: mv /tmp/slacktmp/src/slack-notifications /etc/icinga2/conf.d
+  synchronize:
+    src: /tmp/slacktmp/src/slack-notifications
+    dest: /etc/icinga2/conf.d
+    archive: yes
+  delegate_to: "{{ inventory_hostname }}"
+  tags: syn_slack
+
 
 - name: Ensure that icinga features are enabled
   shell: icinga2 feature enable {{item}}
