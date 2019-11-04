@@ -1,0 +1,134 @@
+#!/bin/ksh
+#
+# Free physical RAM monitor plugin for Nagios
+# Written by Thomas Sluyter (nagios@kilala.nl)
+# By request of DTV Labs, Liberty Global, the Netherlands
+# Last Modified: 20-10-2006
+# 
+# Usage: ./check_ram
+#
+# Description:
+# This plugin determines how much of the physical RAM in the 
+# system is in use.
+#
+# Limitations:
+# Currently this plugin will only function correctly on Solaris systems.
+# And it really is only usefull at DTV Labs.
+#
+# Output:
+# The script returns either a WARN or a CRIT, depending on the 
+# percentage of free physical memory.
+#
+
+# Enabling the following dumps information into DEBUGFILE at various
+# stages during the execution of this script.
+DEBUG="0"
+DEBUGFILE="/tmp/foobar"
+rm $DEBUGFILE >/dev/null 2>&1
+echo "Starting script check_ram." > $DEBUGFILE
+
+# Host OS check and warning message
+if [ `uname` != "SunOS" ]
+then
+        echo "WARNING:"
+        echo "This script was originally written for use on Solaris."
+        echo "You may run into some problems running it on this host."
+        echo ""
+        echo "Please verify that the script works before using it in a"
+        echo "live environment. You can easily disable this message after"
+        echo "testing the script."
+        echo ""
+        exit 1
+fi
+
+# You may have to change this, depending on where you installed your
+# Nagios plugins
+PATH="/usr/bin:/usr/sbin:/bin:/usr/local/bin:/sbin"
+LIBEXEC="/usr/local/nagios/libexec"
+. $LIBEXEC/utils.sh
+
+print_usage() {
+        echo "Usage: $PROGNAME warning-percentage critical-percentage"
+        echo ""
+        echo "e.g. : $PROGNAME 15 5"
+        echo "This will start alerting when more than 85% of RAM has"
+        echo "been used."
+        echo ""
+}
+
+print_help() {
+        echo ""
+        print_usage
+        echo ""
+        echo "Free physical RAM plugin for Nagios"
+        echo ""
+        echo "This plugin not developped by the Nagios Plugin group."
+        echo "Please do not e-mail them for support on this plugin, since"
+        echo "they won't know what you're talking about :P"
+        echo ""
+        echo "For contact info, read the plugin itself..."
+}
+
+if [ $# -lt 2 ]; then print_help; exit $STATE_WARNING;fi
+
+case "$1" in
+        --help) print_help; exit $STATE_OK;;
+        -h) print_help; exit $STATE_OK;;
+        *) if [  $# -lt 2 ]; then print_help; exit $STATE_WARNING;fi ;;
+esac
+
+RAM_WARN=$1
+RAM_CRIT=$2
+[ $DEBUG -gt 0 ] && echo "Warning and Critical percentages are $RAM_WARN and $RAM_CRIT." >> $DEBUGFILE
+
+if [ $RAM_WARN -le RAM_CRIT ]
+then
+        echo "Warning percentage should be larger than critical percentage."
+        exit $STATE_WARNING
+fi
+
+check_space()
+{
+[ $DEBUG -gt 0 ] && echo "Starting check_space." >> $DEBUGFILE
+        TOTALSPACE=0
+        TOTALSPACE=`prtconf | grep ^"Memory size" | awk '{print $3}'`
+[ $DEBUG -gt 0 ] && echo "Total space is $TOTALSPACE." >> $DEBUGFILE
+
+        TOTALFREE=0
+        TOTALFREE=`vmstat 2 2 | tail -1 | awk '{print $5}'`
+[ $DEBUG -gt 0 ] && echo "Free space is $TOTALFREE." >> $DEBUGFILE
+        let TOTALFREE=$TOTALFREE/1000
+[ $DEBUG -gt 0 ] && echo "Free space, div1000 is $TOTALFREE." >> $DEBUGFILE
+}
+
+check_percentile() 
+{
+[ $DEBUG -gt 0 ] && echo "Starting check_percentile." >> $DEBUGFILE
+        FRACTION=`echo "scale=2; $TOTALFREE/$TOTALSPACE" | bc`
+[ $DEBUG -gt 0 ] && echo "Fraction is $FRACTION." >> $DEBUGFILE
+
+        PERCENT=`echo "scale=2; $FRACTION*100" | bc | awk -F. '{print $1}'`
+[ $DEBUG -gt 0 ] && echo "Percentile is $PERCENT." >> $DEBUGFILE
+
+        if [ $PERCENT -lt $RAM_CRIT ]; then
+[ $DEBUG -gt 0 ] && echo "$PERCENT is smaller than $RAM_CRIT. Critical." >> $DEBUGFILE
+          echo "RAM NOK - Less than $RAM_CRIT % of physical RAM is unused."
+          exitstatus=$STATE_CRITICAL
+          exit $exitstatus
+        fi
+
+        if [ $PERCENT -lt $RAM_WARN ]; then
+[ $DEBUG -gt 0 ] && echo "$PERCENT is smaller than $RAM_WARN. Warning." >> $DEBUGFILE
+          echo "RAM NOK - Less than $RAM_WARN % of physical RAM is unused."
+          exitstatus=$STATE_WARNING
+          exit $exitstatus
+        fi
+}
+
+check_space
+check_percentile
+
+[ $DEBUG -gt 0 ] && echo "$PERCENT is greater than $RAM_WARN. OK." >> $DEBUGFILE
+echo "RAM OK - $TOTALFREE MB out of $TOTALSPACE MB RAM unused."
+exitstatus=$STATE_OK
+exit $exitstatus
