@@ -38,6 +38,8 @@
   copy: src="{{ item }}" dest="{{nagios_plugin_dir}}/{{ item }}" owner=nagios group=nagios mode=0755
   with_items:
     - check_aws_rds.py
+    - check_ram
+    - check_linux_ram.py
     - check_reboot_required.sh
     - check_supervisord.py
   tags: ['rdsplugin', 'addplugins']
