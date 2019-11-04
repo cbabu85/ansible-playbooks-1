@@ -4,7 +4,8 @@
 # icinga2 on this host and register it with the appropriate icinga2 masternode.
 # ansible-playbook icinga2-headless-node.yml -l apt-somehost"
 
-- hosts: "{{ ansible_hostname | default('all')}}"
+#- hosts: "{{ ansible_hostname | default('all')}}"
+- hosts: apt-prod-docker
   gather_facts: True
   vars_files:
       - "group_vars/vault.yml"
@@ -36,6 +37,8 @@
 
     - name: create cert on new node
       shell: icinga2 pki new-cert --cn "{{ ansible_hostname }}.aptrust.org" --key "/var/lib/icinga2/certs/{{ ansible_hostname }}.key" --cert "/var/lib/icinga2/certs/{{ ansible_hostname }}.crt"
+      args:
+        creates: /var/lib/icinga2/certs/{{ ansible_hostname }}.crt
       tags: nodeaction
 
     - name: save the masters cert as trustedcert
@@ -65,35 +68,55 @@
       when: globalzone|changed
       service: name=icinga2 state=restarted
 
+      # NOTE: THIS IS NOT carrying over to the next play correctly.
+    - name: Setting fact ofr masteraction
+      set_fact: node_name="{{ansible_hostname}}" cacheable=yes
+      delegate_to: 127.0.0.1
+      become: false
+      tags: carryover
+
+    - debug: var=node_name
+      register: node_name
+      delegate_to: 127.0.0.1
+      tags: carryover
+
 - hosts: "{{ icinga2_master_host | default('monitoring_servers')}}"
+  vars_files:
+      - "group_vars/vault.yml"
+  vars:
+    #    node_name: "{{hostvars['localhost']['node_name']}}"
+    node_name: apt-prod-docker
+
   tags: ['masteraction']
   tasks:
+   - debug: var=node_name
+     tags: carryover
 
    - name: insert/update zones.conf
      tags: ['updatefiles']
      blockinfile:
          dest: /etc/icinga2/zones.conf
-         marker: "# {mark} ANSIBLE MANAGED BLOCK {{ansible_hostname}}"
+         marker: "# {mark} ANSIBLE MANAGED BLOCK {{node_name}}"
          block: |
-            object Endpoint "{{ansible_hostname}}.aptrust.org" {
-                host = "{{ansible_hostname}}.aptrust.org"
+            object Endpoint "{{node_name}}.aptrust.org" {
+                host = "{{node_name}}.aptrust.org"
                 port = "5665"
             }
-            object Zone "{{ansible_hostname}}.aptrust.org" {
+            object Zone "{{node_name}}.aptrust.org" {
                 parent = "master"
-                endpoints = [ "{{ansible_hostname}}.aptrust.org" ]
+                endpoints = [ "{{node_name}}.aptrust.org" ]
             }
 
    - name: insert/update hosts.conf
      tags: ['updatefiles']
      blockinfile:
          dest: "/etc/icinga2/zones.d/master/hosts.conf"
-         marker: "# {mark} ANSIBLE MANAGED BLOCK {{ansible_hostname}}"
+         marker: "# {mark} ANSIBLE MANAGED BLOCK {{node_name}}"
          block: |
-            object Host "{{ansible_hostname}}.aptrust.org" {
+            object Host "{{node_name}}.aptrust.org" {
                 import "Icinga Agent"
-                display_name = "{{ansible_hostname}}"
-                address = "{{ansible_hostname}}.aptrust.org"
+                display_name = "{{node_name}}"
+                address = "{{node_name}}.aptrust.org"
 
                 enable_notifications = true
                 vars.os = "Linux"
