@@ -5,4 +5,5 @@
   when: not pharos_docker
 
 - import_tasks: db_read_only_user.yml
+  when: RAILS_ENV != 'staging'
   tags: psqlreadonly
