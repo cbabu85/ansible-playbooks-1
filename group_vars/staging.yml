@@ -1,4 +1,5 @@
 ---
+environment: staging
 RAILS_ENV: staging
 pharos_url: "https://staging.aptrust.org"
 virtual_host: "staging.aptrust.org"
@@ -14,6 +15,8 @@ pharos_db_port: '5432'
 pharos_db_name: 'pharos_staging'
 pharos_db_user: 'apt_pharos'
 pharos_db_pwd: "{{ vault_pharos_demo_db_pwd}}"
+pharos_db_ro_user: "{{ vault_pharos_demo_db_ro_user }}"
+pharos_db_ro_pwd: "{{ vault_pharos_demo_db_ro_pwd }}"
 # Pharos System user for API access
 pharos_system_user: "system@aptrust.org"
 pharos_system_user_pwd: "{{vault_pharos_demo_system_user_pwd}}"

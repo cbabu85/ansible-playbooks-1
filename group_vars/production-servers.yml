@@ -1,6 +1,7 @@
 ---
 # group_vars/production-servers
 
+environment: production
 # APP Env as language agnostic variable
 APP_ENV: 'production'
 GO_ENV: 'production'
@@ -18,6 +19,8 @@ envtype: "{{APP_ENV}}"
 pharos_local_db: False
 pharos_db_host: "{{ vault_pharos_prod_db_host }}"
 pharos_db_user: "{{ vault_pharos_prod_db_user}}"
+pharos_db_ro_user: "{{ vault_pharos_prod_db_ro_user }}"
+pharos_db_ro_pwd: "{{ vault_pharos_prod_db_ro_pwd }}"
 pharos_db_pwd: "{{ vault_pharos_prod_db_pwd}}"
 pharos_db_port: "5432"
 

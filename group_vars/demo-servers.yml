@@ -9,6 +9,7 @@ RAILS_ENV: 'demo'
 # AWS Tags
 orgtype: 'APT'
 envtype: "{{APP_ENV}}"
+environment: demo
 
 # SSH
 sshd_allow_users: ["{{system_default_user}}",cd3ef,andrew.diamond,adiamond,kec6en]
@@ -25,6 +26,8 @@ pharos_local_db: False
 pharos_db_host: "{{ vault_pharos_demo_db_host}}"
 pharos_db_user: "{{ vault_pharos_demo_db_user}}"
 pharos_db_pwd: "{{ vault_pharos_demo_db_pwd}}"
+pharos_db_ro_user: "{{ vault_pharos_demo_db_ro_user }}"
+pharos_db_ro_pwd: "{{ vault_pharos_demo_db_ro_pwd }}"
 pharos_db_port: "5432"
 
 pharos_devise_key: "{{ vault_pharos_dev_devise_key}}"
@@ -513,4 +516,5 @@ ex_nsq_max_msg_timeout: "720m0s"
 ex_nsq_max_req_timeout: "180m"
 
 # Graylog
-graylog_dns: ip-10-0-0-101.ec2.internal
+#graylog_dns: ip-10-0-0-101.ec2.internal
+graylog_dns: logs.aptrust.org
