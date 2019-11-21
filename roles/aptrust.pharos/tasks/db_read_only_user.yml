@@ -1,0 +1,20 @@
+---
+
+- name: Create Read-Only DB User
+  # command: sudo docker-compose exec -e PGPASSWORD="{{pharos_db_pwd}}" -u "{{pharos_db_user}}" db psql -h "{{pharos_db_host}}" -c "{{item}}"
+  command: docker run -it --rm -e PGPASSWORD={{pharos_db_pwd}} -e PGHOST={{pharos_db_host}} -e PGDATABASE={{pharos_db_name}} -e PGUSER={{pharos_db_user}} governmentpaas/psql psql -c "{{item}}"
+  become: true
+  with_items:
+    - "DO $$ BEGIN CREATE ROLE readaccess; EXCEPTION WHEN duplicate_object THEN
+       RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE; END $$;"
+    - "GRANT USAGE ON SCHEMA public TO readaccess;"
+    - "GRANT SELECT ON ALL TABLES IN SCHEMA public TO readaccess;"
+    - "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO
+        readaccess;"
+    - "DO $$ BEGIN CREATE USER {{pharos_db_ro_user}} WITH PASSWORD
+      '{{pharos_db_ro_pwd}}'; EXCEPTION WHEN duplicate_object THEN RAISE
+      NOTICE '%s, skipping', SQLERRM USING ERRCODE = SQLSTATE; END $$;"
+    - "GRANT readaccess TO {{pharos_db_ro_user}};"
+  args:
+    chdir: "{{dockerapp_path}}"
+  tags: dbdump,psqlreadonly
