@@ -76,7 +76,7 @@ NAME="{{vg_name}}_lvm"
 # Environment
 # Describes the environment (prod,demo,dev,test)
 # For EBS Tagging only
-ENVIRONMENT="{{envtype|default('demo')}}"
+ENVIRONMENT="{{environment|default('demo')}}"
 
 # Volume Type
 # Choose between Provisioned IOPS SSD (io1), General Purpose SSD (gp2),
@@ -299,10 +299,13 @@ initialize_lv() {
     $AWS_EC2 describe-instances --instance-ids $INSTANCE_ID > /etc/ec2_instance_info
     sudo vgcreate vg_$NAME /dev/xvd${DISK_LETTER}
     sudo lvcreate -l 100%VG -n lv_$NAME vg_$NAME
-    sudo mkfs.ext4 /dev/vg_$NAME/lv_$NAME
-
+    if [ ! $(blkid -o value -s TYPE /dev/vg_$NAME/lv_$NAME) ] ;then
+         sudo mkfs.ext4 /dev/vg_$NAME/lv_$NAME
+    else
+	 echo "Filesystem ext4 already exists. Nothing to do here."
+    fi
     sudo mkdir -p $MOUNT_POINT
-    sudo mount $MOUNT_POINT
+    sudo mount /dev/vg_$NAME/lv_$NAME $MOUNT_POINT
 
     add_to_fstab
 
