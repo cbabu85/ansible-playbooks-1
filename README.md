@@ -170,7 +170,7 @@ If you just want to deploy a change to the pharos repom, you wont need to run th
 
 Deploy Pharos to demo:
 
-`ansible-playbook pharos.yml -t deploy -b -l apt-demo-repo2`
+`ansible-playbook pharos.yml -l apt-demo`
 
 Deploy Pharos to production:
 
