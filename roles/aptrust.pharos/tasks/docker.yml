@@ -206,3 +206,23 @@
         - dockserv
         - pharos_start
     #  when: RAILS_ENV == 'staging'
+
+  - name: Scale Pharos to 2 containers
+    docker_service:
+        project_src: "{{dockerapp_path}}"
+        scale:
+            pharos: 2
+    vars:
+        ansible_python_interpreter: "/usr/bin/env python-docker"
+    when: RAILS_ENV == 'staging'
+
+  - name: Add logrotation for logfiles.
+    template:
+        src: logrotation.docker.yml.j2
+        dest: "/etc/logrotate.d/pharos_{{RAILS_ENV}}.docker"
+        owner: "root"
+        group: "{{deploy_group}}"
+        mode: 0644
+    tags: pharos_logrotate_docker
+
+

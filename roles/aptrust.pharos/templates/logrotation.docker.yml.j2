@@ -1,0 +1,10 @@
+{{dockerapp_data_path}}/*/*.log {
+  su ubuntu ubuntu
+  daily
+  missingok
+  rotate 14
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}
