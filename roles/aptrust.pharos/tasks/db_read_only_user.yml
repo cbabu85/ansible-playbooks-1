@@ -17,4 +17,5 @@
     - "GRANT readaccess TO {{pharos_db_ro_user}};"
   args:
     chdir: "{{dockerapp_path}}"
+  ignore_errors: yes
   tags: dbdump,psqlreadonly
