@@ -214,7 +214,8 @@
             pharos: 2
     vars:
         ansible_python_interpreter: "/usr/bin/env python-docker"
-    when: RAILS_ENV == 'staging'
+    when: RAILS_ENV == 'production'
+    tags: scale2
 
   - name: Add logrotation for logfiles.
     template:
