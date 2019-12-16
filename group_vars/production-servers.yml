@@ -192,8 +192,8 @@ ex_fetchworker: {
   }
 
 ex_storeworker: {
-    networkconnections: "4",
-    workers: "4",
+    networkconnections: "2",
+    workers: "2",
     nsqtopic: "apt_store_topic",
     nsqchannel: "apt_store_channel",
     maxattempts: "6",
