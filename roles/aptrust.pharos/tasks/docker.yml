@@ -207,11 +207,11 @@
         - pharos_start
     #  when: RAILS_ENV == 'staging'
 
-  - name: Scale Pharos to 2 containers
+  - name: Scale Pharos to 3 containers
     docker_service:
         project_src: "{{dockerapp_path}}"
         scale:
-            pharos: 2
+            pharos: 3
     vars:
         ansible_python_interpreter: "/usr/bin/env python-docker"
     when: RAILS_ENV == 'production'
