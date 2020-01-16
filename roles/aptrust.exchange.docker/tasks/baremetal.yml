@@ -51,7 +51,6 @@
     - ['apt']
     - ['data','logs','restore','replication']
   tags: exchange_ebs
-  when: orgtype == 'apt'
 
 
 # TODO: Refactor this as it will clone the repo on every run and overwrite the
@@ -101,13 +100,11 @@
 - name: Set apt exchange services fact to configure supervisor
   set_fact:
       exchangeservices: "{{ex_apt_services}}"
-  when: orgtype == 'apt'
   tags: lsfiles
 
 - name: Set nsq services fact to configure supervisor
   set_fact:
       nsqservices: ['nsqadmin','nsqlookupd','nsqd']
-  when: orgtype == 'apt'
   tags: lsfiles
 
 - name: Update Exchange config file
@@ -122,7 +119,6 @@
   become: true
   template: src=nsq.config.j2
             dest="{{goapp_cfg_path}}/nsq/{{GO_ENV}}.config"
-  when: orgtype == 'apt'
   tags: buildgo, nsq_supervisor
 
 - name: Set Supervisor config for Exchange and NSQ Services
@@ -132,7 +128,6 @@
   with_items:
     - { name: 'exchange_supervisor.conf.j2', dest: 'exchange.conf'}
     - { name: 'nsq_supervisor.conf.j2', dest: 'nsq.conf'}
-  when: orgtype == 'apt'
   tags: listfiles
 
 - name: Add APTrust cronjobs
@@ -149,20 +144,12 @@
         state=present
         disabled=no
   with_dict: "{{ apt_cronjobs }}"
-  when: orgtype == 'apt'
   tags: apt_cronjobs
 
 - set_fact:
       supervisor_apps:
         - 'nsqservices:'
         - 'exchange:'
-  when: orgtype == 'apt'
-  tags: restartapps
-
-- set_fact:
-      supervisor_apps:
-        - 'exchange:'
-  when: orgtype == 'dpn'
   tags: restartapps
 
 # When state = present, the module will call supervisorctl reread then
