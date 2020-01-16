@@ -132,6 +132,10 @@
 # Ensure docker container running state.
 - name: Start docker containers from compose
   docker_service:
-    project_name: exchange
-    project_src: "{{dockerapp_repo_path}}/"
+    project_src: "{{docker_app_path}}/"
+    files: docker-compose.yml
+    pull: true
+  vars:
+      ansible_python_interpreter: "/usr/bin/env python-docker"
+
   tags: dockserv
