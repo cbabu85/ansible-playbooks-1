@@ -99,7 +99,7 @@
     follow: false
   with_nested:
     - ['exchange']
-    - ['data', 'restore', 'replication']
+    - ['data', 'restore', 'replication', 'config']
   tags: exchange_ebs
 
 ##### TEMP HYBRID SETUP START ####
@@ -124,7 +124,8 @@
   become: true
   template:
     src: exchange.json.j2
-    dest: "{{docker_app_path}}/config/{{GO_ENV}}.json"
+    #    dest: "{{docker_app_path}}/config/{{GO_ENV}}.json"
+    dest: "{{docker_data_path}}/config/config.json
 
 - name: Add APTrust cronjobs
   cron:
