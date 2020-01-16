@@ -86,20 +86,6 @@
     - { regexp: "PHAROS_API_KEY", line: "PHAROS_API_KEY={{pharos_api_key}}"}
    tags: dotenv
 
-- name: Setup dockerapp directory structure
-  file:
-    path: "{{item}}"
-    owner: "{{system_default_user}}"
-    group: "{{system_default_user}}"
-    mode: 0775
-    recurse: true
-    state: directory
-   with_items:
-     - "{{docker_app_path}}"
-     - "{{docker_data_path}}"
-     - "{{docker_data_path}}/log"
-   tags: makedir
-
 - name: "Create elastic EBS volume directories (dockerapp)"
   become: yes
   file:
