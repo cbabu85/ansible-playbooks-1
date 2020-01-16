@@ -102,21 +102,6 @@
     - ['data', 'restore', 'replication', 'config']
   tags: exchange_ebs
 
-##### TEMP HYBRID SETUP START ####
-##### THIS IS ONLY TEMPORARY TO RUN baremetal exchange and docker NSQ #######
-- name: Update Exchange config file in {{goapp_cfg_path}}
-  become_user: "{{system_default_user}}"
-  become: true
-  template:
-     src: exchange.json.j2
-     dest: "/{{goapp_cfg_path}}/{{GO_ENV}}.json"
-  tags:
-    - buildgo
-    - gitclone
-    - exchangetemplate
-
-#### TEMP HYBRID SETUP END ####
-
 # Note: This will be used going forward in containerized apps.
 # mounted as volume into each container.
 - name: Update Exchange config file
