@@ -8,13 +8,12 @@
 # Only rebuild go binaries, does not restart services.
 #  ansible-playbook exchange.yml -t gobuild --diff
 -   hosts:
-      - docker1
       - docker4
     vars_files:
         - "group_vars/vault.yml"
 
     vars:
-        playbook_name: exchange
+        playbook_name: exchange.docker
         # AWS.cli
         aws_access_key_id: "{{aws_access_key_ubuntu}}"
         aws_secret_access_key: "{{aws_secret_access_key_ubuntu}}"
@@ -28,13 +27,14 @@
         #  git_branch: feature/two_factor #git branch/commit
         #  git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
         git_branch: docker
+        gather_facts: true
 
     roles:
       - {role: aptrust.common.docker, tags: common}
       - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
       - {role: aws.cli, tags: aws_cli}
-      - {role: aws.ebs_scale.docker, tags: ebs_scale_docker}
-        #      - {role: aptrust.exchange.docker, tags: [exchange, deploy]}
+      - {role: aws.ebs_scale.docker, tags: ebs_scale_docker, setnitro}
+      - {role: aptrust.exchange.docker, tags: [exchange, deploy]}
     tasks:
 
     - name: whoami
@@ -46,7 +46,7 @@
     - name: Slack to all
       slack:
         token: "{{slack_token}}"
-        msg: "{{playbook_name}} (Branch: {{git_branch}}, Commit: {{git_version}}) deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
+        msg: "{{playbook_name}} (Branch: {{git_branch}}, Commit: {{ git_version | default('HEAD', true) }}) deployment on {{ inventory_hostname }}  by user {{whobrokeit.stdout}} completed"
         icon_emoji: ":dog:"
         channel: 'ops'
       tags: [exchange,slack,deploy]
