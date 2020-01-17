@@ -1,5 +1,1 @@
 - import_tasks: docker.yml
-  when: ex_docker
-
-- import_tasks: baremetal.yml
-  when: not ex_docker
