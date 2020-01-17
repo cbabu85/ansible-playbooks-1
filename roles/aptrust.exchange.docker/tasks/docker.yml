@@ -69,6 +69,23 @@
   register: gitclone
   tags: buildgo, gitclone
 
+  # NOTE: Revision should be set by play.
+  # If git_version is set this will result in the same, if it's unset it
+  # uses the HEAD/latest of the git repo.
+- name: get revision
+  shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --short=7 HEAD"
+  register: revision
+  tags: revs, update_env, gitclone, always
+
+- set_fact: exchange_release="{{revision.stdout}}"
+  tags: revs, update_env, always
+
+# Note: Replacing / for _ for docker_tag_name construct that's used in env
+# to get the correct image
+- set_fact: exchange_branch="{{git_branch | replace('/','_')}}"
+  tags: revs, update_env, always
+
+
 # Note: Environment env vars (user profile) supersede .env
 # https://docs.docker.com/compose/environment-variables/#the-env-file
 - name: Update env vars in .env
