@@ -1,6 +1,9 @@
-# NOTE: Former home of repo was /home/ubuntu/go/src/github.com/APTrust/exchange, new home is
-# /srv/docker/exchange
+---
+# NOTE:
+# Former home of repo was /home/ubuntu/go/src/github.com/APTrust/exchange,
+# new home is /srv/docker/exchange
 #
+
 - name: Ensure dockerd is installed and running
   command: docker --version
   tags: checkdock
@@ -15,8 +18,9 @@
   with_items:
       - "{{docker_app_path}}"
       - "{{docker_data_path}}"
+      - "{{docker_data_path}}/config"
       - "{{docker_data_path}}/log"
-  tags: makdir
+  tags: makedir
 
 - name: Set commit-version fact to git hash
   set_fact: gitversion="{{git_version}}"
@@ -54,7 +58,7 @@
 - name: Clone exchange repo
   git:
     repo: "git@github.com:APTrust/exchange.git"
-    dest:"{{ docker_app_path }}"
+    dest: "{{ docker_app_path }}"
     accept_hostkey: yes
     clone: yes
     update: yes
@@ -84,7 +88,7 @@
     - { regexp: "AWS_SECRET_ACCESS_KEY", line: "AWS_SECRET_ACCESS_KEY={{aws_go_pwd}}"}
     - { regexp: "PHAROS_API_USER", line: "PHAROS_API_USER={{pharos_api_user}}"}
     - { regexp: "PHAROS_API_KEY", line: "PHAROS_API_KEY={{pharos_api_key}}"}
-   tags: dotenv
+  tags: dotenv
 
 - name: "Create elastic EBS volume directories (dockerapp)"
   become: yes
@@ -99,7 +103,7 @@
     follow: false
   with_nested:
     - ['exchange']
-    - ['data', 'restore', 'replication', 'config']
+    - ['data', 'restore', 'replication']
   tags: exchange_ebs
 
 # Note: This will be used going forward in containerized apps.
@@ -110,11 +114,11 @@
   template:
     src: exchange.json.j2
     #    dest: "{{docker_app_path}}/config/{{GO_ENV}}.json"
-    dest: "{{docker_data_path}}/config/config.json
+    dest: "{{docker_data_path}}/config/config.json"
 
 - name: Add APTrust cronjobs
   cron:
-    name: "{{item.key}}"
+    name: "{{ item.key }}"
     user: "{{system_default_user}}"
     minute: "{{item.value.minute | default('*')}}"
     hour: "{{item.value.hour | default('*')}}"
@@ -137,5 +141,4 @@
     pull: true
   vars:
       ansible_python_interpreter: "/usr/bin/env python-docker"
-
   tags: dockserv
