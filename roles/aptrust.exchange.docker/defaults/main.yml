@@ -1,12 +1,9 @@
 ---
 goapp_name: exchange
-goapp_bin_path: "{{ go_env.GOPATH }}/bin"
-goapp_src_path: "{{ go_env.GOPATH }}/src/github.com/APTrust/{{goapp_name}}"
-goapp_cfg_path: "{{ goapp_src_path }}/config"
-goapp_log_path: "/data/exchange/log"
-
-# Build Go binaries.
-buildgo: true
+# Path for persisitent data between deploys
+goapp_data_path: "/data/{{goapp_name}}"
+goapp_cfg_path: "{{ goapp_data_path }}/config"
+goapp_log_path: "{{ goapp_data_path }}/log"
 
 # Mount_dir
 # Usually uses external filesystems EBS, NFS
@@ -17,16 +14,11 @@ mount_dir: /mnt/lvm
 #Git branch to deploy
 ex_git_version: master
 
-# Flag to deploy docker-only environment
-ex_docker: true
-
 # Docker related settings
 docker_app_path: "/srv/docker/exchange"
-docker_data_path: "/data/exchange"
-docker_registry_key: registry.gitlab.com/aptrust/container-registry/
-
-# Used to determine which services to deploy on server.
-ex_services: all # values: all, ingest, restore
+docker_data_path: "{{goapp_data_path}}"
+#docker_registry_key: registry.gitlab.com/aptrust/container-registry/
+docker_registry_key: "aptrust/"
 
 ex_apt_services:
   - apt_fetch
@@ -39,24 +31,12 @@ ex_apt_services:
   - apt_glacier_restore_init
   - apt_file_restore
 
-ex_dpn_services:
-  - dpn_copy
-  - dpn_ingest_record
-  - dpn_ingest_store
-  - dpn_package
-  - dpn_replication_store
-  - dpn_validate
-  #  Disabled cause, you know. Titanic and Icebergs.
-  #  - dpn_fixity_checker
-  - dpn_glacier_restore_init
-  - dpn_s3_retriever
-
 apt_cronjobs:
-  apt_bucket_reader:
+  exchange_apt_bucket_reader:
     hour: "*/1"
     minute: "*/2"
     params: "-stats={{goapp_log_path}}/apt_bucket_reader_stats.json"
-  apt_queue:
+  exchange_apt_queue:
     hour: "*/1"
     minute: "*/30"
     params: "-stats={{goapp_log_path}}/apt_queue_stats.json"
