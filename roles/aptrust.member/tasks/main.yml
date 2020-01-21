@@ -14,6 +14,8 @@
           - 'restore'
           - 'receiving.test'
           - 'restore.test'
+          - 'receiving.staging'
+          - 'restore.staging'
       register: new_buckets
       tags: new_buckets, justbuckets
 
@@ -67,8 +69,10 @@
       with_items:
         - { name: receiving, days: 60, incomplete: 7 }
         - { name: receiving.test, days: 30, incomplete: 7 }
+        - { name: receiving.staging, days: 30, incomplete: 7 }
         - { name: restore, days: 14, incomplete: 7 }
         - { name: restore.test, days: 7, incomplete: 7 }
+        - { name: restore.staging, days: 7, incomplete: 7 }
       tags: lcyclecli
 
     - name: Create IAM Group
@@ -91,6 +95,18 @@
       when: '"test" in item.name'
       tags: iamgroups
 
+    - name: Add users to created staging group
+      iam:
+        iam_type: user
+        name: "{{item.name}}"
+        state: present
+        groups: "staging.{{inst_id}}.{{inst_id_suffix}}.users"
+      with_items:
+          -  "{{ inst_users }}"
+      when: '"staging" in item.name'
+      tags: iamgroups
+
+
     - name: Add users to created prod group
       iam:
         iam_type: user
@@ -112,6 +128,19 @@
           -  "{{ inst_users_remove | default([])}}"
       when:
         - '"test" in item'
+        - inst_users_remove not in vars
+      tags: iamgroups, removeuser
+
+    - name: Remove users from staging group
+      iam:
+        iam_type: user
+        name: "{{item}}"
+        state: absent
+        groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
+      with_items:
+          -  "{{ inst_users_remove | default([])}}"
+      when:
+        - '"staging" in item'
         - inst_users_remove not in vars
       tags: iamgroups, removeuser
 
@@ -154,16 +183,9 @@
       # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
     - name: set policydata
       set_fact:
-         s3policydata: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy.json.j2') | string }}"
-      tags: iampol
-
-      # A bug in the iam_policy module is sending json as dict not as raw text,
-      # therefore jinja string filter has to be applied outside of the task.
-      # per official workaround:
-      # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
-    - name: set policydata_test
-      set_fact:
-         s3policydatatest: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_test.json.j2') | string }}"
+        s3_policy_data_prod: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_prod.json.j2') | string }}"
+        s3_policy_data_test: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_test.json.j2') | string }}"
+        s3_policy_data_staging: "{{ lookup( 'template', 'roles/aptrust.member/templates/s3_policy_staging.json.j2') | string }}"
       tags: iampol
 
     - name: Assign IAM policy to user groups
@@ -174,12 +196,12 @@
         state: present
         policy_json: "{{item.1 }}"
       with_together:
-        - [ 'test.{{inst_id}}.{{inst_id_suffix}}.users', '{{inst_id}}.{{inst_id_suffix}}.users' ]
-        - [ '{{s3policydatatest}}','{{s3policydata}}' ]
-        - ['test','prod']
+        - [ 'staging.{{inst_id}}.{{inst_id_suffix}}.users', 'test.{{inst_id}}.{{inst_id_suffix}}.users', '{{inst_id}}.{{inst_id_suffix}}.users' ]
+        - [ '{{s3_policy_data_staging}}', '{{s3_policy_data_test}}','{{s3_policy_data_prod}}' ]
+        - ['staging', 'test', 'prod']
       tags: iampol
 
-# TODO: Create credentials when creating users and print to stdout or put into encrypted var file for initial distribution
+      # TODO: Create credentials when creating users and print to stdout or put into encrypted var file for initial distribution
 
 # Note: Disabled for now. Will create and distribute IAM creds manually for now.
 #    - name: Create user credentials for testing
