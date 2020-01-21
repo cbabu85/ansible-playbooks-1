@@ -6,5 +6,4 @@ inst_suffix: edu
 inst_groups:
     - "{{inst_id}}.{{inst_id_suffix}}.users"
     - "test.{{inst_id}}.{{inst_id_suffix}}.users"
-
-
+    - "staging.{{inst_id}}.{{inst_id_suffix}}.users"
