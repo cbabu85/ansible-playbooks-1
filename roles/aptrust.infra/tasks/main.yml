@@ -8,9 +8,14 @@
       set_fact:
         aptglacierenc: "{{ lookup( 'template', 's3_bucket_encryption.json.j2') | string }}"
         aptglacierdeep: "{{ lookup( 'template', 'apt_glacier_deep_lifecycle.json.j2') | string }}"
-        s3policydata: "{{ lookup( 'template', 's3_policy.json.j2') | string }}"
-        s3policydatatest: "{{ lookup( 'template', 's3_policy_test.json.j2') | string }}"
+        s3_policy_data_prod: "{{ lookup( 'template', 's3_policy.json.j2') | string }}"
+        s3_policy_data_test: "{{ lookup( 'template', 's3_policy_test.json.j2') | string }}"
+        s3_policy_data_staging: "{{ lookup( 'template', 's3_policy_staging.json.j2') | string }}"
         s3_bucket_access: "{{ lookup( 'template', 's3_bucket_access.json.j2') | string }}"
+        s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy.json.j2') | string }}"
+        s3_bucket_policy_test: "{{ lookup( 'template', 's3_bucket_policy_test.json.j2') | string }}"
+        s3_bucket_policy_staging: "{{ lookup( 'template', 's3_bucket_policy_staging.json.j2') | string }}"
+
 
     - name: Create S3 Glacier buckets
       aws_s3:
@@ -59,8 +64,8 @@
       #  state: present
       #  policy_json: "{{item.1 }}"
       #with_together:
-      #  - ['go-services-demo', 'go-services-prod']
-      #  - ['{{s3policydatatest}}', '{{s3policydata}}']
+      #  - ['go-services-demo', 'go-services-prod', 'go-services-staging']
+      #  - ['{{s3_policy_data_test}}', '{{s3_policy_data_prod}}', '{{s3_policy_data_staging}}']
       #  - ['test', 'prod']
       # tags: iampol
 
