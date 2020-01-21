@@ -12,7 +12,7 @@
         s3_policy_data_test: "{{ lookup( 'template', 's3_policy_test.json.j2') | string }}"
         s3_policy_data_staging: "{{ lookup( 'template', 's3_policy_staging.json.j2') | string }}"
         s3_bucket_access: "{{ lookup( 'template', 's3_bucket_access.json.j2') | string }}"
-        s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy.json.j2') | string }}"
+        s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy_prod.json.j2') | string }}"
         s3_bucket_policy_test: "{{ lookup( 'template', 's3_bucket_policy_test.json.j2') | string }}"
         s3_bucket_policy_staging: "{{ lookup( 'template', 's3_bucket_policy_staging.json.j2') | string }}"
 
