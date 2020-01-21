@@ -8,11 +8,11 @@ It provides the following tasks:
  2. Create IAM Group
  3. Create IAM Users
  4. Setup an IAM policy to manage access to S3 buckets
- 5. Apply the IAM inline policy to the groups (test/prod)
+ 5. Apply the IAM inline policy to the groups (test/staging/prod)
  6. Setup logging of S3 buckets to aptrust.s3.logs bucket
  7. Setup lifecycle rules of S3 buckets
 
-This playbook utilizes encrypted data structures in the 
+This playbook utilizes encrypted data structures in the
 
 ```group_vars/members/[inst_id].yml```
 
