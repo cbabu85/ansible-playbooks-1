@@ -14,17 +14,14 @@ docker4 hostname_name=docker4 hostname_fqdn=staging.aptrust.org host_eip=52.0.17
 [demo-servers]
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
-apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.90.164.9 # Pharos+Exchange Demo
+apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos+Exchange Demo
 
 [pharos-servers]
-apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.90.164.9 # Pharos+Exchange Demo
-#apt-prod-repo2 hostname_name=apt-prod-repo2 hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Prod
-#apt-prod-docker hostname_name=apt-prod-docker hostname_fqdn=apt-prod-docker.aptrust.org host_eip=54.159.98.164 # Pharos Docker Prod (new prod-repo)
+apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos+Exchange Demo
 apt-prod-docker hostname_name=apt-prod-docker hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Docker Prod (new prod-repo)
 
 [production-servers]
 # APTrust 2.0
-apt-prod-repo2 hostname_name=apt-prod-repo22 hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Prod
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
 apt-prod-web hostname_name=apt-prod-web hostname_fqdn=wiki.aptrust.org host_eip=34.200.146.5 # Web and Wiki Instance
 docker2 hostname_name=docker2 hostname_fqdn=logs.aptrust.org host_eip=34.231.222.220 instance_id=i-0ef049a6ae46171a9
