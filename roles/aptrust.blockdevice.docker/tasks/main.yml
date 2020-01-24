@@ -48,11 +48,12 @@
   filesystem:
     fstype: ext4
     dev: "{{blockdevicename}}"
+  tags: makeblock
 
 - name: mount the persistent block device
   mount:
     path: "{{ mount_point }}"
     src: "{{ blockdevicename }}"
     fstype: ext4
-    opts: nofail
+    opts: nofail,x-systemd.device-timeout=5
     state: mounted
