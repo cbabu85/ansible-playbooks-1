@@ -23,6 +23,7 @@
     instance: "{{ansible_ec2_instance_id}}"
     region: "{{ansible_ec2_placement_region}}"
     name: "{{ ansible_hostname }}_data"
+    device_name: '/dev/xvdf'
     volume_type: gp2
     volume_size: 5
     encrypted: yes
