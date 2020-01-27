@@ -84,6 +84,9 @@
       register: new_groups
       tags: iamgroups, always
 
+# Note: I know this is dirty and not DRY, but the data structure
+# of member files and limits of Ansible does not allow for a more
+# preogrammatic approach.
     - name: Add users to created test group
       iam:
         iam_type: user
@@ -91,7 +94,7 @@
         state: present
         groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          -  "{{ inst_users }}"
+          - "{{ inst_users }}"
       when: '"test" in item.name'
       tags: iamgroups
 
@@ -102,10 +105,9 @@
         state: present
         groups: "staging.{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          -  "{{ inst_users }}"
+          - "{{ inst_users }}"
       when: '"staging" in item.name'
       tags: iamgroups
-
 
     - name: Add users to created prod group
       iam:
@@ -114,7 +116,7 @@
         state: present
         groups: "{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          -  "{{ inst_users }}"
+          - "{{ inst_users }}"
       when: '"test" not in item.name'
       tags: iamgroups
 
