@@ -7,3 +7,10 @@ inst_groups:
     - "{{inst_id}}.{{inst_id_suffix}}.users"
     - "test.{{inst_id}}.{{inst_id_suffix}}.users"
     - "staging.{{inst_id}}.{{inst_id_suffix}}.users"
+
+apt_preservation_users:
+    - apt.go.demo
+    - apt.go.staging
+    - apt.go.prod
+
+apt_preservation_group: 'apt_preservation_services'
