@@ -1,4 +1,10 @@
 ---
+# This playbook executes
+# - Create S3 Glacier buckets
+# - Enables default encryption
+# - Blocks S3 public access by default
+# - Setup S3 Lifecycle policies for Deep Glacier
+#
       # A bug in the iam_policy module is sending json as dict not as raw text,
       # therefore jinja string filter has to be applied outside of the task.
       # per official workaround:
@@ -15,7 +21,9 @@
         s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy_prod.json.j2') | string }}"
         s3_bucket_policy_test: "{{ lookup( 'template', 's3_bucket_policy_test.json.j2') | string }}"
         s3_bucket_policy_staging: "{{ lookup( 'template', 's3_bucket_policy_staging.json.j2') | string }}"
+      tags: always
 
+# TODO: Shoudl set up services users apt.go.demo, apt.go.production, apt.go.staging
 
     - name: Create S3 Glacier buckets
       aws_s3:
@@ -54,6 +62,42 @@
             --lifecycle-configuration '{{ aptglacierdeep }}'
       with_items: "{{s3_glacier_buckets}}"
       tags: lcyclecli
+
+    - name: Setup preservation-services group
+      iam:
+        iam_type: group
+        name: "{{apt_preservation_group}}"
+        state: present
+      tags: iam_group
+
+    - name: Setup apt-go-services users
+      iam:
+        iam_type: user
+        name: "{{item}}"
+        state: present
+        groups: "{{apt_preservation_group}}"
+      with_items:
+        - "{{apt_preservation_users}}"
+      tags: iam_users
+
+    - debug:
+        msg: "{{item.0.name}} {{ 's3_bucket_policy_%s' | format(item.1) }}"
+      with_subelements:
+          - "{{ s3_buckets }}"
+          - environment
+      tags: s3_bucket_policy_debug
+
+    - name: Setup Bucket policies to only allow preservation services users access
+      s3_bucket:
+        name: "{{item.0.name}}"
+        policy: "{{ s3_bucket_policy_staging }}"
+        #        s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy_prod.json.j2') | string }}"
+        #s3_bucket_policy_test: "{{ lookup( 'template', 's3_bucket_policy_test.json.j2') | string }}"
+        #s3_bucket_policy_staging: "{{ lookup( 'template', 's3_bucket_policy_staging.json.j2') | string }}"
+      with_subelements:
+        - "{{ s3_buckets }}"
+        - environment
+      tags: s3_bucket_policy
 
 
       #    - name: Assign IAM policy to user groups
