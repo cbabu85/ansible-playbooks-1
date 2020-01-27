@@ -1,6 +1,7 @@
 ---
   - hosts:
-      - apt-demo
+      - apt-demo-old
+      - apt-demo2
       - docker*
       - apt-prod-srv
       - apt-prod-docker
