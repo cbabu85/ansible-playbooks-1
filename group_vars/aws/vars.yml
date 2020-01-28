@@ -1,0 +1,8 @@
+---
+# AWS Infrastructure vars
+#
+#
+aws_account_number: "{{vault_aws_account_number}}"
+aws_admin_users: "{{vault_aws_admin_user}}"
+
+aws_preservation_services_users: "{{vaul_aws_preservation_services_user}}"

@@ -1,4 +1,0 @@
----
-# group_vars/aws
-
-system_default_user: ubuntu
