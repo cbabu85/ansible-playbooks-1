@@ -8,8 +8,9 @@
   vars:
     # Set in role defaults. Only pass in `-e inst_id=abc` and '-e inst_suffix=edu` to run this role.
   vars_files:
-    - "group_vars/aptrust-infra.yml"
+    #    - "group_vars/aptrust-infra.yml"
+    - "group_vars/aws/vars.yml"
+    - "group_vars/aws/vault.yml"
 
   roles:
-    - {role: aptrust.infra}
-
+    - {role: aptrust.infrastructure}
