@@ -8,9 +8,9 @@ inst_groups:
     - "test.{{inst_id}}.{{inst_id_suffix}}.users"
     - "staging.{{inst_id}}.{{inst_id_suffix}}.users"
 
-apt_preservation_users:
+aws_preservation_service_users:
     - apt.go.demo
     - apt.go.staging
     - apt.go.prod
 
-apt_preservation_group: 'apt_preservation_services'
+aws_preservation_group: 'apt_preservation_services'
