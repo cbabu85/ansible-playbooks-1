@@ -22,8 +22,8 @@
                 "s3:DeleteObjectVersionTagging"
             ],
             "Resource": [
-                "arn:aws:s3:::aptrust.{{item.0.name}}.preservation/*",
-                "arn:aws:s3:::aptrust.{{item.0.environment}}.preservation"
+                "arn:aws:s3:::{{item.0.name}}/*",
+                "arn:aws:s3:::{{item.0.name}}"
             ]
         },
         {
@@ -34,11 +34,11 @@
 				{% for admin in aws_admin_users %}
 						"arn:aws:iam::{{aws_account_number}}:user/{{admin}}",
 				{% endfor %}
-                	"arn:aws:iam::{{aws_account_number}}:user/apt.go.{{environment}}"
+                	"arn:aws:iam::{{aws_account_number}}:user/apt.go.{{item.0.environment}}"
                 ]
             },
             "Action": "s3:*",
-            "Resource": "arn:aws:s3:::aptrust.{{environment}}.preservation"
+            "Resource": "arn:aws:s3:::{{item.0.name}}"
         }
     ]
 }
