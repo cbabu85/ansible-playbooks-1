@@ -22,7 +22,16 @@
         s3_bucket_access: "{{ lookup( 'template', 's3_bucket_access.json.j2') | string }}"
       tags: always
 
-# TODO: Shoudl set up services users apt.go.demo, apt.go.production, apt.go.staging
+    - name: Create S3 preservation buckets
+      aws_s3:
+        bucket: "{{ item.name }}"
+        encrypt: true
+        encryption_mode: AES256
+        region: "{{item.region}}"
+        mode: create
+      with_items: "{{s3_buckets}}"
+      tags: new_buckets, s3buckets
+
 
     - name: Create S3 Glacier buckets
       aws_s3:
