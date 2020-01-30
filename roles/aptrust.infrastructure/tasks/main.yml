@@ -74,7 +74,7 @@
     - name: Setup preservation-services group
       iam:
         iam_type: group
-        name: "{{apt_preservation_group}}"
+        name: "{{aws_preservation_services_group}}"
         state: present
       tags: iam_group
 
@@ -83,9 +83,9 @@
         iam_type: user
         name: "{{item}}"
         state: present
-        groups: "{{apt_preservation_group}}"
+        groups: "{{aws_preservation_services_group}}"
       with_items:
-        - "{{apt_preservation_users}}"
+        - "{{aws_preservation_services_users}}"
       tags: iam_users
 
     - debug:
