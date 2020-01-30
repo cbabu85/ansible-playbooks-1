@@ -4,12 +4,14 @@
 # - Enables default encryption
 # - Blocks S3 public access by default
 # - Setup S3 Lifecycle policies for Deep Glacier
+# - Setup Preservation services users and group
 #
       # A bug in the iam_policy module is sending json as dict not as raw text,
       # therefore jinja string filter has to be applied outside of the task.
       # per official workaround:
       # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
 
+    # TODO: Make s3_policies into dynamic templates
     - name: set facts for cli commands
       set_fact:
         aptglacierenc: "{{ lookup( 'template', 's3_bucket_encryption.json.j2') | string }}"
@@ -18,9 +20,6 @@
         s3_policy_data_test: "{{ lookup( 'template', 's3_policy_test.json.j2') | string }}"
         s3_policy_data_staging: "{{ lookup( 'template', 's3_policy_staging.json.j2') | string }}"
         s3_bucket_access: "{{ lookup( 'template', 's3_bucket_access.json.j2') | string }}"
-        s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy_prod.json.j2') | string }}"
-        s3_bucket_policy_test: "{{ lookup( 'template', 's3_bucket_policy_test.json.j2') | string }}"
-        s3_bucket_policy_staging: "{{ lookup( 'template', 's3_bucket_policy_staging.json.j2') | string }}"
       tags: always
 
 # TODO: Shoudl set up services users apt.go.demo, apt.go.production, apt.go.staging
