@@ -1,8 +1,98 @@
----
+
 # AWS Infrastructure vars
+## This file is the base for APTrust infrastructure setup. It should be replaced with Terraform at some point.
 #
 #
 aws_account_number: "{{vault_aws_account_number}}"
-aws_admin_users: "{{vault_aws_admin_user}}"
+aws_admin_users: "{{vault_aws_admin_users}}"
 
-aws_preservation_services_users: "{{vaul_aws_preservation_services_user}}"
+aws_preservation_services_users: "{{vault_aws_preservation_services_users}}"
+aws_preservation_services_group: apt_preservation_services
+
+
+#s3_lifecycle:
+  #  -
+# This file is the base for APTrust infrastructure setup. It should be replaced
+# with Terraform at some point.
+#
+
+
+# Note: Disabled s3_buckets for production right now since it violates
+# consistent aptrust.<environment>.preservation.storage naming pattern.
+# The s3 bucket policy template relies on consistent naming pattern.
+s3_buckets:
+  #  - name: aptrust.preservation.storage
+  #  region: us-east-1
+  #  environment: prod
+  # - name: apt.preservation.oregon
+  #  region: us-west-2
+  #  environment: prod
+  - name: aptrust.test.preservation
+    region: us-east-1
+    environment: demo
+  - name: aptrust.test.preservation.oregon
+    region: us-west-2
+    environment: demo
+  - name: aptrust.staging.preservation
+    region: us-east-1
+    environment: staging
+  - name: aptrust.staging.preservation.oregon
+    region: us-west-2
+    environment: staging
+
+
+s3_glacier_buckets:
+  - name: aptrust.preservation.glacier-deep.va
+    region: us-east-1
+    environment: prod
+  - name: aptrust.preservation.glacier-deep.oh
+    region: us-east-2
+    environment: prod
+  - name: aptrust.preservation.glacier-deep.or
+    region: us-west-2
+    environment: prod
+  - name: aptrust.preservation.glacier.va
+    region: us-east-1
+    environment: prod
+  - name: aptrust.preservation.glacier.oh
+    region: us-east-2
+    environment: prod
+  - name: aptrust.preservation.glacier.or
+    region: us-west-2
+    environment: prod
+  - name: aptrust.test.preservation.glacier-deep.va
+    region: us-east-1
+    environment: demo
+  - name: aptrust.test.preservation.glacier-deep.oh
+    region: us-east-2
+    environment: demo
+  - name: aptrust.test.preservation.glacier-deep.or
+    region: us-west-2
+    environment: demo
+  - name: aptrust.test.preservation.glacier.va
+    region: us-east-1
+    environment: demo
+  - name: aptrust.test.preservation.glacier.oh
+    region: us-east-2
+    environment: demo
+  - name: aptrust.test.preservation.glacier.or
+    region: us-west-2
+    environment: demo
+  - name: aptrust.staging.preservation.glacier-deep.va
+    region: us-east-1
+    environment: staging
+  - name: aptrust.staging.preservation.glacier-deep.oh
+    region: us-east-2
+    environment: staging
+  - name: aptrust.staging.preservation.glacier-deep.or
+    region: us-west-2
+    environment: staging
+  - name: aptrust.staging.preservation.glacier.va
+    region: us-east-1
+    environment: staging
+  - name: aptrust.staging.preservation.glacier.oh
+    region: us-east-2
+    environment: staging
+  - name: aptrust.staging.preservation.glacier.or
+    region: us-west-2
+    environment: staging
