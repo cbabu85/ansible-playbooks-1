@@ -89,8 +89,8 @@
       tags: iam_users
 
     - debug:
-        msg: "{{item.0.name}} {{ 's3_bucket_policy_%s' | format(item.1) }}"
-      with_subelements:
+        msg: "{{ lookup('template', 's3_bucket_policy.json.j2') }}"
+      with_nested:
           - "{{ s3_buckets }}"
           - environment
       tags: s3_bucket_policy_debug
@@ -98,11 +98,11 @@
     - name: Setup Bucket policies to only allow preservation services users access
       s3_bucket:
         name: "{{item.0.name}}"
-        policy: "{{ s3_bucket_policy_staging }}"
+        policy: "{{ lookup('template', 's3_bucket_policy.json.j2') }}"
         #        s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy_prod.json.j2') | string }}"
         #s3_bucket_policy_test: "{{ lookup( 'template', 's3_bucket_policy_test.json.j2') | string }}"
         #s3_bucket_policy_staging: "{{ lookup( 'template', 's3_bucket_policy_staging.json.j2') | string }}"
-      with_subelements:
+      with_nested:
         - "{{ s3_buckets }}"
         - environment
       tags: s3_bucket_policy
