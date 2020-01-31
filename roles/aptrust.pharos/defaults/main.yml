@@ -1,5 +1,5 @@
 ---
-pharos_docker: false
+pharos_docker: true
 RAILS_ENV: 'development'
 
 pharos_app_root: "/var/www/{{ansible_fqdn}}/pharos"
