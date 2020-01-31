@@ -430,16 +430,17 @@ check_inflight(){
      fi
 }
 
-# TODO: REWRITE to use compose
 stop_services(){
-     sudo supervisorctl stop all
-     sudo docker stop exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+     #sudo supervisorctl stop all
+#     sudo docker stop exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+     [[ -d /srv/docker/exchange ]] && sudo cd /srv/docker/exchange && sudo docker-compose down
      [[ -e /usr/bin/filebeat ]] && sudo service filebeat stop
 }
 # TODO: REWRITE to use compose
 start_services(){
-     sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
-     sudo supervisorctl start exchange:
+#     sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
+#     sudo supervisorctl start exchange:
+     [[ -d /srv/docker/exchange ]] && sudo cd /srv/docker/exchange && sudo docker-compose up
      [[ -e /usr/bin/filebeat ]] && sudo service filebeat start
 }
 # When less space needed and still inside the disk limit print out manual action to carry out.
