@@ -80,7 +80,6 @@
   with_items:
     - { name: 'adiamond', pwd: "{{ adiamond_pwd }}" }
     - { name: 'cd3ef', pwd: "{{ cd3ef_pwd }}" }
-    - { name: 'kec6en', pwd: "{{ kec6en_pwd }}" }
     - { name: "{{ system_default_user}}", pwd: "{{ aptdeploy_pwd }}" }
   tags: [createusers, addcommonusers]
 
@@ -94,7 +93,6 @@
 #    - { name: 'cd3ef', pubkeyfile: "{{ var_cd3ef_sshkey }}" }
     - { name: "adiamond", pubkeyfile: "{{ adiamond_sshkey }}" }
     - { name: "cd3ef", pubkeyfile: "{{ cd3ef_sshkey }}" }
-    - { name: "kec6en", pubkeyfile: "{{ kec6en_sshkey }}" }
     - { name: "{{system_default_user}}", pubkeyfile: "{{aptdeploy_sshkey}}" }
     - { name: "{{system_default_user}}", pubkeyfile: "{{ cd3ef_sshkey }}"  }
   tags: [common, pubkeys]
