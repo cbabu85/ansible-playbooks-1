@@ -22,9 +22,6 @@
 
 - name: Reload udev rules and trigger kernel events
   become: true
-  shell: /bin/bash -lc "udevadm control --reload && udevadm trigger"
+  shell: udevadm control --reload && udevadm trigger
   tags: nvmfix
   when: supervisor == 'nitro'
-
-
-
