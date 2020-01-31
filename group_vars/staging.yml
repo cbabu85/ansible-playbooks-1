@@ -83,8 +83,8 @@ ex_nsqlookupd: "staging.aptrust.org:4161"
 ex_aptrusts3region: "us-east-1"
 ex_aptrustglacierregion: "us-west-2"
 
-ex_preservationbucket: "aptrust.test.preservation"
-ex_replicationbucket: "aptrust.test.preservation.oregon"
+ex_preservationbucket: "aptrust.{{environment}}.preservation"
+ex_replicationbucket: "aptrust.{{environment}}.preservation.oregon"
 
 ex_restoretotestbuckets: "true"
 ex_maxdayssincefixitycheck: 90
@@ -92,12 +92,12 @@ ex_maxdayssincefixitycheck: 90
 ex_glacier_region_VA: "us-east-1"
 ex_glacier_region_OH: "us-east-2"
 ex_glacier_region_OR: "us-west-2"
-ex_glacier_bucket_VA: "aptrust.test.preservation.glacier.va"
-ex_glacier_bucket_OH: "aptrust.test.preservation.glacier.oh"
-ex_glacier_bucket_OR: "aptrust.test.preservation.glacier.or"
-ex_glacier_deep_bucket_VA: "aptrust.test.preservation.glacier-deep.va"
-ex_glacier_deep_bucket_OH: "aptrust.test.preservation.glacier-deep.oh"
-ex_glacier_deep_bucket_OR: "aptrust.test.preservation.glacier-deep.or"
+ex_glacier_bucket_VA: "aptrust.{{environment}}.preservation.glacier.va"
+ex_glacier_bucket_OH: "aptrust.{{environment}}.preservation.glacier.oh"
+ex_glacier_bucket_OR: "aptrust.{{environment}}.preservation.glacier.or"
+ex_glacier_deep_bucket_VA: "aptrust.{{environment}}.tpreservation.glacier-deep.va"
+ex_glacier_deep_bucket_OH: "aptrust.{{environment}}.preservation.glacier-deep.oh"
+ex_glacier_deep_bucket_OR: "aptrust.{{environment}}.preservation.glacier-deep.or"
 
 
 ex_fetchworker: {
