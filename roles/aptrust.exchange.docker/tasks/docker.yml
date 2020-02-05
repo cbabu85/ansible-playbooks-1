@@ -89,23 +89,13 @@
 # Note: Environment env vars (user profile) supersede .env
 # https://docs.docker.com/compose/environment-variables/#the-env-file
 - name: Update env vars in .env
-  lineinfile:
-    dest: "{{docker_app_path }}/.env"
-    regexp: "^{{ item.regexp }}"
-    line: "{{ item.line }}"
-  with_items:
-    - { regexp: 'nsq_mem_queue_size=', line: 'nsq_mem_queue_size={{ex_nsq_mem_queue_size}}' }
-    - { regexp: 'nsq_data_path=', line: 'nsq_data_path={{ex_nsq_data_path}}' }
-    - { regexp: 'nsq_broadcast_address=', line: 'nsq_broadcast_address={{ex_nsq_broadcast_address}}' }
-    - { regexp: 'nsq_msg_timeout=', line: 'nsq_msg_timeout={{ex_nsq_msg_timeout}}' }
-    - { regexp: 'nsq_max_msg_timeout=', line: 'nsq_max_msg_timeout={{ex_nsq_max_msg_timeout}}' }
-#    - { regexp: 'nsq_max_msg_size=', line: 'nsq_max_msg_size={{ex_nsq_max_msg_size}}' }
-    - { regexp: 'nsq_tcp_address=', line: 'nsq_tcp_address={{ex_nsq_tcp_address}}' }
-    - { regexp: "AWS_ACCESS_KEY", line: "AWS_ACCESS_KEY={{aws_go_user}}"}
-    - { regexp: "AWS_SECRET_ACCESS_KEY", line: "AWS_SECRET_ACCESS_KEY={{aws_go_pwd}}"}
-    - { regexp: "PHAROS_API_USER", line: "PHAROS_API_USER={{pharos_api_user}}"}
-    - { regexp: "PHAROS_API_KEY", line: "PHAROS_API_KEY={{pharos_api_key}}"}
-  tags: dotenv
+  template:
+      src: .env.j2
+			dest: "{{dockerapp_path}}/.env"
+			owner: "{{system_default_user}}"
+			group: "{{system_default_group}}"
+			mode: 0644
+	tags: dotenv
 
 - name: "Create elastic EBS volume directories (dockerapp)"
   become: yes
