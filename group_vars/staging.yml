@@ -5,6 +5,7 @@ pharos_url: "https://staging.aptrust.org"
 virtual_host: "staging.aptrust.org"
 
 aws_go_user: "{{vault_aws_go_staging_user}}"
+aws_go_pwd: "{{vault_aws_go_staging_pwd}}"
 
 pharos_docker: true
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
