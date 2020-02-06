@@ -1,8 +1,14 @@
 ---
 environment: staging
 RAILS_ENV: staging
+GO_ENV: staging
 pharos_url: "https://staging.aptrust.org"
 virtual_host: "staging.aptrust.org"
+
+# TODO: Identify where this is used. If not set the APT cronjobs of
+# aptrust.exchange.docker fails. Despite not referenced. Clear all references
+# across the Ansible repo before deleting this var.
+orgtype: APT
 
 aws_go_user: "{{vault_aws_go_staging_user}}"
 aws_go_pwd: "{{vault_aws_go_staging_pwd}}"
