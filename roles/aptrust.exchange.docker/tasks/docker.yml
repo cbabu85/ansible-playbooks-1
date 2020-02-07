@@ -20,6 +20,7 @@
       - "{{docker_data_path}}"
       - "{{docker_data_path}}/config"
       - "{{docker_data_path}}/log"
+      - "{{docker_data_path}}/nsq"
   tags: makedir, always
 
 - name: Set commit-version fact to git hash
@@ -75,27 +76,27 @@
 - name: get revision
   shell: /bin/bash -c "cd {{docker_app_path}} && git rev-parse --short=7 HEAD"
   register: revision
-  tags: revs, update_env, gitclone,
+  tags: revs, update_env, gitclone, always
 
 - set_fact: exchange_release="{{revision.stdout}}"
-  tags: revs, update_env
+  tags: revs, update_env, always
 
 # Note: Replacing / for _ for docker_tag_name construct that's used in env
 # to get the correct image
 - set_fact: exchange_branch="{{git_branch | replace('/','_')}}"
-  tags: revs, update_env
+  tags: revs, update_env, always
 
 
 # Note: Environment env vars (user profile) supersede .env
 # https://docs.docker.com/compose/environment-variables/#the-env-file
 - name: Update env vars in .env
   template:
-      src: .env.j2
-			dest: "{{dockerapp_path}}/.env"
-			owner: "{{system_default_user}}"
-			group: "{{system_default_group}}"
-			mode: 0644
-	tags: dotenv
+    src: .env.j2
+    dest: "{{docker_app_path}}/.env"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0644
+  tags: dotenv
 
 - name: "Create elastic EBS volume directories (dockerapp)"
   become: yes

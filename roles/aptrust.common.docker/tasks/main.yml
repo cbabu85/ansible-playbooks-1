@@ -11,39 +11,38 @@
     line="{{ ansible_default_ipv4.address }} {{ inventory_hostname }} {{ ansible_hostname }}"
   tags: hostname
 
-
 - name: install base packages
   become: yes
   apt:
     name:
-     - sudo
-     - curl
-     - mailutils
-     - wget
-     - build-essential
-     - software-properties-common
-     - git-core
-     - tig
-     - tmux
-     - htop
-     - iotop
-     - bmon
-     - vim-tiny
-     - emacs-nox
-     - unzip
-     - tar
-     - python-pip
-     - postgresql-client
-     - libpq-dev
-     - nodejs
-     - sqlite3
-     - libsqlite3-dev
-     - nfs-common
-     - python3-pip
+      - sudo
+      - curl
+      - mailutils
+      - wget
+      - build-essential
+      - software-properties-common
+      - git-core
+      - tig
+      - tmux
+      - htop
+      - iotop
+      - bmon
+      - vim-tiny
+      - emacs-nox
+      - unzip
+      - tar
+      - python-pip
+      - postgresql-client
+      - libpq-dev
+      - nodejs
+      - sqlite3
+      - libsqlite3-dev
+      - nfs-common
+      - python3-pip
 # https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
-     - acl
-     - ntp
-     - jq
+      - acl
+      - ntp
+      - jq
     state: latest
     update_cache: true
   tags: packages, packlist
