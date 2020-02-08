@@ -87,7 +87,7 @@ ex_pharosurl: "{{pharos_url}}"
 ex_pharosapiversion: "v2"
 
 ex_nsqdhttpaddress: "http://staging.aptrust.org:4151"
-ex_nsqlookupd: "staging.aptrust.org:4161"
+ex_nsqlookupd: "nsqlookupd:4161"
 
 ex_aptrusts3region: "us-east-1"
 ex_aptrustglacierregion: "us-west-2"
