@@ -11,7 +11,7 @@ include_vars: vault.yml
 # Workaround for Ubuntu 16.04LTS since it doesn't come with Python 2.x
 #ansible_python_interpreter: /usr/bin/python3
 
-fqdn: "{{ansible_fqdn}}.aptrust.org"
+fqdn: "{{ansible_hostname}}.aptrust.org"
 
 # Global Environment
 ruby_env:
