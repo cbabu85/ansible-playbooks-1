@@ -17,7 +17,8 @@
       docker_users: "{{system_default_user}}"
     roles:
       - {role: aptrust.common.docker, tags: common}
-      - {role: stouts.hostname, tags: common, hostname}
+# - {role: stouts.hostname, tags: common, hostname}
+      - {role: holms.fqdn, tags: hostname}
       - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
         #- {role: geerlingguy.docker, tags: docker}
       - {role: nickjj.docker, tags: docker}
