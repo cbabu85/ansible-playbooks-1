@@ -124,6 +124,13 @@
     #    dest: "{{docker_app_path}}/config/{{GO_ENV}}.json"
     dest: "{{docker_data_path}}/config/config.json"
 
+- name: Pull all exchange containers used in  cronjobs
+  docker_image:
+    name: "aptrust/{{item.key}}:{{exchange_release}}-{{exchange_branch}}"
+    pull: true
+  with_dict: "{{ apt_cronjobs }}"
+  tags: dockerimagepull
+
 - name: Add APTrust cronjobs
   cron:
     name: "{{ item.key }}"
@@ -133,7 +140,7 @@
     day: "{{item.value.day | default('*')}}"
     month: "{{item.value.month | default('*')}}"
     job: "sudo run-one docker run --rm --env-file {{docker_app_path}}/.env \
-     {{docker_registry_key}}exchange_{{item.key}}:{{exchange_release}}-{{exchange_branch}} \
+     {{docker_registry_key}}{{item.key}}:{{exchange_release}}-{{exchange_branch}} \
           {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
     state: present
     disabled: "{{item.value.disabled | default('no')}}"
