@@ -140,6 +140,7 @@
     day: "{{item.value.day | default('*')}}"
     month: "{{item.value.month | default('*')}}"
     job: "sudo run-one docker run --rm --env-file {{docker_app_path}}/.env \
+    -v {{docker_data_path}}/config/config.json:/go/bin/config/config.json \
      {{docker_registry_key}}{{item.key}}:{{exchange_release}}-{{exchange_branch}} \
           {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
     state: present
