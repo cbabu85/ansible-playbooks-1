@@ -46,7 +46,7 @@
     - name: Slack to all
       slack:
         token: "{{slack_token}}"
-        msg: "Deployment of Exchange Release: *{{exchange_release}}-{{exchange_branch}}* in Environment: *{{GO_ENV}}* on {{ ansible.fqdn }} by user {{whobrokeit.stdout}} completed"
+        msg: "Deployment of Exchange Release: *{{exchange_release}}-{{exchange_branch}}* in Environment: *{{GO_ENV}}* on {{ ansible_fqdn }} by user {{whobrokeit.stdout}} completed"
         icon_emoji: ":construction_worker:"
         channel: 'ops'
       tags: [exchange,slack,deploy]
