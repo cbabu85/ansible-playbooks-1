@@ -131,6 +131,9 @@
   with_dict: "{{ apt_cronjobs }}"
   tags: dockerimagepull
 
+# NOTE: Referencing the go/bin/main with params is sub-optimal since container
+# params may change but is necessary to pass possible item.value.params in.
+# Will adress this again in the future.
 - name: Add APTrust cronjobs
   cron:
     name: "{{ item.key }}"
@@ -142,12 +145,14 @@
     job: "sudo run-one docker run --rm --env-file {{docker_app_path}}/.env \
     -v {{docker_data_path}}/config/config.json:/go/bin/config/config.json \
      {{docker_registry_key}}{{item.key}}:{{exchange_release}}-{{exchange_branch}} \
-          {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
+     /go/bin/main -config=/go/bin/config/config.json \
+     {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
     state: present
     disabled: "{{item.value.disabled | default('no')}}"
   with_dict: "{{ apt_cronjobs }}"
   tags: cronjobs
 
+  #  -v /data/exchange/config/config.json:/go/bin/config/config.json
 
 # Ensure docker container running state.
 - name: Start docker containers from compose
