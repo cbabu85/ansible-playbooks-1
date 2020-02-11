@@ -40,7 +40,7 @@ apt_cronjobs:
     hour: "*/1"
     minute: "*/30"
     params: "-stats={{goapp_log_path}}/apt_queue_stats.json"
-  apt_queue_fixity:
+  exchange_apt_queue_fixity:
     hour: "*/1"
     minute: "*/30"
     params: "-maxfiles=2500"
