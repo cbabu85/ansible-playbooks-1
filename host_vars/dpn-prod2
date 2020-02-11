@@ -1,8 +1,0 @@
----
-sshd_port:
-    - 22
-    - 1984
-
-ruby_version: 2.3.1
-
-use_efs: true
