@@ -3,7 +3,7 @@ goapp_name: exchange
 goapp_bin_path: "{{ go_env.GOPATH }}/bin"
 goapp_src_path: "{{ go_env.GOPATH }}/src/github.com/APTrust/{{goapp_name}}"
 goapp_cfg_path: "{{ goapp_src_path }}/config"
-goapp_log_path: "/mnt/ebs/{{orgtype}}/logs"
+goapp_log_path: "/mnt/lvm/{{orgtype}}/logs"
 
 # Build Go binaries.
 buildgo: true
@@ -71,7 +71,7 @@ apt_cronjobs:
 # This only runs in prod. See group_vars/production
 #  apt_spot_test_restore:
 #   hour: "1"
- 
+
 
 ex_tardirectory: "~/tmp/data"
 ex_restoredirectory: "~/tmp/apt/restore"
