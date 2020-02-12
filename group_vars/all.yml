@@ -74,9 +74,6 @@ rbenv_users:
     - adiamond
     - cd3ef
 
-
-goapp_log_path: "/mnt/lvm/{{orgtype}}/logs"
-
 ##
 # Postfix variables
 ##
