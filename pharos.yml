@@ -32,7 +32,7 @@
         # hash, both branch and hash need to be defined. e.g.:
         #  git_branch: feature/two_factor #git branch/commit
         #  git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
-        git_branch: develop
+        git_branch: master
         #        git_version: e2c8c44
         DOCKER_DOMAIN: "{{ ansible_fqdn }}"
         # Note: Once production has pharos 2fa/docker this can be removed and the defaults in the role can be set to true.
