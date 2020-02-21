@@ -134,6 +134,8 @@
 # NOTE: Referencing the go/bin/main with params is sub-optimal since container
 # params may change but is necessary to pass possible item.value.params in.
 # Will adress this again in the future.
+# NOTE2: Volume mount of stats file is not ideal since it'll do it for every
+# cron job.
 - name: Add APTrust cronjobs
   cron:
     name: "{{ item.key }}"
@@ -144,6 +146,7 @@
     month: "{{item.value.month | default('*')}}"
     job: "sudo run-one docker run --rm --env-file {{docker_app_path}}/.env \
     -v {{docker_data_path}}/config/config.json:/go/bin/config/config.json \
+    -v {{docker_data_path}}/config/{{item.key}}_stats.json:/go/bin/config/{{item.key}}_stats.json \
      {{docker_registry_key}}{{item.key}}:{{exchange_release}}-{{exchange_branch}} \
      /go/bin/main -config=/go/bin/config/config.json \
      {{item.value.params | default('')}} >> {{docker_data_path}}/log/cron_{{item.key}}.log 2>&1"
