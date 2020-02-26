@@ -1,2 +1,6 @@
 ---
+- name: restart global_traefik
+  docker_container:
+    name: global_traefik
+    restart: true
 
