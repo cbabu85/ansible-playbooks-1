@@ -1,0 +1,96 @@
+# {{ ansible_managed }}
+defaultEntryPoints = ["http"{% if traefik_https %}, "https"{% endif %}]
+{% if traefik_debug %}
+debug = {{ traefik_debug }}
+{% endif %}
+logLevel = "{{ traefik_log_level }}"
+{% if traefik_sendanonymoususage %}
+sendAnonymousUsage = {{ traefik_sendanonymoususage }}
+{% endif %}
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+{% if traefik_https and traefik_https_redirect %}
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+{% endif %}
+{% if traefik_https %}
+  [entryPoints.https]
+    address = ":443"
+    [entryPoints.https.tls]
+{% endif %}
+{% if traefik_api %}
+  [entryPoints.traefik]
+    address = "127.0.0.1:8080"
+{% endif %}
+{% if traefik_ping %}
+  [entryPoints.ping]
+    address = "127.0.0.1:8081"
+{% endif %}
+
+{% if traefik_file is defined %}
+[file]
+  watch = true
+  [backends]
+{% for key, value in traefik_file.iteritems() %}
+    [backends.backend-{{ key }}]
+      [backends.backend-{{ key }}.servers.server_{{ key }}_{{loop.index - 1 }}]
+      url = "{{ value.backend.url }}"
+{% endfor %}
+  [frontends]
+{% for key, value in traefik_file.iteritems() %}
+    [frontends.frontend-{{ key }}-{{loop.index - 1}}]
+      backend = "backend-{{ key }}"
+      [frontends.frontend-{{ key }}-{{loop.index - 1 }}.routes.route-frontend-{{ key }}-{{loop.index - 1}}]
+      rule = "{{ value.frontend.rule }}"
+      [frontends.frontend-{{ key }}-{{loop.index - 1 }}.whiteList]
+      {% if value.frontend.whitelist is defined %}
+      sourceRange = [{% for range in value.frontend.whitelist %}"{{ range }}"{% if not loop.last %},{% endif %}{% endfor %}]
+      useXForwardedFor = true
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if traefik_https and traefik_acme %}
+[acme]
+email = "{{ traefik_acme_email }}"
+storage = "acme.json"
+{% if traefik_ondemand %}
+onDemand = true
+{% endif %}
+{% if traefik_onhostrule %}
+onHostRule = true
+{% endif %}
+entryPoint = "https"
+
+{% if traefik_dnschallenge %}
+[acme.dnsChallenge]
+  provider = "{{ traefik_dnschallenge_provider }}"
+  delayBeforeCheck = 0
+{% else %}
+[acme.httpChallenge]
+  entryPoint = "http"
+{% endif %}
+
+{% for domain in traefik_acme_domains %}
+[[acme.domains]]
+main = "{{ domain.domain }}"
+{% if domain.sans is defined and domain.sans | length %}
+sans = [{% for san in domain.sans %}"{{ san }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if traefik_api %}
+[api]
+{% if traefik_debug %}
+debug = true
+{% endif %}{% endif %}
+
+{% if traefik_ping %}
+[ping]
+entryPoint = "ping"
+{% endif %}
+
+[docker]
