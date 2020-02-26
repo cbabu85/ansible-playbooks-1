@@ -1,2 +1,59 @@
 ---
+- name: Create traefik network
+  become: true
+  docker_network:
+    name: '{{ traefik_network }}'
+    ipam_config:
+      - subnet: '{{ traefik_network_ipam.subnet }}'
+        gateway: '{{ traefik_network_ipam.gateway }}'
+        iprange: '{{ traefik_network_ipam.iprange }}'
+  tags:
+    - configuration
 
+- name: Create Traefik directory
+  file:
+      path: "{{traefik_dir}}"
+      owner: "{{system_default_user}}"
+      group: "{{system_default_user}}"
+      mode: 0775
+      recurse: true
+      state: directory
+  tags: makedir
+
+- name: Configuration traefik
+  become: true
+  template:
+    src: 'traefik.toml.j2'
+    dest: '/etc/traefik/traefik.toml'
+    owner: root
+    group: docker
+    mode: 0550
+  notify:
+    - restart "{{traefik_container_name}}"
+  tags:
+    - configuration
+
+- name: Start global_traefik
+  become: true
+  docker_container:
+    name: "{{traefik_container_name}}"
+    image: "traefik:{{traefik_version}}"
+    restart_policy: unless-stopped
+    published_ports:
+      - '80:80'
+      - '443:443'
+    #   env:
+    #     CF_API_EMAIL: "{{ traefik_dnschallenge_env.CF_API_EMAIL }}"
+    #     CF_API_KEY: "{{ traefik_dnschallenge_env.CF_API_KEY }}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - "{{traefik_dir}}/traefik.toml:/etc/traefik/traefik.toml"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik-data:/etc/traefik
+    capabilities:
+      - net_bind_service
+    networks:
+      - name: '{{ traefik_network }}'
+    networks_cli_compatible: false
+  tags:
+    - configuration
