@@ -1,0 +1,39 @@
+# {{ ansible_managed }}
+
+logLevel = "{{ traefik_log_level }}"
+
+# Define HTTP and HTTPS entrypoints
+entryPoints:
+  insecure:
+    address: ":80"
+{% if traefik_https %}
+  secure:
+    address: ":443"
+{% endif %}
+
+{% if traefik_api %}
+api:
+  insecure: true
+  dashboard: true
+  debug: true
+{% endif %}
+
+# Dynamic configuration will come from docker labels
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    network: "traefik-network"
+    exposedByDefault: false
+    watch: true
+
+
+#Enable acme with http file challenge
+certificatesResolvers:
+  le:
+    acme:
+      email: "{{traefik_acme_email}}"
+      storage: "{{traefik_dir}}/acme.json"
+      httpChallenge:
+        # used during the challenge
+        entryPoint: insecure
+
