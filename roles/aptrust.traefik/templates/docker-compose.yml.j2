@@ -1,0 +1,33 @@
+version: '3'
+services:
+  traefik:
+    image: "traefik:{{traefik_version}}"
+    container_name: "{{traefik_container_name}}"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{traefik_dir}}/traefik.yml:/etc/traefik/traefik.yaml:ro"
+    labels:
+      - "traefik.enable": "true"
+
+      # HTTP to HTTPS redirection
+      - "traefik.http.routers.http_catchall.rule": "HostRegexp(`{any:.+}`)"
+      - "traefik.http.routers.http_catchall.entrypoints": "insecure"
+      - "traefik.http.routers.http_catchall.middlewares": "https_redirect"
+      - "traefik.http.middlewares.https_redirect.redirectscheme.scheme": "https"
+      - "traefik.http.middlewares.https_redirect.redirectscheme.permanent": "true"
+
+  echo:
+    image: ""hashicorp/http-echo""
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.echo.rule": "Host(`staging.aptrust.org`)"
+      - "traefik.http.routers.echo.entrypoints": "secure"
+      - "traefik.http.routers.echo.tls.certresolver": "le"
+
+networks:
+  default:
+    external:
+      name: "traefik-network"  # The same network defined in Docker provider config
