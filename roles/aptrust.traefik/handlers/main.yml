@@ -1,5 +1,5 @@
 ---
-- name: restart global_traefik
+- name: restart "{{traefik_container_name}}"
   docker_container:
     name: "{{traefik_container_name}}"
     restart: true
