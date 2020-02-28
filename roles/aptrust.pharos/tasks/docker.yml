@@ -194,18 +194,22 @@
     with_dict: "{{pharos_cronjobs}}"
     tags: pharos_cronjobs
 
-  - name: Start docker containers from compose
+  - name: Stop, and start docker containers from compose
     docker_service:
         project_src: "{{dockerapp_path}}"
         files: docker-compose.yml
         pull: true
-        #        recreate: always
+        remove_volumes: yes
+        state: "{{item}}"
     vars:
         ansible_python_interpreter: "/usr/bin/env python-docker"
     tags:
         - dockserv
         - pharos_start
     #  when: RAILS_ENV == 'staging'
+    with_items:
+        - absent
+        - present
 
   - name: Scale Pharos to 3 containers
     docker_service:
