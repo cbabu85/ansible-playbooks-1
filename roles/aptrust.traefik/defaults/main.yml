@@ -1,6 +1,6 @@
 ---
 
-trafik_version: v2.1.4
+traefik_version: v2.1.4
 traefik_dir: "/srv/docker/traefik"
 traefik_container_name: global_traefik
 
@@ -9,18 +9,21 @@ traefik_sendanonymoususage: false
 traefik_hostname: '{{ inventory_hostname }}'
 traefik_log_level: ERROR
 
-traefik_https: false
-traefik_https_redirect: false
-traefik_log_level: ERROR
+traefik_https: true
+traefik_https_redirect: true
 traefik_network: traefik_default
-traefik_api: false
+traefik_api: true
 traefik_api_url: '{{ traefik_hostname }}'
-traefik_ping: false
-traefik_acme: false
+traefik_ping: true
+
+traefik_acme: true
+traefik_acme_email: ops@aptrust.org
+traefik_acme_domains:
+  - staging.aptrust.org
+
 traefik_ondemand: false
 traefik_onhostrule: false
 
-traefik_network: gateway
 traefik_network_ipam:
   subnet: '172.16.1.0/24'
   gateway: '172.16.1.1'
