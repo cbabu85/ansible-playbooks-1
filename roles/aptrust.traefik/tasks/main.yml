@@ -2,11 +2,11 @@
 - name: Create traefik network
   become: true
   docker_network:
-    name: '{{ traefik_network }}'
+    name: "{{ traefik_network }}"
     ipam_config:
-      - subnet: '{{ traefik_network_ipam.subnet }}'
-        gateway: '{{ traefik_network_ipam.gateway }}'
-        iprange: '{{ traefik_network_ipam.iprange }}'
+      - subnet: "{{ traefik_network_ipam.subnet }}"
+        gateway: "{{ traefik_network_ipam.gateway }}"
+        iprange: "{{ traefik_network_ipam.iprange }}"
   tags:
     - configuration
 
@@ -14,7 +14,7 @@
   file:
       path: "{{traefik_dir}}"
       owner: "{{system_default_user}}"
-      group: "{{system_default_user}}"
+      group: "{{system_default_group}}"
       mode: 0775
       recurse: true
       state: directory
@@ -24,9 +24,9 @@
   become: true
   template:
     src: 'traefik.toml.j2'
-    dest: '/etc/traefik/traefik.toml'
-    owner: root
-    group: docker
+    dest: "{{traefik_dir}}/traefik.toml"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
     mode: 0550
   notify:
     - restart "{{traefik_container_name}}"
