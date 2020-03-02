@@ -285,8 +285,8 @@ ex_fixityworker: {
 ex_glacierrestoreworker: {
     networkconnections: "8",
     workers: "4",
-    nsqtopic: "apt_glacier_restore_topic",
-    nsqchannel: "apt_glacier_restore_channel",
+    nsqtopic: "apt_glacier_restore_init_topic",
+    nsqchannel: "apt_glacier_restore_init_channel",
     maxattempts: "8",
     maxinflight: "20",
     heartbeatinterval: "10s",
