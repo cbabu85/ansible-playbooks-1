@@ -1,3 +1,7 @@
+#[all:vars]
+#domain="aptrust.org"
+#hostname_domain="aptrust.org"
+
 [local]
 #localhost ansible_python_interpreter="/usr/bin/python"
 localhost ansible_connection=local ansible_python_interpreter=python
@@ -11,23 +15,23 @@ apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.
 [staging]
 docker4 hostname_name=docker4 hostname_fqdn=staging.aptrust.org host_eip=52.0.177.244 instance_id=i-0d2ae613c9c8c4eed
 
-[demo-servers]
+[demo_servers]
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos+Exchange Demo
 
-[pharos-servers]
+[pharos_servers]
 apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos+Exchange Demo
 apt-prod-docker hostname_name=apt-prod-docker hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Docker Prod (new prod-repo)
 
-[production-servers]
+[production_servers]
 # APTrust 2.0
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
 apt-prod-web hostname_name=apt-prod-web hostname_fqdn=wiki.aptrust.org host_eip=34.200.146.5 # Web and Wiki Instance
 docker2 hostname_name=docker2 hostname_fqdn=logs.aptrust.org host_eip=34.231.222.220 instance_id=i-0ef049a6ae46171a9
 apt-prod-docker hostname_name=apt-prod-docker hostname_fqdn=repo.aptrust.org host_eip=52.202.25.174 # Pharos Docker Prod (new prod-repo)
 
-[exchange-servers]
+[exchange_servers]
 apt-prod-services hostname_name=apt-prod-services hostname_fqdn=prod-services.aptrust.org host_eip=34.197.110.161 # Prod Go Services
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
 apt-prod-srv hostname=apt-prod-srv hostname_fqdn=apt-prod-srv.aptrust.org host_eip=54.147.253.108
