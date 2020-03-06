@@ -194,19 +194,25 @@
     with_dict: "{{pharos_cronjobs}}"
     tags: pharos_cronjobs
 
+  # Note: Docker does not automatically update volumes even if new volumes
+  # are created. Therefore we need to remove the asset volume manually before
+  # the updated containers/volumes are recreated below.
+  - name: Remove asset volume to recreate
+    docker_volume:
+        name: pharos_assets
+        state: absent
+
   - name: Stop, and start docker containers from compose
     docker_service:
         project_src: "{{dockerapp_path}}"
         files: docker-compose.yml
         pull: true
-        remove_volumes: yes
         state: "{{item}}"
     vars:
         ansible_python_interpreter: "/usr/bin/env python-docker"
     tags:
         - dockserv
         - pharos_start
-    #  when: RAILS_ENV == 'staging'
     with_items:
         - absent
         - present
