@@ -40,6 +40,7 @@
       zone: us-east-1a
       subnet: vpc-0ce02669
       publicly_accessible: yes
+      db_instance_class: db.t2.medium
       wait: yes
       wait_timeout: 600
       tags:
@@ -63,5 +64,4 @@
       pharos_src_db_host: "{{rds.instance.endpoint}}"
       pharos_src_db_user: "{{vault_pharos_prod_db_user}}"
       pharos_src_db_pwd: "{{vault_pharos_prod_db_pwd}}"
-      pharos_src_db: pharos_production
       pharos_two_factor_key: "{{vault_pharos_prod_two_factor_key}}"
