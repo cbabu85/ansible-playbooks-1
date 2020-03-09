@@ -30,7 +30,8 @@
 # Restore a Postgres db instance from a snapshot, wait for it to become available again, and
 #  then modify it to add your security group. Also, display the new endpoint.
 #  Note that the "publicly_accessible" option is allowed here just as it is in the AWS CLI
-- local_action:
+- name: Restore latest pharos_production snapshot to prod-staging
+  local_action:
       module: rds
       command: restore
       snapshot: "{{prod_latest_snapshot}}"
@@ -45,14 +46,16 @@
           Name: pharos-production-staging
   register: rds
 
-- local_action:
+- name: Update vpc_security_group for prod-staging instance
+  local_action:
       module: rds
       command: modify
       instance_name: pharos-production-staging
       region: us-east-1
       vpc_security_groups: sg-18a4ac62
 
-- debug:
+- name: Display new instance_endpoint"
+  debug:
       msg: "The new db endpoint is {{ rds.instance.endpoint }}"
 
 - name: Set PRODUCTION Source db environment parameters
@@ -62,5 +65,3 @@
       pharos_src_db_pwd: "{{vault_pharos_prod_db_pwd}}"
       pharos_src_db: pharos_production
       pharos_two_factor_key: "{{vault_pharos_prod_two_factor_key}}"
-  when: source_env is search("prod")
-  tags: always
