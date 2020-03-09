@@ -11,49 +11,51 @@
 # - update env vars on staging before starting containers
 #
 
-
 - name: set instance identifier
   set_fact:
-      instance_identifier:
-          -"{{ vault_pharos_prod_db_host.split(".")[0] }}"
+      instance_identifier: "{{vault_pharos_prod_db_host.split('.')[0]}}"
+  tags: lsnap
+
+- debug: msg="{{instance_identifier}}"
+  tags: lsnap
 
 - name: Get latest snapshot
-  shell: aws rds describe-db-snapshots --db-instance-identifier={{instance_identifier}} --query="reverse(sort_by(DBSnapshots, &SnapshotCreateTime))[0]|DBSnapshotArn" --output text
+  shell: aws rds describe-db-snapshots --region=us-east-1 --db-instance-identifier={{instance_identifier}} --query="reverse(sort_by(DBSnapshots, &SnapshotCreateTime))[0]|DBSnapshotArn" --output text
   register: prod_latest_snapshot
   tags: lsnap
 
-- debug: var="{{prod_latest_snapshot}}"
+- debug: msg="{{prod_latest_snapshot}}"
   tags: lsnap
 
 # Restore a Postgres db instance from a snapshot, wait for it to become available again, and
 #  then modify it to add your security group. Also, display the new endpoint.
 #  Note that the "publicly_accessible" option is allowed here just as it is in the AWS CLI
 - local_action:
-  module: rds
-  command: restore
-  snapshot: "{{prod_latest_snapshot}}"
-  instance_name: pharos-production-staging
-  region: us-east-1
-  zone: us-east-1a
-  subnet: vpc-0ce02669
-  publicly_accessible: yes
-  wait: yes
-  wait_timeout: 600
-  tags:
-    Name: pharos-production-staging
+      module: rds
+      command: restore
+      snapshot: "{{prod_latest_snapshot}}"
+      instance_name: pharos-production-staging
+      region: us-east-1
+      zone: us-east-1a
+      subnet: vpc-0ce02669
+      publicly_accessible: yes
+      wait: yes
+      wait_timeout: 600
+      tags:
+          Name: pharos-production-staging
   register: rds
 
 - local_action:
-  module: rds
-  command: modify
-  instance_name: pharos-production-staging
-  region: us-east-1
-  vpc_security_groups: sg-18a4ac62
+      module: rds
+      command: modify
+      instance_name: pharos-production-staging
+      region: us-east-1
+      vpc_security_groups: sg-18a4ac62
 
 - debug:
-  msg: "The new db endpoint is {{ rds.instance.endpoint }}"
+      msg: "The new db endpoint is {{ rds.instance.endpoint }}"
 
-- name: Set PRODUCTION Source environemnt db parameters
+- name: Set PRODUCTION Source db environment parameters
   set_fact:
       pharos_src_db_host: "{{rds.instance.endpoint}}"
       pharos_src_db_user: "{{vault_pharos_prod_db_user}}"
