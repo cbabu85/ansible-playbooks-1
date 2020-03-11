@@ -82,6 +82,17 @@
     when: source_env is search("demo")
     tags: dbdump
 
+  - name: Update .env according to source_env
+    lineinfile:
+       path: "{{dockerapp_path}}/.env"
+       regexp: '^{{item.key}}'
+       line: "{{item.key}}{{item.value}}"
+    with_items:
+      - {key: 'TWO_FACTOR_KEY=', value: "{{pharos_two_factor_key}}"}
+      - {key: 'PHAROS_DB_HOST=', value: "{{pharos_db_host}}"}
+      - {key: 'PHAROS_DB_USER=', value: "{{pharos_db_user}}"}
+      - {key: 'PHAROS_DB_PWD=', value: "{{pharos_db_pwd}}"}
+
   - name: Update environment in db
     command: sudo docker-compose run --rm migration bin/rails db:environment:set
     args:
