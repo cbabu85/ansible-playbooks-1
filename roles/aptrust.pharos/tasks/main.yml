@@ -1,9 +1,9 @@
 - import_tasks: docker.yml
   when: pharos_docker
 
-- import_tasks: baremetal.yml
+- include_tasks: baremetal.yml
   when: not pharos_docker
 
-- import_tasks: db_read_only_user.yml
+- include_tasks: db_read_only_user.yml
   when: RAILS_ENV != 'staging'
   tags: psqlreadonly
