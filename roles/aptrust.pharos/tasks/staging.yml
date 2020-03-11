@@ -18,6 +18,9 @@
        chdir: "{{dockerapp_path}}"
     tags: dbdump
 
+  - debug: msg="source_env is {{source_env}}"
+    tags: always
+
   - name: Set DEMO source environemnt db parameter for dbdump
     set_fact:
        pharos_src_db_host: "{{vault_pharos_demo_db_host}}"
@@ -31,10 +34,6 @@
   - include_tasks: staging-production.yml
     when: source_env is search("prod")
     tags: always
-
-  - debug: msg="source_env is {{source_env}}"
-    tags: always
-
 
   - name: Docker pg_dump RDS database
     shell: sudo docker-compose exec db bash -lc "PGPASSWORD={{pharos_src_db_pwd}} pg_dump -h {{pharos_src_db_host}} -p 5432 -Fc -C -O -U {{pharos_src_db_user}} {{pharos_src_db}} > /{{pharos_src_db}}.dump"
@@ -80,6 +79,7 @@
     args:
        chdir: "{{dockerapp_path}}"
     ignore_errors: True
+    when: source_env is search("demo")
     tags: dbdump
 
   - name: Update environment in db
