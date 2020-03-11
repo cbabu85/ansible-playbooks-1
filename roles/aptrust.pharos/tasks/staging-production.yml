@@ -6,8 +6,8 @@
 # It requires AWS credentials with sufficent rights to make a backup
 #
 # `Use latest prod snapshot, restore on new instance in demo vpc
-# - Identify latest snapshot
-# - Make AWS CLI call
+# - Identify latest snapshot per AWS CLI call
+# - Restore latest prod RDS snapshot to new instance
 # - update env vars on staging before starting containers
 #
 
@@ -19,28 +19,31 @@
 - debug: msg="{{instance_identifier}}"
   tags: lsnap
 
-- name: Get latest snapshot
+- name: Get latest snapshot ARN
   shell: aws rds describe-db-snapshots --region=us-east-1 --db-instance-identifier={{instance_identifier}} --query="reverse(sort_by(DBSnapshots, &SnapshotCreateTime))[0]|DBSnapshotArn" --output text
   register: prod_latest_snapshot
   tags: lsnap
 
-- debug: msg="{{prod_latest_snapshot}}"
+- debug: msg="{{prod_latest_snapshot.stdout}}"
   tags: lsnap
 
 # Restore a Postgres db instance from a snapshot, wait for it to become available again, and
 #  then modify it to add your security group. Also, display the new endpoint.
 #  Note that the "publicly_accessible" option is allowed here just as it is in the AWS CLI
 - name: Restore latest pharos_production snapshot to prod-staging
-  local_action:
-      module: rds
+  # connection: local
+  become: false
+  rds:
+      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
       command: restore
-      snapshot: "{{prod_latest_snapshot}}"
+      snapshot: "{{prod_latest_snapshot.stdout}}"
       instance_name: pharos-production-staging
+      instance_type: db.t3.medium
       region: us-east-1
       zone: us-east-1a
-      subnet: vpc-0ce02669
-      publicly_accessible: yes
-      db_instance_class: db.t2.medium
+      subnet: demo
+      publicly_accessible: no
       wait: yes
       wait_timeout: 600
       tags:
@@ -48,12 +51,16 @@
   register: rds
 
 - name: Update vpc_security_group for prod-staging instance
-  local_action:
-      module: rds
+  connection: local
+  become: false
+  rds:
       command: modify
       instance_name: pharos-production-staging
       region: us-east-1
       vpc_security_groups: sg-18a4ac62
+      backup_retention: 0
+      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 
 - name: Display new instance_endpoint"
   debug:
@@ -61,7 +68,7 @@
 
 - name: Set PRODUCTION Source db environment parameters
   set_fact:
-      pharos_src_db_host: "{{rds.instance.endpoint}}"
-      pharos_src_db_user: "{{vault_pharos_prod_db_user}}"
-      pharos_src_db_pwd: "{{vault_pharos_prod_db_pwd}}"
+      pharos_db_host: "{{rds.instance.endpoint}}"
+      pharos_db_user: "{{vault_pharos_prod_db_user}}"
+      pharos_db_pwd: "{{vault_pharos_prod_db_pwd}}"
       pharos_two_factor_key: "{{vault_pharos_prod_two_factor_key}}"
