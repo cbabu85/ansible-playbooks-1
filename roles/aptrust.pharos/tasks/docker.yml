@@ -149,8 +149,8 @@
   - include: staging.yml
     when: RAILS_ENV == 'staging'
     tags: stagingworkflow, resetdatabase
-    vars:
-        ansible_python_interpreter: "/usr/bin/python3"
+    #  vars:
+    #   ansible_python_interpreter: "/usr/bin/python3"
 
     #  - name: Update traefik.toml
     #    template:
@@ -235,5 +235,3 @@
         group: "{{deploy_group}}"
         mode: 0644
     tags: pharos_logrotate_docker
-
-
