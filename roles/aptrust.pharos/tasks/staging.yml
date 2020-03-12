@@ -55,6 +55,21 @@
     when: source_env is search("demo")
     tags: dbdumprestore
 
+  - name: Delete pharos-production-staging instance
+    # connection: local
+    become: false
+    rds:
+        aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+        aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+        command: delete
+        region: us-east-1
+        instance_name: pharos-production-staging
+        wait: yes
+        wait_timeout: 600
+    register: rds_deletion
+    when: source_env is search("demo")
+    tags: delete_pharos_production_staging
+
   - name: Restore pharos_demo.dump to local psql container
     command: sudo docker-compose exec db bash -lc "sleep 2 && pg_restore --verbose --no-acl --no-owner -U postgres -d {{pharos_src_db}} /{{pharos_src_db}}.dump"
     args:
