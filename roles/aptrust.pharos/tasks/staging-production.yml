@@ -51,7 +51,6 @@
   register: rds
 
 - name: Update vpc_security_group for prod-staging instance
-  connection: local
   become: false
   rds:
       command: modify
@@ -72,3 +71,11 @@
       pharos_db_user: "{{vault_pharos_prod_db_user}}"
       pharos_db_pwd: "{{vault_pharos_prod_db_pwd}}"
       pharos_two_factor_key: "{{vault_pharos_prod_two_factor_key}}"
+
+- name: Alter database name according to environment
+  command: |
+      sudo docker run --rm -e PGPASSWORD={{pharos_db_pwd}}
+      postgres:{{rds.instance.engine_version}}-alpine
+      psql -h {{rds.instance.endpoint }} -U {{pharos_db_user}} postgres
+      -c "ALTER DATABASE pharos_production RENAME TO pharos_staging;"
+  tags: renameproddb
