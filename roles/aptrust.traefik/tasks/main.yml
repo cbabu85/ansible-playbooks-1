@@ -12,48 +12,74 @@
 
 - name: Create Traefik directory
   file:
-      path: "{{traefik_dir}}"
-      owner: "{{system_default_user}}"
-      group: "{{system_default_group}}"
-      mode: 0775
-      recurse: true
-      state: directory
+    path: "{{traefik_dir}}"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0775
+    recurse: true
+    state: directory
   tags: makedir
+
+- name: Touch acme.json file if non-existent
+  file:
+    path: "{{traefik_dir}}/acme.json"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0664
+    state: touch
+  tags: makdir
+
+- name: Add traefik compose
+  become: true
+  template:
+    src: 'docker-compose.yml.j2'
+    dest: "{{traefik_dir}}/docker-compose.yml"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0664
+  tags:
+    - configuration
+
 
 - name: Configuration traefik
   become: true
   template:
-    src: 'traefik.toml.j2'
-    dest: "{{traefik_dir}}/traefik.toml"
+    src: 'traefik.yml.j2'
+    dest: "{{traefik_dir}}/traefik.yml"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
-    mode: 0550
-  notify:
-    - restart "{{traefik_container_name}}"
+    mode: 0664
   tags:
     - configuration
 
-- name: Start global_traefik
-  become: true
-  docker_container:
-    name: "{{traefik_container_name}}"
-    image: "traefik:{{traefik_version}}"
-    restart_policy: unless-stopped
-    published_ports:
-      - '80:80'
-      - '443:443'
-    #   env:
-    #     CF_API_EMAIL: "{{ traefik_dnschallenge_env.CF_API_EMAIL }}"
-    #     CF_API_KEY: "{{ traefik_dnschallenge_env.CF_API_KEY }}"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - "{{traefik_dir}}/traefik.toml:/etc/traefik/traefik.toml"
-      - /var/run/docker.sock:/var/run/docker.sock
-      - traefik-data:/etc/traefik
-    capabilities:
-      - net_bind_service
-    networks:
-      - name: '{{ traefik_network }}'
-    networks_cli_compatible: false
-  tags:
-    - configuration
+- name: Start traefik
+  docker_compose:
+    project_src: "{{traefik_dir}}"
+    state: present
+  vars:
+    ansible_python_interpreter: "/usr/bin/env python-docker"
+
+#- name: Start global_traefik
+#  become: true
+#  docker_container:
+#    name: "{{traefik_container_name}}"
+#    image: "traefik:{{traefik_version}}"
+#    restart_policy: unless-stopped
+#    published_ports:
+#      - '80:80'
+#      - '443:443'
+#    #   env:
+#    #     CF_API_EMAIL: "{{ traefik_dnschallenge_env.CF_API_EMAIL }}"
+#    #     CF_API_KEY: "{{ traefik_dnschallenge_env.CF_API_KEY }}"
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - "{{traefik_dir}}/traefik.yml:/etc/traefik/traefik.yml"
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - traefik-data:/etc/traefik
+#    capabilities:
+#      - net_bind_service
+#    networks:
+#      - name: '{{ traefik_network }}'
+#    networks_cli_compatible: false
+#  tags:
+#    - configuration
