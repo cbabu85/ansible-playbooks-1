@@ -2,7 +2,7 @@
 
 traefik_version: v2.1.4
 traefik_dir: "/srv/docker/traefik"
-traefik_container_name: global_traefik
+traefik_container_name: traefik
 
 traefik_debug: false
 traefik_sendanonymoususage: false
