@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-logLevel = "{{ traefik_log_level }}"
+logLevel: "{{ traefik_log_level }}"
 
 # Define HTTP and HTTPS entrypoints
 entryPoints:
@@ -32,7 +32,7 @@ certificatesResolvers:
   le:
     acme:
       email: "{{traefik_acme_email}}"
-      storage: "{{traefik_dir}}/acme.json"
+      storage: "acme.json"
       httpChallenge:
         # used during the challenge
         entryPoint: insecure
