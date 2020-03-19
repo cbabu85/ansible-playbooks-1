@@ -32,4 +32,4 @@ services:
 networks:
   default:
     external:
-      name: "traefik-network"  # The same network defined in Docker provider config
+	name: "{{traefik_network}}"
