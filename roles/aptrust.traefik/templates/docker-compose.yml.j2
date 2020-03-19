@@ -3,6 +3,7 @@ services:
   traefik:
     image: "traefik:{{traefik_version}}"
     container_name: {{traefik_container_name}}
+	restart: "always"
     ports:
       - "80:80"
       - "443:443"
