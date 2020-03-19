@@ -3,6 +3,8 @@
   become: true
   docker_network:
     name: "{{ traefik_network }}"
+    attachable: yes
+    internal: no
     ipam_config:
       - subnet: "{{ traefik_network_ipam.subnet }}"
         gateway: "{{ traefik_network_ipam.gateway }}"
