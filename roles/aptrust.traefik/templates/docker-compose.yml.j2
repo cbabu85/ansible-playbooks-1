@@ -22,6 +22,7 @@ services:
 
   echo:
     image: "hashicorp/http-echo"
+	command: -text="Hello World!"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.echo.rule=Host(`staging.aptrust.org`)"
