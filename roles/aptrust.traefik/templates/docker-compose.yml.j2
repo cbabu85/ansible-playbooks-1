@@ -3,10 +3,11 @@ services:
   traefik:
     image: "traefik:{{traefik_version}}"
     container_name: {{traefik_container_name}}
-	restart: "always"
+    restart: "always"
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080" # Traefik Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - "{{traefik_dir}}/traefik.yml:/etc/traefik/traefik.yml:ro"
@@ -22,7 +23,7 @@ services:
 
   echo:
     image: "hashicorp/http-echo"
-	command: -text="Hello World!"
+    command: -text="Hello World!"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.echo.rule=Host(`staging.aptrust.org`)"
@@ -31,5 +32,5 @@ services:
 
 networks:
   default:
-    external:
-	name: "{{traefik_network}}"
+    external: ## Network has been created outside of docker-compose
+      name: "{{traefik_network}}"
