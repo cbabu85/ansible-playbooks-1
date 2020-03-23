@@ -7,7 +7,7 @@
 # - Recreate/Deploy Pharos Docker containers.
 
   - name: Make sure Docker services are shutdown and volumes removed.
-    command: sudo docker-compose down --remove-orphans -v
+    command: sudo docker-compose -f "{{dockercomposefile| default('docker-compose.yml')}}" down  --remove-orphans -v
     args:
        chdir: "{{dockerapp_path}}"
     tags: dockserv
