@@ -5,10 +5,6 @@
     name: "{{ traefik_network }}"
     attachable: yes
     internal: no
-    ipam_config:
-      - subnet: "{{ traefik_network_ipam.subnet }}"
-        gateway: "{{ traefik_network_ipam.gateway }}"
-        iprange: "{{ traefik_network_ipam.iprange }}"
   tags:
     - configuration
 
@@ -21,15 +17,6 @@
     recurse: true
     state: directory
   tags: makedir
-
-- name: Touch acme.json file if non-existent
-  file:
-    path: "{{traefik_dir}}/acme.json"
-    owner: "{{system_default_user}}"
-    group: "{{system_default_user}}"
-    mode: 0664
-    state: touch
-  tags: makdir
 
 - name: Add traefik compose
   become: true
