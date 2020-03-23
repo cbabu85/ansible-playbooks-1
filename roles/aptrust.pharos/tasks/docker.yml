@@ -126,7 +126,9 @@
   - set_fact: pharos_branch="{{git_branch | replace('/','_')}}"
     tags: revs, update_env, always
 
-  - debug: msg={{pharos_branch}}
+  - name: Set docker-compose file fact if traefik
+    set_fact: dockercomposefile=docker-compose.traefik.yml
+    when: traefik_setup
 
   - name: Update .env vars
     template:
@@ -149,31 +151,6 @@
   - include: staging.yml
     when: RAILS_ENV == 'staging'
     tags: stagingworkflow, resetdatabase
-    #  vars:
-    #   ansible_python_interpreter: "/usr/bin/python3"
-
-    #  - name: Update traefik.toml
-    #    template:
-    #      src: traefik.toml.j2
-    #      dest: "{{dockerapp_data_path}}/traefik.toml"
-    #      owner: "{{system_default_user}}"
-    #      group: "{{system_default_group}}"
-    #      mode: 0664
-
-
-# TODO: traefik.toml should be templatized. acme. json touch is ok since its generated
-#  - name: Touch traefik/acme files if non-existent
-#    file:
-#      path: "{{dockerapp_data_path}}/{{item}}"
-#      owner: "{{system_default_user}}"
-#      group: "{{system_default_user}}"
-#      mode: 0600
-#      state: touch
-#    with_items:
-#      - acme.json
-#      - traefik.toml
-#    tags: makdir
-
 
   - name: Setup Pharos Cron Jobs
     # sudo docker run --rm --env-file .env aptrust/pharos:32ca2b4 bin/pharos_notify.py -o snapshot
@@ -194,6 +171,20 @@
     with_dict: "{{pharos_cronjobs}}"
     tags: pharos_cronjobs
 
+  - name: Stop Docker containers from compose
+    docker_service:
+        project_src: "{{dockerapp_path}}"
+        files: "{{dockercomposefile| default('docker-compose.yml')}}"
+        pull: true
+        state: "{{item}}"
+    vars:
+        ansible_python_interpreter: "/usr/bin/env python-docker"
+    tags:
+        - dockserv
+        - pharos_stop
+    with_items:
+        - absent
+
   # Note: Docker does not automatically update volumes even if new volumes
   # are created. Therefore we need to remove the asset volume manually before
   # the updated containers/volumes are recreated below.
@@ -201,11 +192,13 @@
     docker_volume:
         name: pharos_assets
         state: absent
+    vars:
+        ansible_python_interpreter: "/usr/bin/env python-docker"
 
-  - name: Stop, and start docker containers from compose
+  - name: Start Docker containers from compose
     docker_service:
         project_src: "{{dockerapp_path}}"
-        files: docker-compose.yml
+        files: "{{dockercomposefile| default('docker-compose.yml')}}"
         pull: true
         state: "{{item}}"
     vars:
@@ -214,12 +207,12 @@
         - dockserv
         - pharos_start
     with_items:
-        - absent
         - present
 
   - name: Scale Pharos to 3 containers
     docker_service:
         project_src: "{{dockerapp_path}}"
+        files: "{{dockercomposefile| default('docker-compose.yml')}}"
         scale:
             pharos: 3
     vars:
