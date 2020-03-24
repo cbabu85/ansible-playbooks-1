@@ -1,6 +1,7 @@
 # {{ ansible_managed }}
 
-logLevel: "{{ traefik_log_level }}"
+log:
+  level: "{{ traefik_log_level }}"
 
 # Define HTTP and HTTPS entrypoints
 entryPoints:
@@ -22,7 +23,7 @@ api:
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
-    network: "traefik-network"
+	network: "{{traefik_network}}"
     exposedByDefault: false
     watch: true
 
