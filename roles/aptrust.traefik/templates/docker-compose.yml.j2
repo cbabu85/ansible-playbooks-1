@@ -12,7 +12,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - "{{traefik_dir}}/traefik.yml:/etc/traefik/traefik.yml:ro"
-      - "{{traefik_dir}}/acme.json:/etc/traefik/acme.json"
+      - "{{traefik_dir}}/letsencrypt:/etc/traefik/letsencrypt"
     labels:
       - traefik.enable=true
       # HTTP to HTTPS redirection
