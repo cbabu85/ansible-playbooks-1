@@ -9,6 +9,7 @@ services:
       - "443:443"
       - "8080:8080" # Traefik Dashboard
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - "{{traefik_dir}}/traefik.yml:/etc/traefik/traefik.yml:ro"
       - "{{traefik_dir}}/acme.json:/etc/traefik/acme.json"
