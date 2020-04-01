@@ -37,7 +37,7 @@
     dest: "{{traefik_dir}}/traefik.yml"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
-    mode: 0550
+    mode: 0644
   tags:
     - configuration
 
