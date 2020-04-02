@@ -14,7 +14,14 @@ services:
       - "{{traefik_dir}}/traefik.yml:/etc/traefik/traefik.yml:ro"
       - "{{traefik_dir}}/letsencrypt:/etc/traefik/letsencrypt"
     labels:
-      - traefik.enable=true
+      - "traefik.enable=true"
+	  # Dashboard
+	  - "traefik.http.routers.traefik.rule=Host(`{{ansible_nodename}}.aptrust.org`)"
+	  - "traefik.http.routers.traefik.service=api@internal"
+	  - "traefik.http.routers.traefik.middlewares=admin"
+	  - "traefik.http.routers.traefik.tls.certresolver=le"
+	  - "traefik.http.routers.traefik.entrypoints=secure"
+	  - "traefik.http.middlewares.admin.basicauth.users=admin:$$2y$$05$$ngKkHMr5f3AdFbfSZ9fjkO5UQxzdcWVtBoMoGbx/eFXQS3pl42iqu"
       # HTTP to HTTPS redirection
       - "traefik.http.routers.http_catchall.rule=HostRegexp(`{any:.+}`)"
       - "traefik.http.routers.http_catchall.entrypoints=insecure"
