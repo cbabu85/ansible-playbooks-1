@@ -3,6 +3,8 @@
 log:
   level: "{{ traefik_log_level }}"
 
+accesslog: {}
+
 # Define HTTP and HTTPS entrypoints
 entryPoints:
   insecure:
@@ -14,7 +16,7 @@ entryPoints:
 
 {% if traefik_api %}
 api:
-  insecure: true
+  insecure: false
   dashboard: true
   debug: true
 {% endif %}
