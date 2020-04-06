@@ -13,7 +13,7 @@
     path: "{{traefik_dir}}"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
-    mode: 0600
+    mode: 0644
     recurse: true
     state: directory
   tags: makedir
