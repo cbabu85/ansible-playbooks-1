@@ -9,9 +9,18 @@ accesslog: {}
 entryPoints:
   insecure:
     address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: secure
+          scheme: https
 {% if traefik_https %}
   secure:
     address: ":443"
+    http:
+      tls:
+        options: secureTLS
+        certResolver: le
 {% endif %}
 
 {% if traefik_api %}
@@ -36,3 +45,15 @@ certificatesResolvers:
       email: "{{traefik_acme_email}}"
       storage: "/etc/traefik/letsencrypt/acme.json"
       tlsChallenge: {}
+tls:
+  options:
+    secureTLS:
+      minVersion: VersionTLS12
+      sniStrict : true
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
