@@ -250,7 +250,8 @@ ex_receivingbuckets: [
     'aptrust.receiving.{{GO_ENV}}.vcu.edu',
     'aptrust.receiving.{{GO_ENV}}.vwu.edu',
     'aptrust.receiving.{{GO_ENV}}.wm.edu',
-    'aptrust.receiving.{{GO_ENV}}.case.edu'
+    'aptrust.receiving.{{GO_ENV}}.case.edu',
+    'aptrust.receiving.{{GO_ENV}}.staging.edu'
 ]
 
 # NSQ services config
