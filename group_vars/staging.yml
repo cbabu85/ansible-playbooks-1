@@ -104,7 +104,7 @@ ex_glacier_region_OR: "us-west-2"
 ex_glacier_bucket_VA: "aptrust.{{GO_ENV}}.preservation.glacier.va"
 ex_glacier_bucket_OH: "aptrust.{{GO_ENV}}.preservation.glacier.oh"
 ex_glacier_bucket_OR: "aptrust.{{GO_ENV}}.preservation.glacier.or"
-ex_glacier_deep_bucket_VA: "aptrust.{{GO_ENV}}.tpreservation.glacier-deep.va"
+ex_glacier_deep_bucket_VA: "aptrust.{{GO_ENV}}.preservation.glacier-deep.va"
 ex_glacier_deep_bucket_OH: "aptrust.{{GO_ENV}}.preservation.glacier-deep.oh"
 ex_glacier_deep_bucket_OR: "aptrust.{{GO_ENV}}.preservation.glacier-deep.or"
 
