@@ -41,7 +41,7 @@ pharos_aws_sns_pwd: "{{vault_pharos_demo_aws_sns_pwd}}"
 pharos_aws_ses_user: "{{vault_pharos_demo_aws_ses_user}}"
 pharos_aws_ses_pwd: "{{vault_pharos_demo_aws_ses_pwd}}"
 
-pharos_nsq_base_url: "http://staging.aptrust.org:4151"
+pharos_nsq_base_url: "http://nsqd:4151"
 
 pharos_google_api_key: "{{vault_pharos_google_api_key}}"
 pharos_google_client_id: "{{vault_pharos_google_client_id}}"
@@ -67,10 +67,10 @@ pharos_cronjobs:
         disabled: 'yes'
 
 ex_docker: true
-ex_tardirectory: "/mnt/lvm/exchange"
-ex_restoredirectory: "/mnt/lvm/exchange/restore"
-ex_logdirectory: "/data/exchange/logs"
-ex_replicationdirectory: "/mnt/lvm/exchange/replication"
+ex_tardirectory: "/go/bin/data/"
+ex_restoredirectory: "/go/bin/data/restore"
+ex_logdirectory: "/go/bin/data/logs"
+ex_replicationdirectory: "/go/bin/data/replication"
 ex_maxfilesize: "5368709120"
 ex_skipalreadyprocessed: "true"
 ex_deleteonsuccess: "true"
@@ -95,7 +95,7 @@ ex_aptrustglacierregion: "us-west-2"
 ex_preservationbucket: "aptrust.{{GO_ENV}}.preservation"
 ex_replicationbucket: "aptrust.{{GO_ENV}}.preservation.oregon"
 
-ex_restoretotestbuckets: "true"
+ex_restoretotestbuckets: "false"
 ex_maxdayssincefixitycheck: 90
 
 ex_glacier_region_VA: "us-east-1"
