@@ -1,6 +1,8 @@
 ---
 goapp_name: exchange
-# Path for persisitent data between deploys
+# Path for persisitent data between deploys.
+# Note: These need to be on the host system, as they are mounted in the Docker
+# containers.
 goapp_data_path: "/data/{{goapp_name}}"
 goapp_cfg_path: "{{ goapp_data_path }}/config"
 goapp_log_path: "{{ goapp_data_path }}/log"
@@ -31,15 +33,17 @@ ex_apt_services:
   - apt_glacier_restore_init
   - apt_file_restore
 
+# Note: Paths below are in the Docker container, and are mounted to the host
+# system.
 apt_cronjobs:
   exchange_apt_bucket_reader:
     hour: "*/1"
     minute: "*/2"
-    params: "-stats={{goapp_log_path}}/apt_bucket_reader_stats.json"
+    params: "-stats=/go/bin/config/apt_bucket_reader_stats.json"
   exchange_apt_queue:
     hour: "*/1"
     minute: "*/30"
-    params: "-stats={{goapp_log_path}}/apt_queue_stats.json"
+    params: "-stats=/go/bin/config/apt_queue_stats.json"
   exchange_apt_queue_fixity:
     hour: "*/1"
     minute: "*/30"
