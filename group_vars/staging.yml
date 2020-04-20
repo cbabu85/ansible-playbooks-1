@@ -86,7 +86,7 @@ ex_bagitencoding: "UTF-8"
 ex_pharosurl: "{{pharos_url}}"
 ex_pharosapiversion: "v2"
 
-ex_nsqdhttpaddress: "http://staging.aptrust.org:4151"
+ex_nsqdhttpaddress: "http://nsqd:4151"
 ex_nsqlookupd: "nsqlookupd:4161"
 
 ex_aptrusts3region: "us-east-1"
@@ -258,7 +258,7 @@ ex_receivingbuckets: [
 ex_nsq_mem_queue_size: "0"
 ex_nsq_data_path: "{{ex_tardirectory}}"
 ex_nsq_tcp_address: "0.0.0.0:4150"
-ex_nsq_broadcast_address: "{{hostname_fqdn}}"
+ex_nsq_broadcast_address: "nsqd"
 ex_nsq_nsqlookupd_tcp_addresses: "127.0.0.1:4160"
 ex_nsq_msg_timeout: "360m0s"
 ex_nsq_max_msg_timeout: "720m0s"
