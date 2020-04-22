@@ -29,7 +29,8 @@ def test_customized_environment_systemd_unit_file(host):
     unit_file = "/etc/systemd/system/docker.service.d/environment.conf"
     file_contents = host.file(unit_file).content_string
 
-    assert re.search(r"HTTP_PROXY=.*HTTPS_PROXY=.*", file_contents)
+    assert re.search(r"Environment=\"HTTP_PROXY=.*\"", file_contents)
+    assert re.search(r"Environment=\"HTTPS_PROXY=.*\"", file_contents)
 
 
 def test_customized_daemon_flags_systemd_unit_file(host):
@@ -59,3 +60,7 @@ def test_docker_clean_up_cron_job(host):
     cron_conf = host.file("/etc/cron.d/docker-disk-clean-up").content_string
 
     assert "test docker system prune -af" in cron_conf
+
+
+def test_python_docker_module(host):
+    assert 0 == host.run("python-docker -c 'import docker'").rc

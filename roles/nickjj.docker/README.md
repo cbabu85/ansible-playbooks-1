@@ -24,11 +24,12 @@ with it then check out
 - Ubuntu 16.04 LTS (Xenial)
 - Ubuntu 18.04 LTS (Bionic)
 - Debian 9 (Stretch)
+- Debian 10 (Buster)
 
 ---
 
 *You are viewing the master branch's documentation which might be ahead of the
-latest release. [Switch to the latest release](https://github.com/nickjj/ansible-docker/tree/v1.8.0).*
+latest release. [Switch to the latest release](https://github.com/nickjj/ansible-docker/tree/v1.9.2).*
 
 ---
 
@@ -47,7 +48,7 @@ will happen once a week and Docker container logs will be sent to `journald`.
 ```yml
 ---
 
-# site.yml
+# docker.yml
 
 - name: Example
   hosts: "all"
@@ -58,7 +59,7 @@ will happen once a week and Docker container logs will be sent to `journald`.
       tags: ["docker"]
 ```
 
-Usage: `ansible-playbook site.yml -t docker`
+Usage: `ansible-playbook docker.yml`
 
 ### Installation
 
@@ -271,10 +272,13 @@ midnight.
 # `f` forces it to happen without prompting you to agree.
 docker__cron_jobs_prune_flags: "af"
 
+# Control the schedule of the docker system prune.
+docker__cron_jobs_prune_schedule: ["0", "0", "*", "*", "0"]
+
 docker__cron_jobs:
   - name: "Docker disk clean up"
     job: "docker system prune -{{ docker__cron_jobs_prune_flags }} > /dev/null 2>&1"
-    schedule: ["0", "0", "*", "*", "0"]
+    schedule: "{{ docker__cron_jobs_prune_schedule }}"
     cron_file: "docker-disk-clean-up"
     #user: "{{ (docker__users | first) | d('root') }}"
     #state: "present"
@@ -304,10 +308,10 @@ docker__package_dependencies:
   - "gnupg2"
   - "software-properties-common"
 
-# The Docker PGP key id used to sign the Docker package.
+# The Docker GPG key id used to sign the Docker package.
 docker__apt_key_id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
 
-# The Docker PGP key server address.
+# The Docker GPG key server address.
 docker__apt_key_url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
 
 # The Docker upstream APT repository.
@@ -338,8 +342,11 @@ PIP package.
 # This will attempt to install the correct version of PIP based on what your
 # configured Ansible Python interpreter is set to (ie. Python 2 or 3).
 docker__pip_dependencies:
+  - "gcc"
   - "python-setuptools"
+  - "python{{ '3' if ansible_python.version.major == 3 else '' }}-dev"
   - "python{{ '3' if ansible_python.version.major == 3 else '' }}-pip"
+  - "virtualenv"
 ```
 
 #### Installing PIP packages

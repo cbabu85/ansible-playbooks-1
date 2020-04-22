@@ -1,5 +1,32 @@
 # Changelog
 
+## Next release
+
+*Released: TBD*
+
+## v1.9.2
+
+- Add `gcc` as dependency since Docker Compose 1.25+ needs it
+- Add `python(3)-dev` as dependency since Docker Compose 1.25+ needs it
+- Fix Docker module import error so that you can use the `docker_*` Ansible modules
+
+*Released: February 13th 2020*
+
+## v1.9.1
+
+*Released: September 9th 2019*
+
+- Fix quote mismatch when writing environment variable based systemd configuration
+
+## v1.9.0
+
+*Released: August 7th 2019*
+
+- Officially support Debian Buster
+- Fix version pinning to work for both the `docker-ce` and `docker-ce-cli` package
+- Add `docker__cron_jobs_prune_schedule` to configure the docker system prune schedule
+- Fix most Ansible 2.8.x warnings (purposely ignoring the apititude warning)
+
 ## v1.8.0
 
 *Released: December 19th 2018*
