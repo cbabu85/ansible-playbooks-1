@@ -162,7 +162,7 @@
 - name: Start docker containers from compose
   docker_service:
     project_src: "{{docker_app_path}}/"
-    files: docker-compose.yml
+    files: docker-compose.traefik.yml
     pull: true
   vars:
       ansible_python_interpreter: "/usr/bin/env python-docker"
