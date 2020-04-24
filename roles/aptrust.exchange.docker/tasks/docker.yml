@@ -19,8 +19,9 @@
       - "{{docker_app_path}}"
       - "{{docker_data_path}}"
       - "{{docker_data_path}}/config"
-      - "{{docker_data_path}}/log"
+      - "{{docker_data_path}}/logs"
       - "{{docker_data_path}}/nsq"
+      - "{{exchange_data_path}}"
   tags: makedir, always
 
 - name: Set commit-version fact to git hash
