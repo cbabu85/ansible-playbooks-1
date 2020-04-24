@@ -40,7 +40,7 @@
 #
 #
 #Print all the things.
-#set -x
+set -x
 PIDFILE=/var/run/ebs_autoscale.pid
 if [ -f $PIDFILE ]
 then
@@ -76,7 +76,7 @@ NAME="{{vg_name}}_lvm"
 # Environment
 # Describes the environment (prod,demo,dev,test)
 # For EBS Tagging only
-ENVIRONMENT="{{environment|default('demo')}}"
+ENVIRONMENT="{{APP_ENV|default('demo')}}"
 
 # Volume Type
 # Choose between Provisioned IOPS SSD (io1), General Purpose SSD (gp2),
