@@ -66,10 +66,13 @@ pharos_cronjobs:
         params: '-o deletion'
         disabled: 'yes'
 
+# Exchange
+exchange_data_path: "/mnt/lvm/exchange"
+ex_docker_data_path: "/data/exchange"
 ex_docker: true
 ex_tardirectory: "/go/bin/data/"
 ex_restoredirectory: "/go/bin/data/restore"
-ex_logdirectory: "/go/bin/data/logs"
+ex_logdirectory: "/go/bin/logs"
 ex_replicationdirectory: "/go/bin/data/replication"
 ex_maxfilesize: "5368709120"
 ex_skipalreadyprocessed: "true"
@@ -256,7 +259,7 @@ ex_receivingbuckets: [
 
 # NSQ services config
 ex_nsq_mem_queue_size: "0"
-ex_nsq_data_path: "{{ex_tardirectory}}"
+ex_nsq_data_path: "{{ex_docker_data_path}}/nsq"
 ex_nsq_tcp_address: "0.0.0.0:4150"
 ex_nsq_broadcast_address: "nsqd"
 ex_nsq_nsqlookupd_tcp_addresses: "127.0.0.1:4160"
