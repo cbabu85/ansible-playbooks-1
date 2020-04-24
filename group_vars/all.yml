@@ -290,6 +290,19 @@ docker_namespace: "aptrust/container-registry"
 docker_data_dir: "/srv/docker"
 docker_data_mount: "/mnt/lvm/docker"
 
+# nickjj.docker Role
+docker__registries:
+  - registry_url: "https://index.docker.io/v1/"
+    username: "{{vault_dockerhub_deploy_user}}"
+    password: "{{vault_dockerhub_deploy_user_pwd}}"
+    #email: "your_docker_hub@emailaddress.com"
+    #reauthorize: false
+    #config_path: "$HOME/.docker/config.json"
+    #state: "present"
+  - registry_url: "registry.gitlab.com"
+    username: "{{vault_gitlab_deploy_user}}"
+    password: "{{vault_gitlab_deploy_user_pwd}}"
+
 # Graylog
 graylog_dns: "{{vault_graylog_dns}}"
 graylog_root_password_sha2: "{{vault_graylog_root_password_sha2}}"
