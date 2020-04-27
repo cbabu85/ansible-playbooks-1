@@ -45,8 +45,8 @@
   docker_compose:
     project_src: "{{traefik_dir}}"
     state: present
-  vars:
-    ansible_python_interpreter: "/usr/bin/env python-docker"
+    #  vars:
+    #ansible_python_interpreter: "/usr/bin/env python-docker"
 
 #- name: Start global_traefik
 #  become: true
