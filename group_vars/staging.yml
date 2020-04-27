@@ -13,6 +13,10 @@ orgtype: APT
 aws_go_user: "{{vault_aws_go_staging_user}}"
 aws_go_pwd: "{{vault_aws_go_staging_pwd}}"
 
+pharos_web_concurrency: 1
+pharos_min_threads: 1
+pharos_max_threads: 16
+
 pharos_docker: true
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
 pharos_api_key: "{{vault_pharos_demo_api_pwd}}"

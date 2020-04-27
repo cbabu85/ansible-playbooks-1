@@ -12,7 +12,7 @@ envtype: "{{APP_ENV}}"
 environment: demo
 
 # SSH
-sshd_allow_users: ["{{system_default_user}}",cd3ef,andrew.diamond,adiamond,kec6en]
+sshd_allow_users: ["{{system_default_user}}",cd3ef,andrew.diamond,adiamond]
 
 # Fedora
 fedora_db_user: "{{vault_fedora_user}}"
@@ -22,6 +22,9 @@ var_fedora_pid_namespace: 'aptrust'
 ruby_version: 2.4.2
 
 # Pharos
+pharos_web_concurrency: 1
+pharos_min_threads: 1
+pharos_max_threads: 16
 pharos_local_db: False
 pharos_db_host: "{{ vault_pharos_demo_db_host}}"
 pharos_db_user: "{{ vault_pharos_demo_db_user}}"
