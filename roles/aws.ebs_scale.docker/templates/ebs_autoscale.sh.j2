@@ -431,17 +431,10 @@ check_inflight(){
 }
 
 stop_services(){
-     #sudo supervisorctl stop all
-#     sudo docker stop exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
-     [[ -d /srv/docker/exchange ]] && sudo cd /srv/docker/exchange && sudo docker-compose down
-     [[ -e /usr/bin/filebeat ]] && sudo service filebeat stop
+     [[ -d /srv/docker/exchange ]] && cd /srv/docker/exchange && sudo docker-compose down
 }
-# TODO: REWRITE to use compose
 start_services(){
-#     sudo docker start exchange_nsqd_1 exchange_nsqlookupd_1 exchange_nsqadmin_1
-#     sudo supervisorctl start exchange:
-     [[ -d /srv/docker/exchange ]] && sudo cd /srv/docker/exchange && sudo docker-compose up
-     [[ -e /usr/bin/filebeat ]] && sudo service filebeat start
+     [[ -d /srv/docker/exchange ]] && cd /srv/docker/exchange && sudo docker-compose up -d
 }
 # When less space needed and still inside the disk limit print out manual action to carry out.
 # resize2fs can't do a resize while the parition is mounted. The partition needs to be unmounted first,
@@ -477,6 +470,7 @@ if [[ $less_space_needed -eq 1 ]]; then
             umount $MOUNT_POINT
             if [ $? -eq 0 ]; then
               log "Unmount of VG successful. LAST_VOLUME is $LAST_VOLUME and will be removed"
+			  sleep 4
               time e2fsck -f -y /dev/vg_${NAME}/lv_${NAME}
               lvreduction=$(time lvreduce -A y -f -r -L -${LAST_DISK_SIZE}G vg_${NAME}/lv_${NAME} || exit 1)
               if [ $? -eq 0 ]; then
