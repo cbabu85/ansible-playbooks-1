@@ -6,6 +6,7 @@ goapp_name: exchange
 goapp_data_path: "/data/{{goapp_name}}"
 goapp_cfg_path: "{{ goapp_data_path }}/config"
 goapp_log_path: "{{ goapp_data_path }}/log"
+goapp_exchange_data_path: "/mnt/lvm/exchange"
 
 # Mount_dir
 # Usually uses external filesystems EBS, NFS
