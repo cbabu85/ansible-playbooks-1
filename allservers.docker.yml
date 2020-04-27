@@ -1,10 +1,9 @@
 ---
   - hosts:
-      - apt-demo-old
-      - apt-demo2
       - docker*
       - apt-prod-srv
       - apt-prod-docker
+      - apt-demo-services-docker
     gather_facts: true
 
     vars_files:
@@ -12,7 +11,8 @@
     vars:
       #      ansible_python_interpreter: /usr/bin/python3
       playbook_name: allservers
-      ansible_python_interpreter: /usr/bin/python3
+      #      ansible_python_interpreter: /usr/bin/python3
+      #@      ansible_python_interpreter: python3
 
       docker_users: "{{system_default_user}}"
     roles:
