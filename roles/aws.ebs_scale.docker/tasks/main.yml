@@ -1,7 +1,7 @@
 ---
 - name: Ensure botocore and boto3 modules are installed
   pip:
-    name: ["boto", "boto3", "botocore", "awscli"]
+    name: ["boto", "boto3", "botocore", "awscli", "futures"]
 
 # Get local git ref for script versioning
 - name: Get git hash
@@ -18,7 +18,7 @@
   tags: gitts
 
 # Set facts for EBS resource tagging
-- set_fact: environment="{% if 'prod' in ansible_hostname%}prod{%else%}demo{%endif%}"
+#- set_fact: environment="{% if 'prod' in ansible_hostname%}prod{%else%}demo{%endif%}"
 
 - name: Setup EBS_AutoScaling IAM Role
   iam:
@@ -70,7 +70,7 @@
 
 - name: Install jq for json queries and bc for bash arithmetic
   package:
-    name: ['jq', 'bc']
+    name: ['jq', 'bc', 'python-docutils']
     state: present
 
 # Install ebsnvme-id script and udev rules to symlink nvme block devices to
@@ -125,6 +125,8 @@
   tags: nvmfix
   when: supervisor == 'nitro'
 
+- debug: var=APP_ENV
+  tags: ebsdebug
 # TODO: Consider using root as owner and executor or limit sudo to the lvm
 # commands currently system_default_user has pwdless sudo privileges
 # which is not ideal.
