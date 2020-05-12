@@ -17,6 +17,7 @@ docker4 hostname_name=docker4 hostname_fqdn=staging.aptrust.org host_eip=52.0.17
 
 [demo_servers]
 apt-demo-services hostname_name=apt-demo-services hostname_fqdn=demo-services.aptrust.org host_eip=34.196.207.37 # Demo Go Services
+apt-demo-services-docker hostname_name=apt-demo-services-docker hostname_fqdn=demo-services-docker.aptrust.org host_eip=54.145.175.9# Demo Go Services
 apt-ops hostname_name=apt-ops hostname_fqdn=ops.aptrust.org host_eip=34.198.129.76 # Operations Instance
 apt-demo hostname_name=apt-demo hostname_fqdn=demo.aptrust.org host_eip=52.55.230.218 # Pharos+Exchange Demo
 
