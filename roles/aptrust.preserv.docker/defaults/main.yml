@@ -1,0 +1,77 @@
+---
+goapp_name: exchange
+# Path for persisitent data between deploys.
+# Note: These need to be on the host system, as they are mounted in the Docker
+# containers.
+goapp_data_path: "/data/{{goapp_name}}"
+goapp_cfg_path: "{{ goapp_data_path }}/config"
+goapp_log_path: "{{ goapp_data_path }}/log"
+goapp_exchange_data_path: "/mnt/lvm/exchange"
+
+# Mount_dir
+# Usually uses external filesystems EBS, NFS
+# Setting default here which will create subdirectories
+# regardless if any external filesystem is mounted there or not
+mount_dir: /mnt/lvm
+
+#Git branch to deploy
+ex_git_version: master
+
+# Docker related settings
+docker_app_path: "/srv/docker/exchange"
+docker_data_path: "{{goapp_data_path}}"
+#docker_registry_key: registry.gitlab.com/aptrust/container-registry/
+docker_registry_key: "aptrust/"
+
+ex_apt_services:
+  - apt_fetch
+  - apt_file_delete
+  - apt_fixity_check
+  - apt_record
+  - apt_restore
+  - apt_store
+  - apt_volume_service
+  - apt_glacier_restore_init
+  - apt_file_restore
+
+# Note: Paths below are in the Docker container, and are mounted to the host
+# system.
+apt_cronjobs:
+  exchange_apt_bucket_reader:
+    hour: "*/1"
+    minute: "*/2"
+    params: "-stats=/go/bin/config/apt_bucket_reader_stats.json"
+  exchange_apt_queue:
+    hour: "*/1"
+    minute: "*/30"
+    params: "-stats=/go/bin/config/apt_queue_stats.json"
+  exchange_apt_queue_fixity:
+    hour: "*/1"
+    minute: "*/30"
+    params: "-maxfiles=2500"
+# This only runs in prod. See group_vars/production
+#  apt_spot_test_restore:
+#   hour: "1"
+
+
+ex_tardirectory: "~/tmp/data"
+ex_restoredirectory: "~/tmp/apt/restore"
+ex_logdirectory: "~/tmp/apt/logs"
+ex_replicationdirectory: "~/tmp/apt/replicate"
+ex_maxfilesize: "100000000"
+
+ex_pharosurl: "localhost:3000"
+ex_pharosapiversion: "v2"
+ex_nsqdhttpaddress: "http://localhost:4151"
+ex_nsqlookupd: "localhost:4161"
+
+ex_aptrusts3region: "us-east-1"
+ex_aptrustglacierregion: "us-west-2"
+
+ex_preservationbucket: "aptrust.test.preservation"
+ex_replicationbucket: "aptrust.test.preservation.oregon"
+ex_dpnpreservationbucket: "aptrust.dpn.test"
+ex_restoretotestbuckets: "true"
+ex_remotenodehomedirectory: "/home"
+
+ex_localserviceurl: "https://dpn-demo.aptrust.org/"

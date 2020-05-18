@@ -1,0 +1,27 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+#{{ansible_managed}}
+
+{% for item in exchangeservices %}
+
+[program:{{ item }}]
+command={{ goapp_bin_path }}/{{ item }} -config={{ goapp_cfg_path }}/{{GO_ENV}}.json
+
+environment=GOPATH="{{go_env.GOPATH}}",EXCHANGE_HOME="{{goapp_src_path}}",PATH="$PATH:{{goapp_bin_path}}:/usr/local/go/bin:/usr/local/sbin:/usr/bin:/bin",AWS_ACCESS_KEY_ID="{{aws_go_user}}",AWS_SECRET_ACCESS_KEY="{{aws_go_pwd}}",PHAROS_API_USER="{{pharos_api_user}}",PHAROS_API_KEY="{{pharos_api_key}}"
+
+autostart=true
+autorestart=true
+startretries=10
+startsecs=5
+directory={{ goapp_bin_path }}
+user={{ system_default_user }}
+stdout_logfile={{goapp_log_path}}/{{ item }}.stdout.log
+stdout_logfile_maxbytes=50MB
+stdout_logfile_backups=10
+
+stderr_logfile={{goapp_log_path}}/{{ item }}.stderr.log
+stderr_logfile_maxbytes=50MB
+stderr_logfile_backups=10
+{% endfor %}
+
+[group:exchange]
+programs={% for item in exchangeservices %}{{item}}{% if not loop.last %},{% endif %}{% endfor %}

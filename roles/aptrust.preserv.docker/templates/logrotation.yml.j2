@@ -1,0 +1,10 @@
+{{goapp_log_path}}/*.log,
+{{goapp_log_path}}/*.json {
+  daily
+  missingok
+  rotate 31
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}
