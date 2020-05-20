@@ -1,5 +1,6 @@
 ---
 environment: staging
+APT_ENV: staging
 RAILS_ENV: staging
 GO_ENV: staging
 pharos_url: "https://staging.aptrust.org"
