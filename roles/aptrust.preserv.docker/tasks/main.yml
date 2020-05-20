@@ -17,7 +17,7 @@
       - "{{docker_data_path}}/logs"
       - "{{docker_data_path}}/redis"
       - "{{docker_data_path}}/nsq"
-      - "{{goapp_preserv_data_path}}"
+      - "{{preserv_data_path}}"
   tags: makedirs, always
 
 - name: Set commit-version fact to git hash
@@ -114,9 +114,9 @@
   with_nested:
     - ['preserv']
     - ['restore']
-  tags: exchange_ebs
+  tags: preserv_ebs
 
-- name: Pull all exchange containers used in  cronjobs
+- name: Pull all preservation-services containers used in  cronjobs
   docker_image:
     name: "aptrust/{{item.key}}:{{preserv_release}}-{{preserv_branch}}"
     pull: true
@@ -142,7 +142,7 @@
      {{item.value.params | default('')}} >> {{goapp_log_path}}/cron_{{item.key}}.log 2>&1"
     state: present
     disabled: "{{item.value.disabled | default('no')}}"
-  with_dict: "{{ apt_cronjobs }}"
+  with_dict: "{{ preserv_cronjobs }}"
   tags: cronjobs
 
   #  -v /data/exchange/config/config.json:/go/bin/config/config.json
