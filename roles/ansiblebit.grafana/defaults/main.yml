@@ -24,7 +24,7 @@ grafana_database:
   path: grafana.db
 
 grafana_conf_data: |
-  app_mode = {{APP_ENV}}
+  app_mode = {{APT_ENV}}
 
   [paths]
   data = {{ grafana_dir_data }}

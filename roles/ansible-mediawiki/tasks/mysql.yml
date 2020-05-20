@@ -3,12 +3,12 @@
 - name: Create DB on RDS
   rds:
       command: create
-      instance_name: "mediawiki-{{APP_ENV}}"
+      instance_name: "mediawiki-{{APT_ENV}}"
       instance_type: "{{ mediawiki_db.rds_instance_type | default('db.t2.small') }}"
       size: "{{rds_db_size | default('16') }}"
       username: "{{mediawiki_db.user}}"
       password: "{{mediawiki_db.password}}"
-      db_name: "mediawiki_{{APP_ENV}}"
+      db_name: "mediawiki_{{APT_ENV}}"
       db_engine: MySQL
       multi_zone: "{{ mediawiki_db.rds_multi_az | default('no')}}"
       region: "{{ mediawiki_db.rds_region | default('us-east-1')}}"
@@ -25,7 +25,7 @@
       backup_window: '10:00-10:30'
       maint_window: 'Tue:10:30-Tue:11:00'
       tags:
-          Environment: "{{APP_ENV}}"
+          Environment: "{{APT_ENV}}"
   tags: createrds
   register: rds_facts
   when: mediawiki_local_db == false
@@ -34,7 +34,7 @@
 # rds_facts. e.g. "endpoint": "********-demo.cbtzcfmydoc1.us-east-1.rds.amazonaws.com"
 - rds:
     command: facts
-    instance_name: "mediawiki-{{APP_ENV}}"
+    instance_name: "mediawiki-{{APT_ENV}}"
     region: "{{mediawiki_db.rds_region | default('us-east-1')}}"
     aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
     aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"

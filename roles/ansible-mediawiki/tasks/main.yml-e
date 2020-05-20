@@ -1,0 +1,110 @@
+---
+
+- name: clone mediawiki
+  git:
+    repo: 'https://gerrit.wikimedia.org/r/p/mediawiki/core.git'
+    dest: '{{ mediawiki_path }}'
+    version: "{{mediawiki_version|default('HEAD')}}"
+    depth: 1
+    force: yes
+
+- include: composer.yml
+  when: ansible_distribution_release == 'trusty'
+
+- name: install imagemagick
+  apt:
+    name: imagemagick
+    state: present
+
+- name: install mediawiki dependencies
+  shell: composer install --no-dev
+  args:
+    chdir: '{{ mediawiki_path }}'
+
+- include: mysql.yml
+
+- name: install mediawiki skins
+  git:
+    repo: "https://gerrit.wikimedia.org/r/mediawiki/skins/{{item}}"
+    dest: "{{ mediawiki_path }}/skins/{{item}}"
+  with_items: '{{mediawiki_skins}}'
+
+- name: install mediawiki
+  command: php {{ mediawiki_path }}/maintenance/install.php
+    --dbserver {{ mediawiki_db_host }}
+    --dbname {{mediawiki_db.name}}
+    --dbuser {{mediawiki_db.user}}
+    --dbpass {{mediawiki_db.password}}
+    --dbtype {{mediawiki_db.connection}}
+    --lang {{mediawiki_language}}
+    --pass {{admin_user.pass}}
+    --scriptpath '{{mediawiki_dir}}'
+    {{instance_name}} {{admin_user.name}}
+  args:
+    creates: '{{ mediawiki_path }}/LocalSettings.php'
+
+- name: enable clean URL's
+  lineinfile:
+    dest: '{{ mediawiki_path }}/LocalSettings.php'
+    line: '$wgArticlePath = "/$1";'
+    regexp: '\$wgArticlePath'
+
+- name: Upload wiki logo
+  copy:
+    src: '{{mediawiki_logo_file}}'
+    dest: '{{ mediawiki_path }}/images/{{mediawiki_logo_file}}'
+    owner: "{{system_default_user}}"
+    group: "{{system_default_group}}"
+    mode: 0644
+
+- name: Set wiki logo
+  lineinfile:
+    dest: '{{ mediawiki_path }}/LocalSettings.php'
+    regexp: '\$wgLogo = (.*)'
+    line: "$wgLogo = '/images/{{mediawiki_logo_file}}';"
+    state: present
+
+# Update config
+# $wgEmergencyContact = "apache@localhost";
+# $wgPasswordSender = "apache@localhost";
+# Enable writable images dir first!
+# $wgEnableUploads = false;
+## ADD Set Default Timezone
+#$wgLocaltimezone = "America/New_York";
+#date_default_timezone_set( $wgLocaltimezone );
+#
+
+- name: Install Mediawiki extensions
+  git:
+    repo: "https://gerrit.wikimedia.org/r/p/mediawiki/extensions/{{ item.package }}.git"
+    dest: "{{ mediawiki_path }}/extensions/{{ item.package }}"
+    version: "{{ item.version|default(mediawiki_version) }}"
+    depth: 1
+    force: yes
+  with_flattened:
+    - "{{ mediawiki_extensions }}"
+  tags: mextensions
+
+- name: Enable Mediawiki extensions
+  lineinfile: dest="{{mediawiki_path}}/LocalSettings.php"
+              regexp="^wfLoadExtension\( \'{{item.package}}'\ \)\;"
+              line="wfLoadExtension( '{{item.package}}' );"
+              state=present
+  with_flattened:
+  - "{{ mediawiki_extensions }}"
+  tags: mextensions
+
+- include: syntaxhighlight.yml
+  tags: mextensions
+
+- include: visualeditor.yml
+  tags: parsoid
+
+- include: semantic-mediawiki.yml
+  tags: semwiki
+
+- include: wikieditor.yml
+  tags: wikieditor
+
+- include: composer_ext.yml
+  tags: composerext

@@ -1,0 +1,50 @@
+---
+consul_ip: 127.0.0.1
+docker_clusterstore: no
+dockerpy: no
+# Deploy user defaults at APTrust to ubuntu, which is a
+# system default user.
+docker_deploy_user: "{{system_default_user}}"
+vagrant: no
+upgrade_docker: false
+default_docker_config:
+  - storage-driver: overlay2
+  - log-level: info
+  #  tlscacert: "/etc/docker/ssl/ca.pem"
+  #tlscert: "/etc/docker/ssl/cert.pem"
+  #tlskey: "/etc/docker/ssl/key.pem"
+  #tlsverify: true
+
+# Directory to keep persistent data. e.g. an autoscaling EBS drive or external
+# ephermeral storage
+docker_data_dir: /srv/docker
+docker_data_mount: /mnt/lvm/docker
+
+# Sets up LVM for direct-lvm
+docker_production: false
+docker_lvm_init_size: 100 # Volume size in GB
+docker_direct_lvm: /dev/docker_data
+
+production_docker_config:
+  storage-driver: devicemapper
+  storage-opts: |
+   [ dm.directlvm_device="{{docker_direct_lvm}}",
+     dm.directlvm_device_force=true
+   ]
+  log-level: info
+
+docker_tls: true
+docker_port: 2376
+certificates_dir: /etc/docker/ssl
+docker_ssl_path: /etc/docker/ssl
+client_ssl_path: ~/.docker/ssl
+
+
+docker_version: "18.03.1"
+setup_script_url: "https://releases.rancher.com/install-docker/{{ docker_version }}.sh"
+
+# DANGER! THIS VALUE IS USED TO VERIFY THAT THE DOCKER SETUP SCRIPT IS LEGITIMATE.
+# DO NOT MODIFY THIS UNLESS YOU HAVE SPECIFIED A DIFFERENT "docker_version" or "setup_script_url"
+# IF YOU HAVE GENERATED AN MD5 CHECKSUM FOR YOUR DESIRED SETUP SCRIPT, STORE IT IN THIS VARIABLE
+# IF YOU REALLY DON'T WANT TO VERIFY CHECKSUM, SET THIS VALUE TO "false" or "no"
+setup_script_md5_sum: "dbd032bc86591a41689b48e6981ea229"

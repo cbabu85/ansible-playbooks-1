@@ -23,7 +23,7 @@
     volume_type: gp2
     volume_size: "{{docker_lvm_init_size}}"
     tags:
-      environment: "{{APP_ENV}}"
+      environment: "{{APT_ENV}}"
       orgtype: "{{orgtype}}"
   register: ebs_facts
 

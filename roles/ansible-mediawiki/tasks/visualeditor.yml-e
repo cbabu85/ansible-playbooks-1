@@ -1,0 +1,65 @@
+---
+# Setting up VisualEditor
+
+- name: Install npm
+  become_user: "{{system_default_user}}"
+  shell: curl -sL https://deb.nodesource.com/setup_4.x  | sudo -E bash -
+  register: addnpm
+
+- name: Install node.js
+  apt: name=nodejs
+  become: true
+  when: addnpm
+
+- name: install parsoid
+  npm: name=parsoid path="{{mediawiki_path}}/parsoid"
+  tags: parsoid
+
+- name: Config parsoid
+  shell: cp config.example.yaml config.yaml
+  args:
+    chdir: "{{mediawiki_path}}/parsoid"
+  tags: parsoid
+
+- name: Update parsoid config
+  lineinfile:
+    dest: "{{mediawiki_path}}/parsoid/config.yaml"
+    line: 'https://"{{hostname_fqdn}}"/api.php'
+    regexp: 'http://localhost/w/api.php'
+
+- name: Update parsoid config
+  lineinfile:
+    dest: "{{mediawiki_path}}/parsoid/config.yaml"
+    line: 'aptrust.org'
+    regexp: "domain:'localhost'"
+
+- name: Update mediawiki config
+  blockinfile: dest="{{mediawiki_path}}/LocalSettings.php"
+               insertafter="wfLoadExtension\( \'VisualEditor\'\ )\;"
+               content= |
+                  $wgVirtualRestConfig\['modules'\]\['parsoid'\] = array(
+                  // URL to the Parsoid instance
+                  // Use port 8142 if you use the Debian package
+                  'url' => 'https://{{hostname_fqdn}}:8000',
+                  // Parsoid "domain", see below (optional)
+                  'domain' => '{{ansible_domain}}',
+                  // Parsoid "prefix", see below (optional)
+                  'prefix' => '{{ansible_domain}}'
+                  );
+                state=present
+                backup=yes
+
+- name: Install node parsoid systemd service
+  copy:
+    src: node-parsoid.service
+    dest: /etc/systemd/system/node-parsoid.service
+    mode: 0644
+    owner: root
+    group: root
+  when: ansible_distribution_release == 'xenial'
+
+- name: Start parsoid service
+  service:
+    name: node-parsoid
+    state: started
+    enabled: yes

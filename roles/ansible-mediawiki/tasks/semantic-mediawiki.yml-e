@@ -1,0 +1,23 @@
+---
+- name: Install SemMediawiki with composer
+  shell: composer require {{ item}}
+  args:
+    chdir: "{{mediawiki_path}}"
+  with_items:
+    - "mediawiki/semantic-media-wiki \"~2.5\" --update-no-dev"
+    - "mediawiki/semantic-compound-queries:~1.0"
+  tags: semwiki
+
+- name: Run maintenance script
+  shell: php maintenance/update.php --skip-external-dependencies
+  args:
+    chdir: "{{mediawiki_path}}"
+  tags: semwiki
+
+- name: Enable SemWiki extension
+  lineinfile: dest="{{mediawiki_path}}/LocalSettings.php"
+              regexp="^enableSemantics\( \'aptrust\.org\'\ \)\;"
+              line="enableSemantics( 'aptrust.org' );"
+              state=present
+  tags: semwikisem
+

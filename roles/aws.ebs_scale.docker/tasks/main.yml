@@ -125,7 +125,7 @@
   tags: nvmfix
   when: supervisor == 'nitro'
 
-- debug: var=APP_ENV
+- debug: var=APT_ENV
   tags: ebsdebug
 # TODO: Consider using root as owner and executor or limit sudo to the lvm
 # commands currently system_default_user has pwdless sudo privileges

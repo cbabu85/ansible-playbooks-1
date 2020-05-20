@@ -1,0 +1,40 @@
+---
+sudo: required
+dist: trusty
+
+language: "python"
+python:
+- 2.7
+
+env:
+- ANSIBLE_VERSION=2.1
+- ANSIBLE_VERSION=2.2
+
+before_install:
+# Make sure everything's up to date.
+- sudo apt-get update -qq
+
+# Remove MySQL
+- sudo apt-get remove --purge 'mysql*'
+- sudo apt-get autoremove
+- sudo apt-get autoclean
+- sudo rm -rf /var/lib/mysql
+- sudo truncate -s 0 /var/log/mysql/error.log
+
+
+install:
+- pip install ansible==$ANSIBLE_VERSION
+- "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
+- ansible-galaxy install -r requirements.yml
+
+script:
+- "ansible-playbook -i tests/travis-inventory tests/travis-playbook.yml --syntax-check"
+- "ansible-playbook -i tests/travis-inventory tests/travis-playbook.yml --connection=local --sudo"
+- >
+  ansible-playbook -i tests/travis-inventory tests/travis-playbook.yml --connection=local --sudo
+  | grep -q 'changed=0.*failed=0'
+  && (echo 'Idempotence test: pass' && exit 0)
+  || (echo 'Idempotence test: fail' && exit 1)
+- sudo rm -f /etc/nginx/sites-enabled/default && sudo service nginx reload
+- >
+  curl http://localhost/Main_Page

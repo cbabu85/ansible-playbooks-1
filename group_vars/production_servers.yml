@@ -3,7 +3,7 @@
 
 environment: production
 # APP Env as language agnostic variable
-APP_ENV: 'production'
+APT_ENV: 'production'
 GO_ENV: 'production'
 RAILS_ENV: 'production'
 
@@ -12,7 +12,7 @@ ruby_version: '2.4.2'
 
 # AWS Tags
 orgtype: 'APT'
-envtype: "{{APP_ENV}}"
+envtype: "{{APT_ENV}}"
 
 # Pharos
 pharos_web_concurrency: 2

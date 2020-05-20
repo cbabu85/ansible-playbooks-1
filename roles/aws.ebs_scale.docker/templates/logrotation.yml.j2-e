@@ -1,0 +1,9 @@
+{{ebs_logfile}} {
+  daily
+  missingok
+  rotate 31
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}

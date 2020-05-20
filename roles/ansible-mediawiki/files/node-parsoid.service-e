@@ -1,0 +1,13 @@
+[Unit]
+Description=Mediawiki Parsoid web service on node.js
+Documentation=http://www.mediawiki.org/wiki/Parsoid
+
+[Service]
+ExecStart=/usr/bin/node bin/server.js
+WorkingDirectory=/var/www/wiki.aptrust.org/mediawiki/parsoid/
+Restart=on-failure
+StandardOutput=syslog
+User=ubuntu
+Group=deploy
+Restart=on-success
+PrivateTmp=true

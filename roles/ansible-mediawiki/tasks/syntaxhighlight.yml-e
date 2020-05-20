@@ -1,0 +1,30 @@
+---
+
+- name: Get latest SyntaxHighlight version
+  get_url:
+    url: "https://extdist.wmflabs.org/dist/extensions/SyntaxHighlight_GeSHi-master-756dcfd.tar.gz"
+    dest: "{{mediawiki_path}}/extensions/SyntaxHighlight_GeSHi-master-756dcfd.tar.gz"
+
+
+- name: Extract latest Syntaxhighlight
+  unarchive:
+    src: "{{mediawiki_path}}/extensions/SyntaxHighlight_GeSHi-master-756dcfd.tar.gz"
+    dest: "{{mediawiki_path}}/extensions/"
+    remote_src: yes
+
+- name: Make pygments executable
+  file:
+    dest: "{{mediawiki_path}}/extensions/SyntaxHighlight_GeSHi/pygments"
+    mode: a+xr
+
+- name: Composer install deps
+  composer:
+    command: install
+    no_dev: false
+    working_dir: "{{mediawiki_path}}/extensions/SyntaxHighlight_GeSHi"
+
+- name: Enable Mediawiki extensions
+  lineinfile: dest="{{mediawiki_path}}/LocalSettings.php"
+              regexp="^wfLoadExtension\( \'SyntaxHighlight_GeSHi'\ \)\;"
+              line="wfLoadExtension( 'SyntaxHighlight_GeSHi' );"
+              state=present

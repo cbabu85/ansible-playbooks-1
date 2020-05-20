@@ -2,13 +2,13 @@
 
 include_vars: vault.yml
 # APP Env as language agnostic variable
-APP_ENV: 'demo'
+APT_ENV: 'demo'
 GO_ENV: 'demo'
 RAILS_ENV: 'demo'
 
 # AWS Tags
 orgtype: 'APT'
-envtype: "{{APP_ENV}}"
+envtype: "{{APT_ENV}}"
 environment: demo
 
 # SSH

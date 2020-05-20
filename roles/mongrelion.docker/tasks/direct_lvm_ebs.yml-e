@@ -1,0 +1,70 @@
+---
+# This provisions an EBS drive and creates an LVM to use as default Docker data
+# dir. As per recommendation of Docker documentation: https://docs.docker.com/storage/storagedriver/device-mapper-driver/#configure-docker-with-the-devicemapper-storage-driver
+#
+
+- name: Installing lvm2
+  apt: name="{{item}}" state=present
+  with_items:
+    - lvm2
+    - thin-provisioning-tools
+
+- name: Get Instance ID
+  ec2_metadata_facts:
+
+- name: Create EBS volume and attach to instance
+  ec2_vol:
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID')}}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY')}}"
+    region: "{{ansible_ec2_placement_region}}"
+    name: "{{ansible_hostname}}_Docker_data"
+    instance: "{{ansible_ec2_instance_id}}"
+    encrypted: true
+    volume_type: gp2
+    volume_size: "{{docker_lvm_init_size}}"
+    tags:
+      environment: "{{APP_ENV}}"
+      orgtype: "{{orgtype}}"
+  register: ebs_facts
+
+- debug: var=ebs_facts
+
+- debug: msg="{{ ebs_facts.device |replace('s','xv')}}"
+  tags: regx
+
+# Note: consider different device names with c5 instances and stuff
+- name: Symlink device for easier handling
+  file:
+    state: link
+    src: "{{ebs_facts.device|replace('s','xv')}}"
+    dest: "/dev/docker_data"
+    owner: "{{system_default_user}}"
+    group: "{{system_default_user}}"
+    mode: 0755
+
+# Note: Below incomplete tasks to setup LVM directly.
+# Keeping this here for future reference.
+    # - name: Create LVM
+    # lvg: vg=docker_data  pvs=/dev/docker_data1 state=present
+
+  #- name: creating new LVM logical volume
+  # lvol: vg=docker_data size={{ docker_lvm_init_size }}
+
+  # - name: Create LVs thinpool
+  # lvol:
+  # vg: docker_data
+  #  lv: thinpool
+  #  size: 95%VG
+    #    thinpool: thinpool
+    #  opts: "--wipesignatures y"
+
+    # - name: Create LVs thinpool-meta
+    # lvol:
+    #vg: docker_data
+    # lv: thinpoolmeta
+    #size: 1%VG
+    ## thinpool: thinpoolmeta
+    #opts: "--wipesignatures y"
+
+    #- name: Convert to thin pool
+    #command: lvconvert -y --zero n -c 512K --thinpool docker_data/thinpool --poolmetadata docker_data/thinpoolmeta

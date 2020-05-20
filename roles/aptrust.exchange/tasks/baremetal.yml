@@ -203,7 +203,7 @@
 - name: Add logrotation because supervisor doesn't want to
   template:
       src: logrotation.yml.j2
-      dest: "/etc/logrotate.d/exchange_{{APP_ENV}}"
+      dest: "/etc/logrotate.d/exchange_{{APT_ENV}}"
       owner: "root"
       group: "{{deploy_group}}"
       mode: 0644
