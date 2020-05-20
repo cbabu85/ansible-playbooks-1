@@ -80,20 +80,25 @@
 
 # Note: Replacing / for _ for docker_tag_name construct that's used in env
 # to get the correct image
-- set_fact: exchange_branch="{{git_branch | replace('/','_')}}"
+- set_fact: preserv_branch="{{git_branch | replace('/','_')}}"
   tags: revs, update_env, always
 
 
 # Note: Environment env vars (user profile) supersede .env
 # https://docs.docker.com/compose/environment-variables/#the-env-file
+# Note: temporary workaround to overwrite .env and .env.docker since the docker_compose module in Ansible does not support custom env files.
 - name: Update env vars in .env
   template:
     src: .env.docker.j2
-    dest: "{{docker_app_path}}/.env.docker"
+    dest: "{{docker_app_path}}/{{item}}"
     owner: "{{system_default_user}}"
     group: "{{system_default_group}}"
     mode: 0644
+  with_items:
+    - .env.docker
+    - .env
   tags: dotenv
+
 
 - name: "Create elastic EBS volume directories (dockerapp)"
   become: yes
