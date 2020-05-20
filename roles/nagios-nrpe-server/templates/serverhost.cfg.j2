@@ -1,6 +1,0 @@
-define host{
-        use         linux-server
-        host_name   "{(ansible_fqdn}}"
-        alias       "{{ansible_hostname}}"
-        address     "{{ansible_fqdn}}"
-        }
