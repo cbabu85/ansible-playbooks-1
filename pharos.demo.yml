@@ -1,0 +1,57 @@
+---
+#   - a .env file in the code root (with sensible defaults)
+# The instance to deploy to requires to be internet reachable on 80/443.
+# Pharos:
+# All required changes should be env vars in the .env var for deploys in
+# different environemnts.
+#
+##  - Base dir for docker apps is /srv/docker/<appname>
+#     The base directory is used to clone the git repository into.
+#     The data directory is used for storing persistent data if volume
+#     bind-mounts are used.
+#
+-   hosts:
+      - apt-demo
+      - apt-demo2
+      - apt-prod-docker
+    vars_files:
+        - "group_vars/vault.yml"
+
+    vars:
+        # Workaround for Ansible docker Python modules. https://galaxy.ansible.com/nickjj/docker
+        #ansible_python_interpreter: "{{ '/usr/bin/env python-docker' if docker__pip_virtualenv | d() else ansible_python.executable }}"
+        # ansible_python_interpreter: "/usr/bin/env python-docker"
+
+        # Dockerapp config
+        # defined in pharos role defaults.
+        # dockerapp: 'pharos' #Docker app name
+        # dockerapp_path: "/srv/docker/{{dockerapp}}"
+        # dockerapp_data_path: "/data/{{dockerapp}}"
+        # dockerapp_repo: "https://github.com/APtrust/pharos"
+
+        # Note: If latest HEAD of branch, only provide branchname. If a custom git
+        # hash, both branch and hash need to be defined. e.g.:
+        #  git_branch: feature/two_factor #git branch/commit
+        #  git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
+        git_branch: develop
+        #        git_version: e2c8c44
+        DOCKER_DOMAIN: "{{ ansible_fqdn }}"
+        # Note: Once production has pharos 2fa/docker this can be removed and the defaults in the role can be set to true.
+        pharos_docker: true
+    roles:
+      - { role: aptrust.pharos }
+    tasks:
+
+      - name: whoami
+        become: no
+        local_action: shell whoami
+        register: whobrokeit
+        tags: [pharos,slack,deploy]
+
+      - name: Slack to all
+        slack:
+          token: "{{slack_token}}"
+          msg: "Deployment of Pharos Release: *{{pharos_release}}-{{pharos_branch}}* in Environment: *{{RAILS_ENV}}* on {{ inventory_hostname }} by user {{whobrokeit.stdout}} completed"
+          icon_emoji: ":dog:"
+          channel: 'ops'
+        tags: [pharos,slack, deploy]

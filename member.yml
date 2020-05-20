@@ -36,7 +36,8 @@
 # group_vars/members/vt.yml
 #
 # To run this playbook for a particular member,
-# change the inst_id and inst_suffix in the vars below
+# change the inst_id and inst_suffix in the vars below or add at
+# runtime per `-e inst_id=cd3ef`
 
 - name: Setting up AWS buckets and groups
   hosts: localhost

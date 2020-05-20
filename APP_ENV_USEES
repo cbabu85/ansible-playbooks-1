@@ -1,0 +1,24 @@
+filebeat.yml:              environment: "{{APP_ENV}}"
+filebeat.yml:#              environment: "{{APP_ENV}}"
+grafana.yml:        APP_ENV: demo
+group_vars/demo_servers.yml:APP_ENV: 'demo'
+group_vars/demo_servers.yml:envtype: "{{APP_ENV}}"
+group_vars/production_servers.yml:APP_ENV: 'production'
+group_vars/production_servers.yml:envtype: "{{APP_ENV}}"
+host_vars/pharos:APP_ENV: 'development'
+host_vars/docker2:APP_ENV: demo
+host_vars/tmp-ebs-test2:APP_ENV: demo
+roles/aptrust.exchange.docker/tasks/baremetal.yml:      dest: "/etc/logrotate.d/exchange_{{APP_ENV}}"
+roles/dpn.dpn-server/tasks/main.yml:        dest: "/etc/logrotate.d/dpn-server_{{APP_ENV}}"
+roles/ansiblebit.grafana/defaults/main.yml:  app_mode = {{APP_ENV}}
+roles/aptrust.exchange/tasks/baremetal.yml:      dest: "/etc/logrotate.d/exchange_{{APP_ENV}}"
+Binary file roles/aptrust.exchange/tasks/.baremetal.yml.swp matches
+roles/aptrust.exchange/tasks/docker.yml:      dest: "/etc/logrotate.d/exchange_{{APP_ENV}}"
+roles/ansible-mediawiki/tasks/mysql.yml:      instance_name: "mediawiki-{{APP_ENV}}"
+roles/ansible-mediawiki/tasks/mysql.yml:      db_name: "mediawiki_{{APP_ENV}}"
+roles/ansible-mediawiki/tasks/mysql.yml:          Environment: "{{APP_ENV}}"
+roles/ansible-mediawiki/tasks/mysql.yml:    instance_name: "mediawiki-{{APP_ENV}}"
+roles/aws.ebs_scale.docker/tasks/main.yml:- debug: var=APP_ENV
+roles/aws.ebs_scale.docker/templates/ebs_autoscale.sh.j2:ENVIRONMENT="{{APP_ENV|default('demo')}}"
+roles/mongrelion.docker/tasks/direct_lvm_ebs.yml:      environment: "{{APP_ENV}}"
+roles/icinga2-ansible/icinga2-ansible-web2-ui/tasks/icinga2_web2_ui_Debian_install.yml:        Environment: "{{APP_ENV}}"

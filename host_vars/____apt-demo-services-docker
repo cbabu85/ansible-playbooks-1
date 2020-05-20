@@ -1,0 +1,263 @@
+pharos_docker: true
+pharos_url: "https://staging.aptrust.org"
+pharos_api_user: "{{vault_pharos_demo_api_user}}"
+pharos_api_key: "{{vault_pharos_demo_api_pwd}}"
+pharos_two_factor_key: "{{vault_pharos_staging_two_factor_key}}"
+pharos_authy_api_key: "{{vault_pharos_demo_authy_api_key}}"
+pharos_2fa_grace_period: "20"
+pharos_db_host: 'db'
+pharos_db_port: '5432'
+pharos_db_name: 'pharos_staging'
+pharos_db_user: 'apt_pharos'
+pharos_db_pwd: "{{ vault_pharos_demo_db_pwd}}"
+pharos_db_ro_user: "{{ vault_pharos_demo_db_ro_user }}"
+pharos_db_ro_pwd: "{{ vault_pharos_demo_db_ro_pwd }}"
+# Pharos System user for API access
+pharos_system_user: "system@aptrust.org"
+pharos_system_user_pwd: "{{vault_pharos_demo_system_user_pwd}}"
+pharos_system_user_key: "{{vault_pharos_demo_api_pwd}}"
+#
+pharos_logserver: logs.aptrust.org
+pharos_logserver_port: 12219
+pharos_loglevel: debug
+
+pharos_aws_sns_region: "us-east-1"
+pharos_aws_sns_user: "{{vault_pharos_demo_aws_sns_user}}"
+pharos_aws_sns_pwd: "{{vault_pharos_demo_aws_sns_pwd}}"
+pharos_aws_ses_user: "{{vault_pharos_demo_aws_ses_user}}"
+pharos_aws_ses_pwd: "{{vault_pharos_demo_aws_ses_pwd}}"
+
+pharos_nsq_base_url: "http://nsqd:4151"
+
+pharos_google_api_key: "{{vault_pharos_google_api_key}}"
+pharos_google_client_id: "{{vault_pharos_google_client_id}}"
+pharos_google_client_secret: "{{vault_pharos_google_client_secret}}"
+
+pharos_cronjobs:
+    pharos_notify:
+        hour: "*/10"
+        minute: "*"
+        params: ''
+        disabled: 'yes'
+    pharos_snapshot:
+        hour: "1"
+        minute: "1"
+        day: "1"
+        params: '-o snapshot'
+        disabled: 'yes'
+    pharos_deletion:
+        hour: "1"
+        minute: "2"
+        day: "1"
+        params: '-o deletion'
+        disabled: 'yes'
+
+# Exchange
+# data_paths below are for Docker bind mounts
+exchange_data_path: "/mnt/lvm/exchange"
+ex_docker_data_path: "/data/exchange"
+
+ex_docker: true
+# directories below are Docker container internal and are bind mounted for
+# persistence if required
+ex_tardirectory: "/go/bin/data/"
+ex_restoredirectory: "/go/bin/data/restore"
+ex_logdirectory: "/go/bin/logs"
+ex_replicationdirectory: "/go/bin/data/replication"
+ex_maxfilesize: "5368709120"
+ex_skipalreadyprocessed: "true"
+ex_deleteonsuccess: "true"
+ex_logtostderr: "false"
+ex_usevolumeservice: "false"
+ex_volumeserviceport: 8898
+ex_loglevel: 4
+ex_bucketreadercachehours: 24
+ex_bagvalidationconfigfile: "config/aptrust_bag_validation_config.json"
+ex_bagitversion: "0.97"
+ex_bagitencoding: "UTF-8"
+
+ex_pharosurl: "{{pharos_url}}"
+ex_pharosapiversion: "v2"
+
+ex_nsqdhttpaddress: "http://nsqd:4151"
+ex_nsqlookupd: "nsqlookupd:4161"
+
+ex_aptrusts3region: "us-east-1"
+ex_aptrustglacierregion: "us-west-2"
+
+ex_preservationbucket: "aptrust.{{GO_ENV}}.preservation"
+ex_replicationbucket: "aptrust.{{GO_ENV}}.preservation.oregon"
+
+ex_restoretotestbuckets: "false"
+ex_maxdayssincefixitycheck: 90
+
+ex_glacier_region_VA: "us-east-1"
+ex_glacier_region_OH: "us-east-2"
+ex_glacier_region_OR: "us-west-2"
+ex_glacier_bucket_VA: "aptrust.{{GO_ENV}}.preservation.glacier.va"
+ex_glacier_bucket_OH: "aptrust.{{GO_ENV}}.preservation.glacier.oh"
+ex_glacier_bucket_OR: "aptrust.{{GO_ENV}}.preservation.glacier.or"
+ex_glacier_deep_bucket_VA: "aptrust.{{GO_ENV}}.preservation.glacier-deep.va"
+ex_glacier_deep_bucket_OH: "aptrust.{{GO_ENV}}.preservation.glacier-deep.oh"
+ex_glacier_deep_bucket_OR: "aptrust.{{GO_ENV}}.preservation.glacier-deep.or"
+
+
+ex_fetchworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_fetch_topic",
+    nsqchannel: "apt_fetch_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_storeworker: {
+    networkconnections: 16,
+    workers: 8,
+    nsqtopic: "apt_store_topic",
+    nsqchannel: "apt_store_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_recordworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_record_topic",
+    nsqchannel: "apt_record_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_replicationworker: {
+    networkconnections: "4",
+    workers: "8",
+    nsqtopic: "apt_replication_topic",
+    nsqchannel: "apt_replication_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_restoreworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_restore_topic",
+    nsqchannel: "apt_restore_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_filerestoreworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_file_restore_topic",
+    nsqchannel: "apt_file_restore_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_filedeleteworker: {
+    networkconnections: "12",
+    workers: "4",
+    nsqtopic: "apt_file_delete_topic",
+    nsqchannel: "apt_file_delete_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "30m"
+}
+
+ex_fixityworker: {
+    networkconnections: "4",
+    workers: "4",
+    nsqtopic: "apt_fixity_topic",
+    nsqchannel: "apt_fixity_channel",
+    maxattempts: "3",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "180m"
+}
+
+ex_glacierrestoreworker: {
+    networkconnections: "8",
+    workers: "4",
+    nsqtopic: "apt_glacier_restore_topic",
+    nsqchannel: "apt_glacier_restore_channel",
+    maxattempts: "8",
+    maxinflight: "20",
+    heartbeatinterval: "10s",
+    readtimeout: "60s",
+    writetimeout: "10s",
+    messagetimeout: "420m"
+}
+
+ex_receivingbuckets: [
+    'aptrust.receiving.{{GO_ENV}}.chd.virginia.edu',
+    'aptrust.receiving.{{GO_ENV}}.columbia.edu',
+    'aptrust.receiving.{{GO_ENV}}.georgetown.edu',
+    'aptrust.receiving.{{GO_ENV}}.indiana.edu',
+    'aptrust.receiving.{{GO_ENV}}.jhu.edu',
+    'aptrust.receiving.{{GO_ENV}}.miami.edu',
+    'aptrust.receiving.{{GO_ENV}}.ncsu.edu',
+    'aptrust.receiving.{{GO_ENV}}.nd.edu',
+    'aptrust.receiving.{{GO_ENV}}.psu.edu',
+    'aptrust.receiving.{{GO_ENV}}.syr.edu',
+    'aptrust.receiving.{{GO_ENV}}.test.edu',
+    'aptrust.receiving.{{GO_ENV}}.uc.edu',
+    'aptrust.receiving.{{GO_ENV}}.uconn.edu',
+    'aptrust.receiving.{{GO_ENV}}.umd.edu',
+    'aptrust.receiving.{{GO_ENV}}.umich.edu',
+    'aptrust.receiving.{{GO_ENV}}.fulcrum.org',
+    'aptrust.receiving.{{GO_ENV}}.unc.edu',
+    'aptrust.receiving.{{GO_ENV}}.virginia.edu',
+    'aptrust.receiving.{{GO_ENV}}.viul.virginia.edu',
+    'aptrust.receiving.{{GO_ENV}}.vt.edu',
+    'aptrust.receiving.{{GO_ENV}}.vcu.edu',
+    'aptrust.receiving.{{GO_ENV}}.vwu.edu',
+    'aptrust.receiving.{{GO_ENV}}.wm.edu',
+    'aptrust.receiving.{{GO_ENV}}.case.edu',
+    'aptrust.receiving.{{GO_ENV}}.staging.edu'
+]
+
+# NSQ services config
+ex_nsq_mem_queue_size: "0"
+ex_nsq_data_path: "{{ex_docker_data_path}}/nsq"
+ex_nsq_tcp_address: "0.0.0.0:4150"
+ex_nsq_broadcast_address: "nsqd"
+ex_nsq_nsqlookupd_tcp_addresses: "127.0.0.1:4160"
+ex_nsq_msg_timeout: "360m0s"
+ex_nsq_max_msg_timeout: "720m0s"
+ex_nsq_max_req_timeout: "180m"
+
+
+## EBS Autoscale
+vg_disk_size: 2
+nsq_address: ''

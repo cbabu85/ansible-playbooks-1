@@ -251,7 +251,7 @@
   - name: Setup log rotation
     template:
         src: logrotation.yml.j2
-        dest: "/etc/logrotate.d/dpn-server_{{APP_ENV}}"
+        dest: "/etc/logrotate.d/dpn-server_{{APT_ENV}}"
         owner: "root"
         group: "{{deploy_group}}"
         mode: 0644
