@@ -1,2 +1,0 @@
-# {{ ansible_managed }}
-{{ grafana_conf_data }}

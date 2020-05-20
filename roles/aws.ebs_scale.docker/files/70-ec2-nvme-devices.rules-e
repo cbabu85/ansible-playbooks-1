@@ -1,3 +1,0 @@
- #EBS nvme devices
-
- KERNEL=="nvme[0-9]*n[0-9]*", ENV{DEVTYPE}=="disk", ATTRS{model}=="Amazon Elastic Block Store", PROGRAM="/sbin/ebsnvme-id.py -o /dev/%k", SYMLINK+="%c"

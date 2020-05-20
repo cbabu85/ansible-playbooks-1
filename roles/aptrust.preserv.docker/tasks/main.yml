@@ -1,8 +1,4 @@
 ---
-# NOTE:
-# Former home of repo was /home/ubuntu/go/src/github.com/APTrust/exchange,
-# new home is /srv/docker/exchange
-#
 
 - name: Ensure dockerd is installed and running
   command: docker --version
