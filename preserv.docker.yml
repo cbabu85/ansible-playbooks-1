@@ -1,0 +1,53 @@
+---
+# Deploy on all preservation-services servers:
+#  ansible-playbook preserv.docker.yml -t deploy --diff
+# Deploy on a specific preservation-services server:
+#  ansible-playbook preservation-services.yml -t deploy --diff -l dpn-demo2
+# Deploy a specific branch of preservation-services:
+#  ansible-playbook preservation-services.yml -t deploy --diff -e ex_git_branch=<specific_branchname>
+# Only rebuild go binaries, does not restart services.
+#  ansible-playbook preservation-services.yml -t gobuild --diff
+-   hosts:
+      - docker4
+      - apt-demo-services-docker
+    vars_files:
+        - "group_vars/vault.yml"
+
+    vars:
+        playbook_name: preservation-services.docker
+        # AWS.cli used for ebs_scale.docker
+        aws_access_key_id: "{{aws_access_key_ubuntu}}"
+        aws_secret_access_key: "{{aws_secret_access_key_ubuntu}}"
+
+        # DOCKER
+        #        docker_version: 18.06.1-ce
+        # dockerapp: 'preservation-services' #Docker app name
+
+        # Note: If latest HEAD of branch, only provide branchname. If a custom git
+        # hash, both branch and hash need to be defined. e.g.:
+        #  git_branch: feature/two_factor #git branch/commit
+        #  git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
+        git_branch: master
+    gather_facts: true
+
+    roles:
+      - {role: aptrust.common.docker, tags: common}
+      - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
+      - {role: aws.cli, tags: aws_cli}
+      - {role: aws.ebs_scale.docker, tags: ebs_scale_docker, setnitro}
+      - {role: aptrust.preserv.docker, tags: [preserv, deploy]}
+    tasks:
+
+    - name: whoami
+      become: no
+      local_action: shell whoami
+      register: whobrokeit
+      tags: [preserv,slack,deploy]
+
+    - name: Slack to all
+      slack:
+        token: "{{slack_token}}"
+        msg: "Deployment of preservation-services Release: *{{preserv_release}}-{{preserv_branch}}* in Environment: *{{GO_ENV}}* on {{ ansible_fqdn }} by user {{whobrokeit.stdout}} completed"
+        icon_emoji: ":construction_worker:"
+        channel: 'aptrust_internal'
+      tags: [preserv,slack,deploy]
