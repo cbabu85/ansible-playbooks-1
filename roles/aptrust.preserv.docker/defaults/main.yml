@@ -6,7 +6,7 @@ goapp_name: preserv
 goapp_data_path: "/data/{{goapp_name}}"
 goapp_cfg_path: "{{ goapp_data_path }}/config"
 goapp_log_path: "{{ goapp_data_path }}/logs"
-goapp_preserv_data_path: "/mnt/lvm/preserv"
+preserv_data_path: "/mnt/lvm/preserv"
 
 preserv_log_level: DEBUG
 
