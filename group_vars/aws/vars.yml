@@ -16,7 +16,6 @@ aws_preservation_services_group: apt_preservation_services
 # with Terraform at some point.
 #
 
-
 # Note: Disabled s3_buckets for production right now since it violates
 # consistent aptrust.<environment>.preservation.storage naming pattern.
 # The s3 bucket policy template relies on consistent naming pattern.
@@ -39,6 +38,15 @@ s3_buckets:
   - name: aptrust.staging.preservation.oregon
     region: us-west-2
     environment: staging
+  - name: aptrust.staging.staging
+    region: us-east-1
+    environment: staging
+  - name: aptrust.test.staging
+    region: us-east-1
+    environment: demo
+  - name: aptrust.staging
+    region: us-east-1
+    environment: prod
 
 
 s3_glacier_buckets:
