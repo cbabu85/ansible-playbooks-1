@@ -1,10 +1,15 @@
 ---
 environment: staging
+# cd3ef. 06/27/2020
+# APT_ENV should be the only variable that describes the environemnt. There my
+# still be remnants of the other (mainly RAILS_ENV) throughout the Ansible files.
 APT_ENV: staging
 RAILS_ENV: staging
 GO_ENV: staging
 pharos_url: "https://staging.aptrust.org"
+# cd3ef - 05/23/20: Mostly used for Pharos docker setup. Should be replaced by dokcer_domain below as it can be re-used for any docker app setup.
 virtual_host: "staging.aptrust.org"
+docker_domain: "{{virtual_host}}"
 
 # TODO: Identify where this is used. If not set the APT cronjobs of
 # aptrust.exchange.docker fails. Despite not referenced. Clear all references
@@ -14,6 +19,7 @@ orgtype: APT
 aws_go_user: "{{vault_aws_go_staging_user}}"
 aws_go_pwd: "{{vault_aws_go_staging_pwd}}"
 
+# PHAROS VARS
 pharos_web_concurrency: 1
 pharos_min_threads: 1
 pharos_max_threads: 16
