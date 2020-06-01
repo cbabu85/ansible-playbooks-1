@@ -282,3 +282,90 @@ ex_nsq_max_req_timeout: "180m"
 ## EBS Autoscale
 vg_disk_size: 2
 nsq_address: ''
+
+####
+## Preservation-Services
+####
+# name to be used for consecuvite vars. Equivalent to goapp_name in the
+# aptrust.preserv.docker role. See the defaults in the role for more info.
+preserv_docker_data_path="/data/preserv"
+preserv_data_path: "{{elastic_mount_dir}}/preserv"
+# data path for restorations on external elastic storage.
+preserv_docker_restore_path="{{elastic_mount_dir | d('./docker/data')}}/preserv/restore"
+# container base directory
+#preserv_base_working_dir=./data
+# profile directory exist in each service container. no local bind-mount necessary
+preserv_bucket_standard_or="aptrust.{{APT_ENV}}.preservation.oregon"
+preserv_bucket_standard_va="aptrust.{{APT_ENV}}.preservation"
+preserv_bucket_glacier_oh="aptrust.{{APT_ENV}}.preservation.glacier.oh"
+preserv_bucket_glacier_or="aptrust.{{APT_ENV}}.preservation.glacier.or"
+preserv_bucket_glacier_va="aptrust.{{APT_ENV}}.preservation.glacier.va"
+preserv_bucket_glacier_deep_oh="aptrust.{{APT_ENV}}.preservation.glacier-deep.oh"
+preserv_bucket_glacier_deep_or="aptrust.{{APT_ENV}}.preservation.glacier-deep.or"
+preserv_bucket_glacier_deep_va="aptrust.{{APT_ENV}}.preservation.glacier-deep.va"
+preserv_bucket_wasabi_or="coming-soon"
+preserv_bucket_wasabi_va="coming-soon"
+preserv_ingest_bucket_reader_interval="1m"
+
+# Set by Role defaults. This is only the container directory. Bind mounts for
+# persistence are done with DOCKER_DATA_PATH. See docker-compose file.
+#preserv_log_dir="${base_working_dir}/logs"
+preserv_log_level="DEBUG"
+
+preserv_max_days_since_last_fixity=90
+preserv_max_file_size=5497558138880
+preserv_max_worker_attempts=3
+
+# nsq settings
+# Using role defaults. This won't change in Docker setup unless NSQ runs on different host.
+#preserv_nsq_lookupd_tcp_address="nsqlookupd:4160"
+#preserv_nsq_lookupd_http_address="nsqlookupd:4161"
+preserv_nsq_data_path="{{preserv_docker_data_path}}/nsq"
+preserv_nsq_broadcast_address="nsqd"
+preserv_nsq_msg_timeout="360m0s"
+preserv_nsq_max_msg_timeout="180m0s"
+preserv_nsq_max_msg_size="31457280"
+preserv_nsq_mem_queue_size="0"
+preserv_nsq_tcp_address=0.0.0.0:4150
+preserv_nsq_max_req_timeout="180m0s"
+preserv_nsq_max_heartbeat_interval="30s"
+#preserv_nsq_lookupd="${nsq_lookupd_http_address}"
+#preserv_nsq_url="http://${nsq_broadcast_address}:4151"
+preserv_pharos_api_key="{{pharos_api_key}}"
+preserv_pharos_api_user="{{pharos_api_user}}"
+preserv_pharos_api_version="v2"
+preserv_pharos_url="{{pharos_url}}"
+## redis
+preserv_redis_default_db= 0
+preserv_redis_password=""
+preserv_redis_retries=3
+preserv_redis_retry_ms=250ms
+preserv_redis_url="redis:6379"
+preserv_redis_user= ""
+
+preserv_staging_bucket="staging"
+preserv_staging_upload_retries=3
+preserv_staging_upload_retry_ms=250ms
+preserv_volume_service_url="http://volume_service:8898"
+
+# connection info for local s3 service. this is a minio server that
+# runs in dev/test, but not demo/production.
+# for localhost testing, use 'localhost' instead of '127.0.0.1' because
+# minio signed urls use hostname, not ip.
+preserv_s3_local_host="minio:9000"
+preserv_s3_local_key="minioadmin"
+preserv_s3_local_secret="minioadmin"
+
+# aws s3 connection info. in dev/test, point back to the local s3
+# provider, so we can't overwrite anything in demo/prod.
+# for localhost testing, use 'localhost' instead of '127.0.0.1' because minio signed urls use hostname, not ip.
+preserv_s3_aws_host="s3.amazonaws.com"
+preserv_s3_aws_key="{{aws_go_user}}"
+preserv_s3_aws_secret="{{aws_go_pwd}}"
+_
+# wasabi s3 connection info.in dev/test, point back to the local s3
+# provider, so we can't overwrite anything in demo/prod.
+# for localhost testing, use 'localhost' instead of '127.0.0.1' because # minio signed urls use hostname, not ip.
+preserv_s3_wasabi_host="minio:9000"
+preserv_s3_wasabi_key="minioadmin"
+preserv_s3_wasabi_secret="minioadmin"
