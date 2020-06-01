@@ -362,7 +362,7 @@ preserv_s3_local_secret: "minioadmin"
 preserv_s3_aws_host: "s3.amazonaws.com"
 preserv_s3_aws_key: "{{aws_go_user}}"
 preserv_s3_aws_secret: "{{aws_go_pwd}}"
-_
+
 # wasabi s3 connection info.in dev/test, point back to the local s3
 # provider, so we can't overwrite anything in demo/prod.
 # for localhost testing, use 'localhost' instead of '127.0.0.1' because # minio signed urls use hostname, not ip.
