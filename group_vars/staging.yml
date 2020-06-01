@@ -343,7 +343,7 @@ preserv_redis_retry_ms: 250ms
 preserv_redis_url: "redis:6379"
 preserv_redis_user: ""
 
-preserv_staging_bucket: "staging"
+preserv_staging_bucket: "aptrust.staging.staging"
 preserv_staging_upload_retries: 3
 preserv_staging_upload_retry_ms: 250ms
 preserv_volume_service_url: "http://volume_service:8898"
