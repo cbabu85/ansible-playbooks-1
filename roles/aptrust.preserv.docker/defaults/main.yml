@@ -31,3 +31,4 @@ preserv_cronjobs:
   ingest_bucket_reader:
     hour: "*/1"
     minute: "*/2"
+    disabled: 'yes'
