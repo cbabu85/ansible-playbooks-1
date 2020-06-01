@@ -153,6 +153,7 @@
     project_src: "{{docker_app_path}}/"
     files: docker-compose.yml
     pull: true
+    state: present
   vars:
       ansible_python_interpreter: "/usr/bin/env python-docker"
   tags: dockserv
