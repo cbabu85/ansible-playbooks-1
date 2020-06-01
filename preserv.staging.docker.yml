@@ -9,10 +9,8 @@
 #  ansible-playbook preservation-services.yml -t gobuild --diff
 -   hosts:
       - docker4
-      - apt-demo-services-docker
     vars_files:
         - "group_vars/vault.yml"
-
     vars:
         playbook_name: preservation-services.docker
         # AWS.cli used for ebs_scale.docker
