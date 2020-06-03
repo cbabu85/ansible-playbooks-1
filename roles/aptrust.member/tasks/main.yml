@@ -86,7 +86,7 @@
 
 # Note: I know this is dirty and not DRY, but the data structure
 # of member files and limits of Ansible does not allow for a more
-# preogrammatic approach.
+# programmatic approach.
     - name: Add users to created test group
       iam:
         iam_type: user
@@ -116,8 +116,8 @@
         state: present
         groups: "{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          - "{{ inst_users }}"
-      when: '"test" not in item.name'
+        - "{{ inst_users }}"
+      when: '"test" not in item.name and "staging" not in item.name'
       tags: iamgroups
 
     - name: Remove users from test group
@@ -127,7 +127,7 @@
         state: absent
         groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          -  "{{ inst_users_remove | default([])}}"
+        - "{{ inst_users_remove | default([])}}"
       when:
         - '"test" in item'
         - inst_users_remove not in vars
@@ -140,7 +140,7 @@
         state: absent
         groups: "test.{{inst_id}}.{{inst_id_suffix}}.users"
       with_items:
-          -  "{{ inst_users_remove | default([])}}"
+        - "{{ inst_users_remove | default([])}}"
       when:
         - '"staging" in item'
         - inst_users_remove not in vars
