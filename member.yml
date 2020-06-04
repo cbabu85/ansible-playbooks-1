@@ -37,7 +37,7 @@
 #
 # To run this playbook for a particular member,
 # change the inst_id and inst_suffix in the vars below or add at
-# runtime per `-e inst_id=cd3ef`
+# runtime per `-e inst_id=example`
 
 - name: Setting up AWS buckets and groups
   hosts: localhost
