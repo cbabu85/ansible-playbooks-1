@@ -367,5 +367,5 @@ preserv_s3_aws_secret: "{{aws_go_pwd}}"
 # provider, so we can't overwrite anything in demo/prod.
 # for localhost testing, use 'localhost' instead of '127.0.0.1' because # minio signed urls use hostname, not ip.
 preserv_s3_wasabi_host: "minio:9000"
-preserv_s3_wasabi_key: "minioadmin"
-preserv_s3_wasabi_secret: "minioadmin"
+preserv_s3_wasabi_key: "{{vault_preserv_s3_wasabi_key}}"
+preserv_s3_wasabi_secret: "{{vault_preserv_s3_wasabi_key}}"
