@@ -12,6 +12,9 @@
       # https://github.com/ansible/ansible/issues/7005#issuecomment-42894813
 
     # TODO: Make s3_policies into dynamic templates
+    # Note: Lack of consisten environment naming makes it difficult to have a
+    # single template. All environments have an infix (test or staging) but
+    # production does not.
     - name: set facts for cli commands
       set_fact:
         aptglacierenc: "{{ lookup( 'template', 's3_bucket_encryption.json.j2') | string }}"
@@ -99,27 +102,22 @@
       s3_bucket:
         name: "{{item.0.name}}"
         policy: "{{ lookup('template', 's3_bucket_policy.json.j2') }}"
-        #        s3_bucket_policy_prod: "{{ lookup( 'template', 's3_bucket_policy_prod.json.j2') | string }}"
-        #s3_bucket_policy_test: "{{ lookup( 'template', 's3_bucket_policy_test.json.j2') | string }}"
-        #s3_bucket_policy_staging: "{{ lookup( 'template', 's3_bucket_policy_staging.json.j2') | string }}"
       with_nested:
         - "{{ s3_buckets }}"
         - environment
       tags: s3_bucket_policy
 
-
-      #    - name: Assign IAM policy to user groups
-      #    iam_policy:
-      #  iam_type: user
-      #  iam_name: "{{ item.0 }}"
-      #  policy_name: "{{inst_id}}-{{inst_id_suffix}}-{{item.2}}-s3policy"
-      #  state: present
-      #  policy_json: "{{item.1 }}"
-      #with_together:
-      #  - ['go-services-demo', 'go-services-prod', 'go-services-staging']
-      #  - ['{{s3_policy_data_test}}', '{{s3_policy_data_prod}}', '{{s3_policy_data_staging}}']
-      #  - ['test', 'prod']
-      # tags: iampol
+    - name: Assign IAM policy to user groups
+      iam_policy:
+        iam_type: user
+        iam_name: "{{ item.0 }}"
+        policy_name: "{{item.0}}-s3policy"
+        state: present
+        policy_json: "{{item.1 }}"
+      with_together:
+        - ['apt.go.demo', 'apt.go.prod', 'apt.go.staging']
+        - ['{{s3_policy_data_test}}', '{{s3_policy_data_prod}}', '{{s3_policy_data_staging}}']
+      tags: iampol
 
 # TODO: Create credentials when creating users and print to stdout or put into encrypted var file for initial distribution
 
