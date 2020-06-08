@@ -107,6 +107,9 @@
         - environment
       tags: s3_bucket_policy
 
+    # Note: These are currently set up as IAM-user specific inline policies.
+    # This should probably change to a customer managed policy.
+    # See https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html#choosing-managed-or-inline
     - name: Assign IAM policy to user groups
       iam_policy:
         iam_type: user
