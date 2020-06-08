@@ -87,6 +87,9 @@
 # Note: I know this is dirty and not DRY, but the data structure
 # of member files and limits of Ansible does not allow for a more
 # programmatic approach.
+# This could be simplified if we created users for all environments but as of
+# 05/05/20 we want to retain the possiblity to only create users for a single
+# environment (e.g. demo users, for trial use of APTrust)
     - name: Add users to created test group
       iam:
         iam_type: user
