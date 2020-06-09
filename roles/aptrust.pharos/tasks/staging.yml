@@ -114,6 +114,12 @@
        chdir: "{{dockerapp_path}}"
     tags: dbdump
 
+  - name: Initialize staging org and user
+    command: sudo docker-compose run --rm migration bundle exec rake pharos:init_staging
+    args:
+       chdir: "{{dockerapp_path}}"
+    tags: init_staging
+
 
 # Next should startup all services again.
 #  - name: Start docker containers from compose
