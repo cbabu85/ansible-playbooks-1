@@ -414,13 +414,19 @@ check_nsq_inflight(){
     # may hit timeout in NSQ and won't show up there anymore. This leads to
     # premature shutdown of services and interrupting running processes.
     # airtraffic=$(timeout 3 curl http://$NSQ_ADDRESS/stats | grep channel|awk '{ print $7,$8; }'| grep -o '[0-9]'|tr -d "\n")
-    airtraffic=$(curl -H "Content-Type: application/json" -H "Accept: application/json" -H "X-Pharos-API-User: $PHAROS_API_USER" -H "X-Pharos-API-Key: $PHAROS_API_KEY" -G "$PHAROS_URL/api/v2/items?node_not_empty=true&pid_not_empty=true" | jq .count)
 
-    # Check for Rsync jobs on when script is run on DPN node.
-    rsyncing=$(ps axu |pgrep rsync | wc -l)
+    status_code=$(curl --write-out %{http_code} --silent --output /dev/null -H "Content-Type: application/json" -H "Accept: application/json" -H "X-Pharos-API-User: $PHAROS_API_USER" -H "X-Pharos-API-Key: $PHAROS_API_KEY" -G "$PHAROS_URL/api/v2/items?node_not_empty=true&pid_not_empty=true")
 
-     if [[ "$airtraffic" -gt "0" || "$rsyncing" -gt "0" ]]; then
-       log "Seeing some air traffic: $airtraffic and/or rsyncs $rsyncing. Please stand by. "
+   if [[ "$status_code" -ne 200 ]] ; then
+     log "Pharos status $status_code - Not OK! Won't shrink LVM drive." | send_msg "Pharos status $status_code - Not OK! Won't shrink LVM drive. Admin action necessary."
+     exit 1
+   else
+     log "Pharos status $status_code - Good thing I checked."
+     airtraffic=$(curl -H "Content-Type: application/json" -H "Accept: application/json" -H "X-Pharos-API-User: $PHAROS_API_USER" -H "X-Pharos-API-Key: $PHAROS_API_KEY" -G "$PHAROS_URL/api/v2/items?node_not_empty=true&pid_not_empty=true" | jq .count)
+   fi
+
+     if [[ "$airtraffic" -gt "0" ]]; then
+       log "Seeing some air traffic: $airtraffic. Please stand by. "
        nsq_result="standby"
      else
        log "Nobody is flying. Good to go."
