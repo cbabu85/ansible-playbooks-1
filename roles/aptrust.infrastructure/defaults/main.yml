@@ -11,6 +11,6 @@ inst_groups:
 aws_preservation_service_users:
     - apt.go.demo
     - apt.go.staging
-    - apt.go.prod
+    - apt.go.production
 
 aws_preservation_group: 'apt_preservation_services'
