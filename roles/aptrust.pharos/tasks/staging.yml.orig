@@ -21,13 +21,17 @@
   - debug: msg="source_env is {{source_env}}"
     tags: always
 
-  - name: Include demo env tasks.
-    include_tasks: staging-demo.yml
-    when: source_env == 'demo'
+  - name: Set DEMO source environemnt db parameter for dbdump
+    set_fact:
+       pharos_src_db_host: "{{vault_pharos_demo_db_host}}"
+       pharos_src_db_pwd: "{{vault_pharos_demo_db_pwd}}"
+       pharos_src_db_user: "{{vault_pharos_demo_db_user}}"
+       pharos_src_db: pharos_demo
+       pharos_two_factor_key: "{{vault_pharos_demo_two_factor_key}}"
+    when: source_env is search("demo")
     tags: always
 
-  - name: Include prod env tasks.
-    include_tasks: staging-production.yml
+  - include_tasks: staging-production.yml
     when: source_env is search("prod")
     tags: always
 
@@ -110,7 +114,7 @@
        chdir: "{{dockerapp_path}}"
     tags: dbdump
 
-  - name: Initialize staging org and user
+  - name: Initialize staging user
     command: sudo docker-compose run --rm migration bundle exec rake pharos:init_staging
     args:
        chdir: "{{dockerapp_path}}"
