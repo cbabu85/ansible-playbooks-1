@@ -18,6 +18,18 @@
        - "{{preserv_docker_data_path}}/redis/*"
        - "{{preserv_docker_data_path}}/nsq/*"
     when: RAILS_ENV is search("staging")
+    tags: preservreset
+
+  - name: Wipe and restart preservation services state.
+    command: sudo docker-compose "{{item}}"
+    args:
+       chdir: "/srv/docker/preserv"
+    with_items:
+      - "down --remove-orphans -v"
+      - "up"
+    when: RAILS_ENV is search("staging")
+    tags: preservreset
+
 
   - name: Start Postgres container with initdb
     command: sudo docker-compose up -d  db
