@@ -20,6 +20,15 @@
       - "{{preserv_data_path}}"
   tags: makedirs, always
 
+# Note: This clearing step is duplicated in the aptrust.pharos role for staging
+# deploys.
+#- name: Clear NSQ and Redis data between staging deploys
+#  shell: rm -rf "{{item}}/*"
+#  with_items:
+#    - "{{docker_data_path}}/redis"
+#    - "{{docker_data_path}}/nsq"
+#  when: APT_ENV is search("staging")
+
 - name: Set commit-version fact to git hash
   set_fact: gitversion="{{git_version}}"
   when: git_version is defined
