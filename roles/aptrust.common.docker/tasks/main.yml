@@ -117,7 +117,15 @@
 
 - name: Adjust /srv permissions.
   become: yes
-  file: path=/srv owner="{{system_default_user}}" group="{{deploy_group}}" mode=0775
+  file:
+    path: "{{item}}"
+    owner: "{{system_default_user}}"
+    group: "{{deploy_group}}"
+    mode: 0775
+  with_items:
+    - /srv
+    - /srv/docker
+  tags: srvdir
 
 ## Making sure github.com is a known_host
 - name: Ensure github.com is a known host
