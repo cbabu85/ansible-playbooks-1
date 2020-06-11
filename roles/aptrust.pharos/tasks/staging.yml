@@ -12,6 +12,13 @@
        chdir: "{{dockerapp_path}}"
     tags: dockserv
 
+  - name: Clear NSQ and Redis data between staging deploys
+    shell: rm -rf "{{item}}"
+    with_items:
+       - "{{preserv_docker_data_path}}/redis/*"
+       - "{{preserv_docker_data_path}}/nsq/*"
+    when: RAILS_ENV is search("staging")
+
   - name: Start Postgres container with initdb
     command: sudo docker-compose up -d  db
     args:
