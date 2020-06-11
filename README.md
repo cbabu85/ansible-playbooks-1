@@ -1,81 +1,36 @@
-# Ansible 2.1 Vault issue:
-There is a bug in Ansible 2.0.1 that prevents saving changes to an Ansible vault file. A fix requires changing an Ansible file as follows.
-/usr/local/Cellar/ansible/2.0.1.0/libexec/lib/python2.7/site-packages/ansible/parsing/vault
-
-https://github.com/ansible/ansible/commit/2ba4428424a97716e107ae36d79ef332439c36d1
-
-# APTrust Ansible Config Files
-
-These files are used to configure and manage servers and services for the
-Academic Preservation Trust.
-
-These are very early files as we are getting use to ansible and particularly
-getting use to ansible best practices and they are prone to change often.
-
 # Var Files
-Var files are Ansible-conform stored in the group_vars and host_vars directories.
+Configuration variables are stored in var files group_vars and host_vars
+directories. Variables have a precedence on how they get applied. Most
+variables are combined in a environment var file
+(e.g. group_vars/demo-servers.yml).
+
+Here is the order of precedence from least to greatest
+(the last listed variables winning prioritization):
+
+1. command line values (eg “-u user”)
+2. role defaults
+3. inventory file or script group vars
+4. inventory group_vars/all
+5. playbook group_vars/all
+6. inventory group_vars/*
+7. playbook group_vars/*
+8. inventory file or script host vars
+9. inventory host_vars/*
+10. playbook host_vars/*
+11. host facts / cached set_facts
+12. play vars
+13. play vars_prompt
+14. play vars_files
+15. role vars (defined in role/vars/main.yml)
+16. block vars (only for tasks in block)
+17. task vars (only for the task)
+18. include_vars
+19. set_facts / registered vars
+20. role (and include_role) params
+21. include params
+22. extra vars (always win precedence)
+
 Sensitive information files are encrypted using Ansible Vault.
-
-## Vagrant Setup
-
-You can set up a local development environment to build, run, develop
-and test playbooks. First, download and
-install [Vagrant](https://docs.vagrantup.com/v2/installation/).
-
-Copy the Vagrant file in this repository to the directory where you
-want to install your Vagrant virtual machine. This documentation
-assumes you are running Vagrant under ~/aptrust.
-
-Note that the Vagrant file gives the virtual machine 8 processors and
-2GB of RAM. You will need all of that RAM to build some of the Go
-binaries if you stick with the 8 processor setting, because Go will
-use 8 go-routines to build the source. If you want to use a more
-lightweight VM, reduce the number of CPU cores and memory in
-tandem. For example, you can do 2 cores and 1 GB of RAM.
-
-You should be able to bring up your Vagrant virtual machine with this
-command:
-
-> vagrant up
-
-The following command will print out settings that you can copy
-directly into your ~/.ssh/config file. These settings can ease the
-process of running your ansible playbooks against the VM.
-
-> vagrant ssh-config
-
-Now cd into the ansible-playbooks directory (the one that contains
-this README file) and run the following:
-
-> ansible-playbook vagrant.yml
-
-The playbook will likely take 20 or more minutes to run, because it
-does quite a bit of work.
-
-You can connect to the Vagrant via SSH with this command:
-
-> vagrant ssh
-
-### Troubleshooting Your Vagrant Setup
-
-If Ansible has trouble connecting to your Vagrant VM, try running:
-
-> vagrant ssh-config
-
-Note the path to the private key file in the vagrant output. Then run
-this.
-
-> ansible-playbook vagrant.yml -vvvv
-
-In the command output, look at the private keys SSH tries to use. If
-it does not match what the vagrant command printed, copy the output of
-vagrant ssh-config into your ~/.ssh/config file.
-
-If you have destroyed and re-created your Vagrant VM, the SSH
-fingerprint of the new VM will not match the fingerprint of the old
-VM. Ansible will fail to connect but will not give a meaningful
-error. Open ~/.ssh/known_hosts and delete the entry for host
-192.168.33.10, then try again.
 
 ## Ansible Vault
 Sensitive information is securely stored via Ansible Vault. This feature of Ansible encrypts any file with AES-256bit encryption. This allows for storing encrypted files in a public repo (GitHub).
@@ -168,34 +123,30 @@ If you just want to deploy a change to the pharos repom, you wont need to run th
 
 ### Example deployments for people who can't remember anything
 
+Deploy custom branch of Pharos:
+
+`ansible-playbook pharos.yml -e git_branch=adifferentbranch -l apt-demo`
+
 Deploy Pharos to demo:
 
 `ansible-playbook pharos.yml -l apt-demo`
 
 Deploy Pharos to production:
 
-`ansible-playbook pharos.yml -t deploy -b -l apt-prod-repo2`
+`ansible-playbook pharos.yml -l apt-prod-docker`
 
 Deploy exchange to demo:
 
-`ansible-playbook exchange.yml --diff -t exchange -b -l apt-demo-services`
+`ansible-playbook exchange.yml --diff -t deploy -l apt-demo-services`
 
 Deploy exchange to production:
 
-`ansible-playbook exchange.yml --diff -t exchange -b -l apt-prod-services`
+`ansible-playbook exchange.yml --diff -t deploy -l apt-prod-services`
 
 Deploy a custom branch of exchange to production:
 
-`ansible-playbook exchange.yml --diff -t exchange -b -l apt-prod-services -e ex_git_branch=custom-branch`
+`ansible-playbook exchange.yml --diff -t deploy -l apt-prod-services -e ex_git_branch=custom-branch`
 
 Deploy exchange to production without restarting services:
 
 `ansible-playbook exchange.yml -t buildgo -l apt-prod-services`
-
-Deploy exchange to DPN demo:
-
-`ansible-playbook exchange.yml --diff -t exchange -b -l dpn-demo2`
-
-Deploy exchange to DPN production:
-
-`ansible-playbook exchange.yml --diff -t exchange -b -l dpn-prod2`
