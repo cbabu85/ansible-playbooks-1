@@ -48,6 +48,25 @@ s3_buckets:
     region: us-east-1
     environment: prod
 
+s3_wasabi_buckets:
+  - name: aptrust-production-wasabi-va
+    region: us-east-1
+    environment: prod
+  - name: aptrust-production-wasabi-or
+    region: us-west-1
+    environment: prod
+  - name: aptrust-demo-wasabi-va
+    region: us-east-1
+    environment: demo
+  - name: aptrust-demo-wasabi-or
+    region: us-west-1
+    environment: demo
+  - name: aptrust-staging-wasabi-va
+    region: us-east-1
+    environment: staging
+  - name: aptrust-staging-wasabi-or
+    region: us-west-1
+    environment: staging
 
 s3_glacier_buckets:
   - name: aptrust.preservation.glacier-deep.va
