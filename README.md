@@ -127,6 +127,10 @@ Deploy custom branch of Pharos:
 
 `ansible-playbook pharos.yml -e git_branch=adifferentbranch -l apt-demo`
 
+Deploy Pharos to staging:
+
+`ansible-playbook pharos.staging.docker.yml`
+
 Deploy Pharos to demo:
 
 `ansible-playbook pharos.yml -l apt-demo`
