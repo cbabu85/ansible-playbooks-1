@@ -12,6 +12,17 @@
        chdir: "{{dockerapp_path}}"
     tags: dockserv
 
+  - name: Stop preserv Redis and NSQD
+    command: sudo docker-compose stop "{{item}}"
+    args:
+       chdir: "/srv/docker/preserv"
+    with_items:
+       - redis
+       - nsqd
+    when: RAILS_ENV is search("staging")
+    tags: preservreset
+
+
   - name: Clear NSQ and Redis data between staging deploys
     shell: rm -rf "{{item}}"
     with_items:
