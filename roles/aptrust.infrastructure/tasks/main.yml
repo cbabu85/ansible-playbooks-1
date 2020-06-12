@@ -35,6 +35,18 @@
       with_items: "{{s3_buckets}}"
       tags: new_buckets, s3buckets
 
+    - name: Create S3 wasabi buckets
+      aws_s3:
+        bucket: "{{ item.name }}"
+        encrypt: true
+        encryption_mode: AES256
+        region: "{{item.region}}"
+        s3_url: "https://s3.{{item.region}}.wasabisys.com"
+        mode: create
+        aws_access_key: "{{lookup('env', 'WASABI_ACCESS_KEY_ID')}}"
+        aws_secret_key: "{{lookup('env', 'WASABI_SECRET_ACCESS_KEY')}}"
+      with_items: "{{s3_wasabi_buckets}}"
+      tags: wasabibuckets, s3buckets
 
     - name: Create S3 Glacier buckets
       aws_s3:
