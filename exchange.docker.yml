@@ -28,6 +28,11 @@
         #  git_branch: feature/two_factor #git branch/commit
         #  git_version: 37bd0d4ef31bcc3a6ed97dba57c299ec61dbea48
         git_branch: docker
+
+        ex_tardirectory: "/mnt/lvm/exchange/data"
+        ex_restoredirectory: "/mnt/lvm/exchange/restore"
+        ex_logdirectory: "/data/exchange/logs"
+        ex_replicationdirectory: "/mnt/lvm/exchange/replication"
     gather_facts: true
 
     roles:
