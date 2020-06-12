@@ -21,12 +21,12 @@
     tags: preservreset
 
   - name: Wipe and restart preservation services state.
-    command: sudo "{{item}}"
+    command: sudo docker-compose up -d -V --force-recreate "{{item}}"
     args:
        chdir: "/srv/docker/preserv"
     with_items:
-      - "docker-compose down --remove-orphans -v"
-      - "docker-compose up"
+       - redis
+       - nsqd
     when: RAILS_ENV is search("staging")
     tags: preservreset
 
