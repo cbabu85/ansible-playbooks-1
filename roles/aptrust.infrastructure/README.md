@@ -2,6 +2,7 @@
 This role defines creates APTrust infrastructure.
 
  - Create S3 preservation buckets
+ - Create Wasabi preservation buckets
  - Create S3 Glacier buckets
  - Enables default encryption
  - Blocks S3 public access by default
