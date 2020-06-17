@@ -1,5 +1,5 @@
 ---
-# Deploys Pharos on demo
+# Deploys Pharos on production
 #
 # Pre-requisites:
 # This role requires a server instance that has had the allservers.docker.yml
@@ -14,7 +14,7 @@
 #     The data directory is used for storing persistent data like logs between
 #     redeploys.
 -   hosts:
-      - apt-demo
+      - apt-prod-docker
     vars_files:
         - "group_vars/vault.yml"
 

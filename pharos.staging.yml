@@ -1,14 +1,19 @@
 ---
-#   - a .env file in the code root (with sensible defaults)
-# Pharos:
-# All required changes should be env vars in the .env var for deploys in
-# different environemnts.
+# Deploys Pharos on staging
 #
-##  - Base dir for docker apps is /srv/docker/<appname>
-#     The base directory is used to clone the git repository into.
-#     The data directory is used for storing persistent data if volume
-#     bind-mounts are used.
+# Pre-requisites:
+# This role requires a server instance that has had the allservers.docker.yml
+# playbook applied. The play includes user account setup, ssh and installation
+# of Docker deamon as well as Traefik setup for TLS and reverse proxy.
 #
+##  - Base dir: for docker apps is /srv/docker/<appname>
+#     The base directory is used to clone the git repository into. Is used for
+#     starting Docker app per docker-compose. Also configuration in the .env
+#     file is updated upon deployment.
+#   - Data dir: /data/pharos
+#     The data directory is used for storing persistent data like logs between
+#     redeploys.
+
 -   hosts:
       - docker4
     vars_files:
