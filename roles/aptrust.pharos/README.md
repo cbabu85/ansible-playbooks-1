@@ -1,11 +1,32 @@
 # APTrust Pharos - Preservation Repository Web-UI and API
 ===
 
-Pharos is a rails application that provides a Web-UI for APTrust's
+Pharos is a Rails web application that provides a Web-UI for APTrust's
 preservation repository.
 
 It supports baremetal installation and Docker setup, which is chosen based on
-`pharos_docker` variable (true means docker setup).
+`pharos_docker` variable (true means docker setup). Defaults to Docker setup.
+
+Barmetal task file is only kept for legacy reasons. It is currently (06/15/20)
+not applied anywherer anymore.
+
+In it's origins of the role it has a variable `pharos_setup` that allowed  for
+a from scratch setup of Pharos. It allows to create a new RDS instance. This
+probably hasn't been tested with the Docker setup and probably requires some
+work.
+
+## Docker
+
+All docker related tasks are in docker.yml.
+- It sets up a directory strucutre (/srv/docker/pharos, /data/pharos, etc)
+- Uses logic to determine the git commit hash version, which is used for pulling the git repo and the correct Docker images from Gitlab/Dockerhub
+- If traefik_setup=true then it uses a docker-compose.traefik.yml to run Pharos. Earlier versions of Pharos deployment used Nginx.
+- INcludes staging.yml tasks if it's being deployed on a staging environment
+- Sets up Pharos cronjobs
+- Stops running Pharos containers
+- Removes pharos_asset docker volumes
+- Starts newer version of Pharos which creates the pharos_asset
+volume automatically.
 
 ## Baremetal
 This role installs required system packages and creates the Pharos
@@ -68,7 +89,7 @@ Baremetal:
 - cd3ef.nginx
 - carlosbuenosvinos.ansistrano-deploy
 
-Example Playbook
+Example Playbook Baremetal
 ----------------
 -   hosts: pharos-server
     vars_files:
