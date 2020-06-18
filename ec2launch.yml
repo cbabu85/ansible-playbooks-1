@@ -1,4 +1,13 @@
 ---
+# This playbook is a proof of concept for creating new EC2 instances and
+# adding them automatically to the local Ansible hosts file as well as to your
+# .ssh/config file. The play worked when it was developed but may need changes
+# to make it work again.
+# Time is probably better spent to use Terraform and define all AWS
+# infrastructure in code. When that is implemented I hope you chose to tag
+# resources consistently so you can use a dynamic Ansible inventory rather than
+# the static hosts file.
+
   - name: Instantiating an EC2 Instance
     hosts: localhost
     connection: local

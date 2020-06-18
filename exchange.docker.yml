@@ -1,12 +1,8 @@
 ---
-# Deploy on all exchange servers:
-#  ansible-playbook exchange.yml -t deploy --diff
-# Deploy on a specific exchange server:
-#  ansible-playbook exchange.yml -t deploy --diff -l dpn-demo2
-# Deploy a specific branch of exchange:
-#  ansible-playbook exchange.yml -t deploy --diff -e ex_git_branch=<specific_branchname>
-# Only rebuild go binaries, does not restart services.
-#  ansible-playbook exchange.yml -t gobuild --diff
+# This file is for a proof-of-concept of deploying containerized Exchange
+# services which as of 06/18/20 has been tested on staging (docker4) with
+# success.
+
 -   hosts:
       - docker4
       - apt-demo-services-docker
