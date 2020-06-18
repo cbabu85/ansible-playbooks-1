@@ -123,34 +123,17 @@ If you just want to deploy a change to the pharos repom, you wont need to run th
 
 ### Example deployments for people who can't remember anything
 
-Deploy custom branch of Pharos:
 
-`ansible-playbook pharos.yml -e git_branch=adifferentbranch -l apt-demo`
-
-Deploy Pharos to staging:
-
-`ansible-playbook pharos.staging.docker.yml`
-
-Deploy Pharos to demo:
-
-`ansible-playbook pharos.yml -l apt-demo`
-
-Deploy Pharos to production:
-
-`ansible-playbook pharos.yml -l apt-prod-docker`
-
-Deploy exchange to demo:
-
-`ansible-playbook exchange.yml --diff -t deploy -l apt-demo-services`
-
-Deploy exchange to production:
-
-`ansible-playbook exchange.yml --diff -t deploy -l apt-prod-services`
-
-Deploy a custom branch of exchange to production:
-
-`ansible-playbook exchange.yml --diff -t deploy -l apt-prod-services -e ex_git_branch=custom-branch`
-
-Deploy exchange to production without restarting services:
-
-`ansible-playbook exchange.yml -t buildgo -l apt-prod-services`
+| App | Staging | Demo | Production |  |
+|-|-|-|-|-|
+| Pharos | ansible-playbook pharos.staging.yml | ansible-playbook pharos.demo.yml | ansible-playbook pharos.production.yml | Deploy default (master) branch |
+|  | ansible-playbook pharos.staging.yml -e git_branch=adifferentbranch | ~ | ~ | Deploy differnent branch of Pharos |
+|  | ansible-playbook pharos.staging.yml -e git_version=03dfe9c | ~ | ~ | Deploy specific git-commit of Pharos |
+| Exchange | ansible-playbook exchange.docker.yml -t deploy | ansible-playbook exchange.yml -t deploy | ansible-playbook exchange.yml -t deploy | Deploy default (master) branch |
+|  | ansible-playbook exchange.docker.yml -t deploy -e ex_git_branch=custom-branch | ansible-playbook exchange.demo.yml -t deploy -e ex_git_branch=custom-branch | ansible-playbook exchange.production.yml -t deploy -e ex_git_branch=custom-branch |  |
+|  |  | ansible-playbook exchange.demo.yml -t buildgo | ansible-playbook exchange.production.yml -t buildgo | Deploy exchange without restarting services: |
+|  |  |  |  |  |
+| Preserv | ansible-playbook preserv.staging.yml -t deploy | ansible-playbook preserv.demo.yml -t deploy | ansible-playbook preserv.production.yml -t deploy | Deploy default (master) branch |
+|  | ansible-playbook preserv.staging.yml -e git_branch=adifferentbranch | ~ | ~ | Deploy custom branch of Preserv |
+|  | ansible-playbook preserv.staging.yml -e git_version=03dfe9c | ~ | ~ | Deploy specific git-commit of Preserv |
+|  |  |  |  |  |
