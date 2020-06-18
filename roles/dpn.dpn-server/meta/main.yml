@@ -1,8 +1,0 @@
----
-
-dependencies:
-      - { role: 'postgresql', when: ansible_bios_version == 'VirtualBox' or dpnserver_local_db == true}
-
-
-
-

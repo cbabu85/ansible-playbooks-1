@@ -28,7 +28,6 @@ go_env: "{{ruby_env}}"
 data_mount: /data
 mount_dir: /mnt/lvm
 elastic_mount_dir: /mnt/lvm
-central_log_dir: "{{mount_dir}}/{{orgtype}}/logs/{{ansible_hostname}}"
 
 # System default user varies. (e.g. local-vagrant.yml)
 # Therefore overwritten by group/host specific vars.

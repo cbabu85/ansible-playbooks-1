@@ -1,5 +1,0 @@
----
-
-- name: Copy config files to shared directory
-  shell: cp -Rv "{{ansistrano_release_path.stdout}}/{{item}}/" "{{ ansistrano_shared_path.stdout }}/{{item}}"
-  with_items: "{{ansistrano_shared_paths}}"
