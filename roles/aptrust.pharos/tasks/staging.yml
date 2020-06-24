@@ -80,7 +80,7 @@
     tags: dbdump2
 
   - name: Create pharos src db DB to connect to later
-    shell: sudo docker-compose exec -u postgres db psql -c "{{item}}"
+    shell: sudo docker-compose exec -T -u postgres db psql -c "{{item}}"
     with_items:
        - "DROP DATABASE IF EXISTS pharos_staging;"
        - "DROP DATABASE IF EXISTS {{pharos_src_db}};"
