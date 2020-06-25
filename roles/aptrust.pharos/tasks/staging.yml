@@ -106,7 +106,7 @@
     tags: delete_pharos_production_staging
 
   - name: Restore pharos_demo.dump to local psql container
-    command: sudo docker-compose exec db bash -lc "sleep 2 && pg_restore --verbose --no-acl --no-owner -U postgres -d {{pharos_src_db}} /{{pharos_src_db}}.dump"
+    command: sudo docker-compose exec -T db bash -lc "sleep 2 && pg_restore --verbose --no-acl --no-owner -U postgres -d {{pharos_src_db}} /{{pharos_src_db}}.dump"
     args:
        chdir: "{{dockerapp_path}}"
     when: source_env is search("demo")
@@ -116,7 +116,7 @@
     # on schema and tables is a pain. Won't matter as much anyways since psql
     # will only have pharos staging db.
   - name: Create DB and User permissions
-    command: sudo docker-compose exec -u postgres db psql -c "{{item}}"
+    command: sudo docker-compose exec -T -u postgres db psql -c "{{item}}"
     with_items:
        - "CREATE USER {{pharos_db_user}} WITH PASSWORD '{{pharos_db_pwd}}' SUPERUSER"
        - "ALTER DATABASE {{pharos_src_db}} RENAME TO pharos_staging"
