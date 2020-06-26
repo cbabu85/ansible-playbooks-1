@@ -1,5 +1,5 @@
 ---
-- name: Setting up APT infrastructure on AWS
+- name: Setting up APT infrastructure on AWS & Wasabi
   hosts: localhost
   connection: local
   gather_facts: False
