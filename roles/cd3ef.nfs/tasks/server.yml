@@ -1,7 +1,7 @@
 ---
 
 - name: Install nfs server packages
-  apt:  name="{{item}}" state=latest
+  apt: name="{{item}}" state=latest
   with_items: "{{nfs_server_modules}}"
 
 - name: Ensure existence of export directories

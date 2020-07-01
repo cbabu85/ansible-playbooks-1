@@ -8,15 +8,17 @@
         nfs_client_imports:
           - local: "{{nfs_mount_dir}}/logs"
             remote: "{{nfs_export_dir}}/logs"
+            state: absent
           - local: "{{nfs_mount_dir}}/backups"
             remote: "{{nfs_export_dir}}/backups"
+            state: absent
 
         # NFS Server:
         nfs_exports:
           - path: "{{nfs_export_dir}}/{{nfs_directories}}"
             export: "{{nfs_directories}}"
     roles:
-        - {role: common, tags: common}
+      #        - {role: common, tags: common}
         - {role: cd3ef.nfs, tags: nfs}
 
     tasks:
