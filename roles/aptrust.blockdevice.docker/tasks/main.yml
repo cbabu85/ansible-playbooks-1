@@ -25,7 +25,7 @@
     name: "{{ ansible_hostname }}_data"
     #    device_name: '/dev/xvdf'
     volume_type: gp2
-    volume_size: 5
+    volume_size: "{{blockdevice_volume_size|d('5')}}"
     encrypted: yes
     aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
     aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"

@@ -1,2 +1,3 @@
 ---
 mount_point: /data
+blockdevice_volume_size: 5
