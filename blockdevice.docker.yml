@@ -1,0 +1,20 @@
+---
+  - hosts:
+      - docker*
+      - apt-prod-srv
+      - apt-prod-docker
+      - apt-demo-services-docker
+      - apt-ops
+    gather_facts: true
+
+    vars_files:
+      - "group_vars/vault.yml"
+    vars:
+      #      ansible_python_interpreter: /usr/bin/python3
+      playbook_name: allservers
+      #      ansible_python_interpreter: /usr/bin/python3
+      #@      ansible_python_interpreter: python3
+
+      docker_users: "{{system_default_user}}"
+    roles:
+      - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
