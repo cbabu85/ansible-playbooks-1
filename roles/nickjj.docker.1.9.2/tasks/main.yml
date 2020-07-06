@@ -29,6 +29,45 @@
     repo: "{{ docker__apt_repository }}"
     update_cache: true
 
+- name: Install Docker
+  apt:
+    name: "docker-{{ docker__edition }}"
+    state: "{{ docker__state }}"
+
+- name: Install Python packages
+  pip:
+    name: >
+      {{ item.name }}{% if item.version | d() %}=={{ item.version }}{% endif %}
+    virtualenv: "{{ docker__pip_virtualenv }}"
+    state: "{{ item.state | d('present') }}"
+  loop: "{{ docker__default_pip_packages + docker__pip_packages }}"
+  when: item.name | d()
+
+- name: Symlink Python binary to /usr/local/bin/python-docker
+  file:
+    path: "/usr/local/bin/python-docker"
+    src: "{{ docker__pip_virtualenv }}/bin/python"
+    force: true
+    state: "link"
+
+- name: Symlink selected Python package binaries to /usr/local/bin
+  file:
+    path: "{{ item.path }}"
+    src: "{{ item.src }}"
+    force: true
+    state: "link"
+  loop: "{{ docker__default_pip_packages + docker__pip_packages }}"
+  when:
+    - item.state | d("present") != "absent"
+    - item.path | d() and item.src | d()
+
+- name: Add user(s) to "docker" group
+  user:
+    name: "{{ item }}"
+    groups: "docker"
+    append: true
+  loop: "{{ docker__users }}"
+
 - name: Create Docker configuration directories
   file:
     path: "{{ item }}"
@@ -48,46 +87,7 @@
     group: "root"
     mode: "0644"
   when: docker__default_daemon_json | d() or docker__daemon_json | d()
-
-- name: Install Docker
-  apt:
-    name: "docker-{{ docker__edition }}"
-    state: "{{ docker__state }}"
-
-- name: Install Python packages
-  pip:
-    name: >
-      {{ item.name }}{% if item.version | d() %}=={{ item.version }}{% endif %}
-    virtualenv: "{{ docker__pip_virtualenv }}"
-    state: "{{ item.state | d('present') }}"
-  loop: "{{ docker__default_pip_packages + docker__pip_packages }}"
-  when: item.name | d()
-
-- name: Create python3-docker proxy script to access the Virtualenv's interpreter
-  template:
-    src: "usr/local/bin/python3-docker.j2"
-    dest: "/usr/local/bin/python3-docker"
-    owner: "root"
-    group: "root"
-    mode: "0755"
-
-- name: Symlink selected Python package binaries to /usr/local/bin
-  file:
-    path: "{{ item.path }}"
-    src: "{{ item.src }}"
-    force: true
-    state: "link"
-  loop: "{{ docker__default_pip_packages + docker__pip_packages }}"
-  when:
-    - item.state | d("present") != "absent"
-    - item.path | d() and item.src | d()
-
-- name: Add user(s) to "docker" group
-  user:
-    name: "{{ item }}"
-    groups: "docker"
-    append: true
-  loop: "{{ docker__users }}"
+  notify: ["Restart Docker"]
 
 - name: Configure Docker daemon options (flags)
   template:
@@ -144,7 +144,7 @@
   loop: "{{ docker__registries }}"
   when: item.username | d() and item.password | d()
   vars:
-    ansible_python_interpreter: "{{ '/usr/bin/env python3-docker' }}"
+    ansible_python_interpreter: "{{ '/usr/bin/env python-docker' }}"
 
 - name: Remove Docker related cron jobs
   file:

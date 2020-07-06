@@ -1,24 +1,16 @@
 # Changelog
 
-## v2.0.0
+## Next release
 
-- **Backwards incompatible change:** `python-docker` was renamed to `python3-docker`
-- Fix symlink related issues with virtualenv when using virtualenv 20+
-- Configure daemon before installing Docker to allow customizing certain things
-- Support multiple CPU architecture types (amd64, arm64, armhf, armv7l)
-- Officially support Ubuntu 20.04
-- Remove all support for Python 2.x
-- Officially remove support for Ubuntu 16.04
-
-*Released: May 19th 2020*
+*Released: TBD*
 
 ## v1.9.2
-
-*Released: February 13th 2020*
 
 - Add `gcc` as dependency since Docker Compose 1.25+ needs it
 - Add `python(3)-dev` as dependency since Docker Compose 1.25+ needs it
 - Fix Docker module import error so that you can use the `docker_*` Ansible modules
+
+*Released: February 13th 2020*
 
 ## v1.9.1
 
