@@ -122,6 +122,7 @@
     owner: "{{system_default_user}}"
     group: "{{deploy_group}}"
     mode: 0775
+    state: directory
   with_items:
     - /srv
     - /srv/docker
