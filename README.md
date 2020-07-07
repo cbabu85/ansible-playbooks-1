@@ -1,3 +1,10 @@
+# Requirements
+
+* [ansible](https://www.ansible.com/resources/get-started) 2.9+ for Python 2
+* [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html) library for AWS interaction
+* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+
+
 # Var Files
 Configuration variables are stored in var files group_vars and host_vars
 directories. Variables have a precedence on how they get applied. Most
@@ -88,7 +95,12 @@ It is advisable to keep an Ansible config file in your home directory to make us
  pipelining = True
  ```
 
- ## Using Ansible for deployment
+## Using Ansible for deployment
+
+Note that if you are using virtualenv, you may have to set the ansible\_python\_interpreter in the playbook you want to run. For example, if you're using a virtualenv called `aptrust`, you would set this in your .yml playbook:
+
+`ansible\_python\_interpreter: "~/.virtualenv/aptrust/bin/python"`
+
 
 ### Limit to certain hosts only
 Some playbooks are applied to multiple hosts. For example pharos may be deployed in production, demo and local development environments. Therefore pharos servers may be grouped as `pharos-servers` in the inventory (hosts) file.
