@@ -1,10 +1,17 @@
 ---
+- name: Check if network exists
+  shell: "docker network inspect {{traefik_network}}"
+  ignore_errors: yes
+  register: network_exists
+
 - name: Create traefik network
   become: true
-  docker_network:
-    name: "{{ traefik_network }}"
-    attachable: yes
-    internal: no
+  shell: "docker network create {{traefik_network}} --attachable"
+  #  docker_network:
+  #  name: "{{ traefik_network }}"
+  #  attachable: yes
+  #  internal: no
+  when: network_exists.failed
   tags:
     - configuration
 
@@ -42,9 +49,10 @@
     - configuration
 
 - name: Start traefik
-  docker_compose:
-    project_src: "{{traefik_dir}}"
-    state: present
+  command: chdir="{{traefik_dir}}" sudo docker-compose up -d
+  #  docker_compose:
+  # project_src: "{{traefik_dir}}"
+  # state: present
     #  vars:
     #ansible_python_interpreter: "/usr/bin/env python-docker"
 
