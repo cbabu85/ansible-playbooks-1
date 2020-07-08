@@ -13,7 +13,7 @@
     tags: dockserv
 
   - name: Flush all Redis data
-    command: sudo docker-compose exec redis redis-cli FLUSHALL
+    command: sudo docker-compose exec -T redis redis-cli FLUSHALL
     args:
        chdir: "/srv/docker/preserv"
     when: RAILS_ENV is search("staging")
