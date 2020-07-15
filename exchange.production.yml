@@ -1,0 +1,73 @@
+---
+# Deploy on all exchange servers:
+#  ansible-playbook exchange.yml -t deploy --diff
+# Deploy on a specific exchange server:
+#  ansible-playbook exchange.yml -t deploy --diff -l dpn-demo2
+# Deploy a specific branch of exchange:
+#  ansible-playbook exchange.yml -t deploy --diff -e ex_git_branch=<specific_branchname>
+# Only rebuild go binaries, does not restart services.
+#  ansible-playbook exchange.yml -t gobuild --diff
+-   hosts: apt-prod-srv
+    vars_files:
+        - "group_vars/vault.yml"
+
+    environment: "{{go_env}}"
+    vars:
+        playbook_name: exchange
+
+        # AWS.cli
+        aws_access_key_id: "{{aws_access_key_ubuntu}}"
+        aws_secret_access_key: "{{aws_secret_access_key_ubuntu}}"
+
+        # Golang
+        # Installs from official golang page. Find Filenames + checksums
+        # here: https://golang.org/dl/
+        golang_workspace_user: "{{system_default_user}}"
+        #        golang_tarball: go1.12.5.linux-amd64.tar.gz
+        # golang_tarball_checksum: aea86e3c73495f205929cfebba0d63f1382c8ac59be081b6351681415f4063cf
+        golang_tarball: go1.13.1.linux-amd64.tar.gz
+        golang_tarball_checksum: 94f874037b82ea5353f4061e543681a0e79657f787437974214629af8407d124
+
+        # Supervisor
+        supervisor_user: "{{system_default_user}}"
+        supervisor_user_group: "{{system_default_group}}"
+        supervisor_pid_path: "/tmp"
+
+        # Exchange variables to overwrite for new-gen setup
+        ex_git_branch: master
+        ex_docker: true
+
+        ex_tardirectory: "/mnt/lvm/exchange/data"
+        ex_restoredirectory: "/mnt/lvm/exchange/restore"
+        ex_logdirectory: "/data/exchange/logs"
+        ex_replicationdirectory: "/mnt/lvm/exchange/replication"
+
+        goapp_log_path: "{{ex_logdirectory}}"
+        dockerapp_repo_path: "{{dockerapp_path}}"
+
+    roles:
+      # - {role: aptrust.common.docker, tags: common}
+      - {role: futurice.supervisor, tags: supervisor}
+      - {role: sansible.golang, tags: golang}
+        #      - {role: retr0h.nsq, tags: nsq}
+        #      - {role: franklinkim.docker-compose, tags: docker-compose, when: ex_docker}
+        #      - # {role: mongrelion.docker, tags: docker, when: ex_docker }
+      - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
+      - {role: aws.cli, tags: aws_cli}
+      - {role: aws.ebs_scale.docker, tags: ebs_scale_docker, setnitro}
+      - {role: aptrust.exchange, tags: [exchange, deploy]}
+    tasks:
+
+    - name: whoami
+      become: no
+      local_action: shell whoami
+      register: whobrokeit
+      tags: [exchange,slack,deploy]
+
+    - name: Slack to all
+      slack:
+        token: "{{slack_token}}"
+        msg: "Deployment of Exchange Release: *{{exchange_release}}-{{exchange_branch}}* in Environment: *{{GO_ENV}}* on {{ ansible_fqdn }} by user {{whobrokeit.stdout}} completed"
+        icon_emoji: ":construction_worker:"
+        channel: 'aptrust_internal'
+      tags: [exchange,slack,deploy]
