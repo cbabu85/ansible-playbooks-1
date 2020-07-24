@@ -46,12 +46,12 @@
         dockerapp_repo_path: "{{dockerapp_path}}"
 
     roles:
-      # - {role: aptrust.common.docker, tags: common}
+      - {role: aptrust.common.docker, tags: common}
+      # Needed for name resolution of NSQ docker containers for supervised
+      # exchange services.
+      - {role: hostname, tags: hostname }
       - {role: futurice.supervisor, tags: supervisor}
       - {role: sansible.golang, tags: golang}
-        #      - {role: retr0h.nsq, tags: nsq}
-        #      - {role: franklinkim.docker-compose, tags: docker-compose, when: ex_docker}
-        #      - # {role: mongrelion.docker, tags: docker, when: ex_docker }
       - {role: aptrust.blockdevice.docker, tags: blockdev_docker}
       - {role: aws.cli, tags: aws_cli}
       - {role: aws.ebs_scale.docker, tags: ebs_scale_docker, setnitro}
