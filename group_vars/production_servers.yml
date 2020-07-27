@@ -519,14 +519,12 @@ ex_dpn_dpnfixityworker: {
   messagetimeout: "360m"
 }
 
-
-
 #
 # NSQ services config
 ex_nsq_mem_queue_size: "0"
 ex_nsq_data_path: "{{ex_tardirectory}}"
 ex_nsq_tcp_address: "0.0.0.0:4150"
-ex_nsq_broadcast_address: "{{hostname_fqdn}}"
+ex_nsq_broadcast_address: "prod-services.aptrust.org"
 ex_nsq_nsqlookupd_tcp_addresses: "127.0.0.1:4160"
 ex_nsq_msg_timeout: "4880m0s"
 ex_nsq_max_msg_timeout: "720m0s"
