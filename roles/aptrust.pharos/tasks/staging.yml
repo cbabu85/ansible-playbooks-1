@@ -29,12 +29,47 @@
     when: RAILS_ENV is search("staging")
     tags: preservreset
 
-  - name: Clear NSQ and Redis data between staging deploys
-    shell: rm -rf "{{item}}"
+  # For now, don't do this. If we don't deploy preserv
+  # immediately after Pharos, the preservation services
+  # processes will have no log files. They'll continue
+  # to run, but log messages disappear into the ether.
+  #
+  # - name: Clear old preserv logs
+  #   file:
+  #     state: "{{item}}"
+  #     path: "{{preserv_docker_data_path}}/logs/"
+  #     owner: "{{system_default_user}}"
+  #     group: "{{system_default_user}}"
+  #     mode: '0755'
+  #   with_items:
+  #     - absent
+  #     - directory
+  #   when: RAILS_ENV is search("staging")
+  #   tags: preservreset
+
+  - name: Clear old NSQ data
+    file:
+      state: "{{item}}"
+      path: "{{preserv_docker_data_path}}/nsq/"
+      owner: "{{system_default_user}}"
+      group: "{{system_default_user}}"
+      mode: '0755'
     with_items:
-       - "{{preserv_docker_data_path}}/redis/*"
-       - "{{preserv_docker_data_path}}/nsq/*"
-       - "{{preserv_docker_data_path}}/logs/*"
+      - absent
+      - directory
+    when: RAILS_ENV is search("staging")
+    tags: preservreset
+
+  - name: Clear old Redis data
+    file:
+      state: "{{item}}"
+      path: "{{preserv_docker_data_path}}/redis/"
+      owner: "{{system_default_user}}"
+      group: "{{system_default_user}}"
+      mode: '0755'
+    with_items:
+      - absent
+      - directory
     when: RAILS_ENV is search("staging")
     tags: preservreset
 
