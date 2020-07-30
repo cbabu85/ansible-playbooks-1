@@ -34,6 +34,7 @@
     with_items:
        - "{{preserv_docker_data_path}}/redis/*"
        - "{{preserv_docker_data_path}}/nsq/*"
+       - "{{preserv_docker_data_path}}/logs/*"
     when: RAILS_ENV is search("staging")
     tags: preservreset
 
