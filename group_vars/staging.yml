@@ -311,6 +311,7 @@ preserv_bucket_glacier_deep_va: "aptrust.{{APT_ENV}}.preservation.glacier-deep.v
 preserv_bucket_wasabi_or: "coming-soon"
 preserv_bucket_wasabi_va: "coming-soon"
 preserv_ingest_bucket_reader_interval: "1m"
+preserv_apt_queue_interval: "1m"
 
 # Set by Role defaults. This is only the container directory. Bind mounts for
 # persistence are done with DOCKER_DATA_PATH. See docker-compose file.
