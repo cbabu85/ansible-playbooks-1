@@ -454,7 +454,7 @@ if [[ $less_space_needed -eq 1 ]]; then
         # Shrinking will commence once no worker is processing items.
         check_inflight
         log "INFLIGHT_RESULT: $inflight_result"
-        if [ $inflight_result == "takeoff" ];then
+        if [[ $inflight_result == "takeoff" ]];then
             log "---SHRINKING VOLUME START----"
             send_msg "Worker queues empty. Shutting down exchange services. \n \
                 $(df -h $MOUNT_POINT) Shrinking by $LAST_DISK_SIZE GB"
