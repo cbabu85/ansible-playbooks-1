@@ -149,3 +149,9 @@ If you just want to deploy a change to the pharos repom, you wont need to run th
 |  | ansible-playbook preserv.staging.yml -e git_branch=adifferentbranch | ~ | ~ | Deploy custom branch of Preserv |
 |  | ansible-playbook preserv.staging.yml -e git_version=03dfe9c | ~ | ~ | Deploy specific git-commit of Preserv |
 |  |  |  |  |  |
+
+Deploying EBS autoscale to apt-prod-services:
+
+`ansible-playbook ebs_autoscale.yml -l apt-prod-services`
+
+Note that deployment forces the script to run once immediately.
