@@ -20,9 +20,9 @@ aws_go_user: "{{vault_aws_go_staging_user}}"
 aws_go_pwd: "{{vault_aws_go_staging_pwd}}"
 
 # PHAROS VARS
-pharos_web_concurrency: 4
+pharos_web_concurrency: 5
 pharos_min_threads: 2
-pharos_max_threads: 8
+pharos_max_threads: 16
 
 pharos_docker: true
 pharos_api_user: "{{vault_pharos_demo_api_user}}"
