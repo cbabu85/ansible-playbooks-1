@@ -320,6 +320,7 @@ preserv_log_level: "DEBUG"
 
 preserv_max_days_since_last_fixity: 90
 preserv_max_file_size: 5497558138880
+preserv_max_fixity_items_per_run: 2500
 preserv_max_worker_attempts: 3
 
 # nsq settings
@@ -341,6 +342,9 @@ preserv_pharos_api_key: "{{pharos_api_key}}"
 preserv_pharos_api_user: "{{pharos_api_user}}"
 preserv_pharos_api_version: "v2"
 preserv_pharos_url: "{{pharos_url}}"
+
+preserv_queue_fixity_interval: "60m"
+
 ## redis
 preserv_redis_default_db: 0
 preserv_redis_password: ""
