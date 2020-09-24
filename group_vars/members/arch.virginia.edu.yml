@@ -1,0 +1,35 @@
+# Institutional ID e.g. virginia (from virignia.edu)
+inst_id: arch.virginia
+# Suffix in domain e.g. virginia.edu
+inst_id_suffix: edu
+# Full institutional name. Used for AWS Tags.
+inst_name: "University of BeesomeA"
+# If institution is a subscriber the inst_member is the "parent" organisation.
+# If the institution is a member/parent organisation use the same inst_id as
+# the institution itself. Used for AWS Tags.
+inst_member: virginia
+# Can be member or subscriber. Mostly used for AWS Tags.
+inst_type: subscriber
+# Institutional users that should have AWS credentials. Currently it is
+# necessary to repeat users for prod, stagingx and demo environments. Like joe.schmo is
+# for production and joe.schmo.test is for demo and joe.schmo.staging for staging. Phone number and email address
+# are used for AWS Tags.
+inst_users:
+  - name: andrew.larue
+    email: ajl5t@virginia.edu
+    phone: +5341234567
+  - name: andrew.larue.test
+    email: ajl5t@virginia.edu
+    phone: +6341234567
+  - name: andrew.larue.staging
+    email: ajl5t@virginia.edu
+    phone: +74412345672
+# List users that should be removed. Only username is necessary.
+inst_users_remove:
+  - tonald.drump
+  - tonald.drump.test
+
+# List of institutional admins. In the AWS context this does not matter much as
+# it does not affect permissions. Mostly used for AWS tags.
+inst_admin:
+  - andrew.larue
