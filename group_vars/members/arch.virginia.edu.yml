@@ -3,7 +3,7 @@ inst_id: arch.virginia
 # Suffix in domain e.g. virginia.edu
 inst_id_suffix: edu
 # Full institutional name. Used for AWS Tags.
-inst_name: "University of BeesomeA"
+inst_name: "UVA Architecture"
 # If institution is a subscriber the inst_member is the "parent" organisation.
 # If the institution is a member/parent organisation use the same inst_id as
 # the institution itself. Used for AWS Tags.
