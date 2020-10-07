@@ -300,30 +300,32 @@ ex_glacierrestoreworker: {
 }
 
 ex_receivingbuckets: [
+    'aptrust.receiving.arch.virginia.edu',
+    'aptrust.receiving.arizona.edu',
+    'aptrust.receiving.bc.edu',
     'aptrust.receiving.chd.virginia.edu',
     'aptrust.receiving.columbia.edu',
+    'aptrust.receiving.fulcrum.org',
     'aptrust.receiving.georgetown.edu',
     'aptrust.receiving.indiana.edu',
+    'aptrust.receiving.iupui.edu',
     'aptrust.receiving.jhu.edu',
     'aptrust.receiving.miami.edu',
     'aptrust.receiving.ncsu.edu',
+    'aptrust.receiving.nd.edu',
     'aptrust.receiving.psu.edu',
     'aptrust.receiving.syr.edu',
+    'aptrust.receiving.test.edu',
     'aptrust.receiving.uc.edu',
     'aptrust.receiving.uconn.edu',
     'aptrust.receiving.umd.edu',
     'aptrust.receiving.umich.edu',
-    'aptrust.receiving.fulcrum.org',
     'aptrust.receiving.unc.edu',
-    'aptrust.receiving.nd.edu',
     'aptrust.receiving.virginia.edu',
     'aptrust.receiving.viul.virginia.edu',
     'aptrust.receiving.vt.edu',
     'aptrust.receiving.vwu.edu',
-    'aptrust.receiving.test.edu',
     'aptrust.receiving.wm.edu',
-    'aptrust.receiving.iupui.edu',
-    'aptrust.receiving.arizona.edu'
     ]
 
 ## FOR CHANGES ON DPN NODES THIS NEEDS TO BE CHANGED

@@ -287,11 +287,18 @@ ex_glacierrestoreworker: {
   }
 
 ex_receivingbuckets: [
+        'aptrust.receiving.test.arch.virginia.edu',
+        'aptrust.receiving.test.arizona.edu',
+        'aptrust.receiving.test.bc.edu',
+        'aptrust.receiving.test.case.edu',
         'aptrust.receiving.test.chd.virginia.edu',
         'aptrust.receiving.test.columbia.edu',
+        'aptrust.receiving.test.fulcrum.org',
         'aptrust.receiving.test.georgetown.edu',
         'aptrust.receiving.test.indiana.edu',
+        'aptrust.receiving.test.iupui.edu',
         'aptrust.receiving.test.jhu.edu',
+        'aptrust.receiving.test.lafayette.edu',
         'aptrust.receiving.test.miami.edu',
         'aptrust.receiving.test.ncsu.edu',
         'aptrust.receiving.test.nd.edu',
@@ -302,19 +309,13 @@ ex_receivingbuckets: [
         'aptrust.receiving.test.uconn.edu',
         'aptrust.receiving.test.umd.edu',
         'aptrust.receiving.test.umich.edu',
-        'aptrust.receiving.test.fulcrum.org',
         'aptrust.receiving.test.unc.edu',
+        'aptrust.receiving.test.vcu.edu',
         'aptrust.receiving.test.virginia.edu',
         'aptrust.receiving.test.viul.virginia.edu',
         'aptrust.receiving.test.vt.edu',
-        'aptrust.receiving.test.vcu.edu',
         'aptrust.receiving.test.vwu.edu',
         'aptrust.receiving.test.wm.edu',
-        'aptrust.receiving.test.case.edu',
-        'aptrust.receiving.test.bc.edu',
-        'aptrust.receiving.test.lafayette.edu',
-        'aptrust.receiving.test.iupui.edu',
-        'aptrust.receiving.test.arizona.edu'
     ]
 
 ex_dpn: {
