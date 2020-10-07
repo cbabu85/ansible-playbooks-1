@@ -141,7 +141,7 @@ If you just want to deploy a change to the pharos repom, you wont need to run th
 | Pharos | ansible-playbook pharos.staging.yml | ansible-playbook pharos.demo.yml | ansible-playbook pharos.production.yml | Deploy default (master) branch |
 |  | ansible-playbook pharos.staging.yml -e git_branch=adifferentbranch | ~ | ~ | Deploy differnent branch of Pharos |
 |  | ansible-playbook pharos.staging.yml -e git_version=03dfe9c | ~ | ~ | Deploy specific git-commit of Pharos |
-| Exchange | ansible-playbook exchange.docker.yml -t deploy | ansible-playbook exchange.yml -t deploy | ansible-playbook exchange.yml -t deploy | Deploy default (master) branch |
+| Exchange | ansible-playbook exchange.docker.yml -t deploy | ansible-playbook exchange.yml -t deploy -l apt-demo-services | ansible-playbook exchange.yml -t deploy -l apt-prod-services | Deploy default (master) branch |
 |  | ansible-playbook exchange.docker.yml -t deploy -e ex_git_branch=custom-branch | ansible-playbook exchange.demo.yml -t deploy -e ex_git_branch=custom-branch | ansible-playbook exchange.production.yml -t deploy -e ex_git_branch=custom-branch |  |
 |  |  | ansible-playbook exchange.demo.yml -t buildgo | ansible-playbook exchange.production.yml -t buildgo | Deploy exchange without restarting services: |
 |  |  |  |  |  |
